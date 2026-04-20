@@ -2,6 +2,9 @@ import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import tailwindcss from '@tailwindcss/vite'
 
+// Backend URL: use environment variable in production, local IP in development
+const BACKEND_URL = process.env.VITE_API_URL || 'http://localhost:5000';
+
 export default defineConfig({
   plugins: [
     react(),
@@ -10,20 +13,14 @@ export default defineConfig({
 
   server: {
     port: 5173,
-    host: true,          // listen on 0.0.0.0 — accessible from any device on LAN
+    host: true,
     strictPort: true,
-    open: true,          // 🏠 Auto-open home page (React SPA at /) when server starts
-
-    // ── HMR — use machine's LAN IP so hot-reload works on other devices too ──
-    hmr: {
-      host: '192.168.1.4',
-      port: 5173,
-    },
+    open: true,
 
     // ── Proxy — forward /api calls to backend ──────────────────────────────
     proxy: {
       '/api': {
-        target: 'http://192.168.1.4:5000',   // use LAN IP, not localhost
+        target: BACKEND_URL,
         changeOrigin: true,
         secure: false,
         timeout: 15000,
@@ -35,7 +32,6 @@ export default defineConfig({
       }
     },
 
-    // ── Increase watch file limit for large projects ──────────────────────
     watch: {
       usePolling: false,
     },
