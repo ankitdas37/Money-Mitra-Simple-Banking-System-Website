@@ -1,0 +1,12 @@
+{
+  "name": "money-mitra",
+  "version": "1.0.0",
+  "description": "Money Mitra — Anime-Inspired Digital Banking Simulation Platform",
+  "scripts": {
+    "dev:backend": "cd backend && npm run dev",
+    "dev:frontend": "cd frontend && npm run dev",
+    "install:all": "cd backend && npm install && cd ../frontend && npm install",
+    "db:init": "cd backend && npm run db:init",
+    "db:seed": "cd backend && npm run db:seed"
+  }
+}

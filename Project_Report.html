@@ -1,0 +1,2221 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+  <title>Money Mitra — Project Report</title>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Fira+Code:wght@400;500&display=swap"
+    rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #07071A;
+      --bg2: #0D0D2B;
+      --card: rgba(255, 255, 255, 0.04);
+      --border: rgba(255, 255, 255, 0.08);
+      --border2: rgba(108, 99, 255, 0.3);
+      --primary: #6C63FF;
+      --accent: #00E5A0;
+      --pink: #FF6B9D;
+      --gold: #FFB84C;
+      --blue: #5BC8FB;
+      --text: #E8E8FF;
+      --muted: #8888AA;
+      --grad1: linear-gradient(135deg, #6C63FF, #A855F7);
+      --grad2: linear-gradient(135deg, #00E5A0, #00B4D8);
+      --grad3: linear-gradient(135deg, #FF6B9D, #FF8C57);
+      --grad4: linear-gradient(135deg, #FFB84C, #FF6B9D);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: 'Outfit', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      font-size: 13.5px;
+      line-height: 1.8;
+      overflow-x: hidden;
+    }
+
+    /* ── PRINT ── */
+    @media print {
+      body {
+        background: #fff !important;
+        color: #111 !important;
+        font-size: 11px;
+      }
+
+      .no-print,
+      .print-btn,
+      .particles,
+      .blob {
+        display: none !important;
+      }
+
+      .section {
+        page-break-inside: avoid;
+      }
+
+      h2 {
+        color: #4F46E5 !important;
+        background: none !important;
+        -webkit-text-fill-color: #4F46E5 !important;
+      }
+
+      .glass-card {
+        background: #f8f8ff !important;
+        border: 1px solid #e0e0f0 !important;
+        box-shadow: none !important;
+      }
+
+      table {
+        border-collapse: collapse;
+      }
+
+      th {
+        background: #4F46E5 !important;
+        color: #fff !important;
+      }
+
+      td {
+        border: 1px solid #e0e0f0 !important;
+      }
+
+      @page {
+        size: A4;
+        margin: 18mm;
+      }
+    }
+
+    /* ── PARTICLES BG ── */
+    .particles {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      overflow: hidden;
+    }
+
+    .particle {
+      position: absolute;
+      border-radius: 50%;
+      animation: float linear infinite;
+      opacity: 0.15;
+    }
+
+    @keyframes float {
+      0% {
+        transform: translateY(100vh) rotate(0deg);
+      }
+
+      100% {
+        transform: translateY(-120px) rotate(720deg);
+      }
+    }
+
+    .blob {
+      position: fixed;
+      border-radius: 50%;
+      filter: blur(80px);
+      opacity: 0.12;
+      pointer-events: none;
+      z-index: 0;
+      animation: blobmove 16s ease-in-out infinite alternate;
+    }
+
+    @keyframes blobmove {
+      0% {
+        transform: translate(0, 0)scale(1);
+      }
+
+      100% {
+        transform: translate(60px, 40px)scale(1.15);
+      }
+    }
+
+    /* ── PRINT BTN ── */
+    .print-btn {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      z-index: 9999;
+      background: var(--grad1);
+      color: #fff;
+      border: none;
+      padding: 11px 22px;
+      border-radius: 50px;
+      cursor: pointer;
+      font-family: 'Outfit', sans-serif;
+      font-size: 13px;
+      font-weight: 700;
+      box-shadow: 0 4px 24px rgba(108, 99, 255, 0.45);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.3s;
+    }
+
+    .print-btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 32px rgba(108, 99, 255, 0.6);
+    }
+
+    /* ── LAYOUT ── */
+    .container {
+      max-width: 940px;
+      margin: 0 auto;
+      padding: 40px 32px 80px;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* ── COVER ── */
+    .cover {
+      min-height: 92vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 60px 0 80px;
+      position: relative;
+    }
+
+    .cover::before {
+      content: '';
+      position: absolute;
+      inset: -60px;
+      background: radial-gradient(ellipse 70% 60% at 50% 40%, rgba(108, 99, 255, 0.18) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .cover-ring {
+      width: 130px;
+      height: 130px;
+      border-radius: 28px;
+      background: linear-gradient(135deg, rgba(108, 99, 255, 0.2), rgba(0, 229, 160, 0.15));
+      border: 2px solid rgba(108, 99, 255, 0.4);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 28px;
+      font-size: 64px;
+      box-shadow: 0 0 60px rgba(108, 99, 255, 0.25);
+      animation: logoPulse 3s ease-in-out infinite;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .cover-ring::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(108, 99, 255, 0.1), transparent);
+      animation: shimmer 2.5s ease-in-out infinite;
+    }
+
+    @keyframes logoPulse {
+
+      0%,
+      100% {
+        box-shadow: 0 0 40px rgba(108, 99, 255, 0.25);
+      }
+
+      50% {
+        box-shadow: 0 0 80px rgba(108, 99, 255, 0.5), 0 0 120px rgba(0, 229, 160, 0.15);
+      }
+    }
+
+    @keyframes shimmer {
+      0% {
+        opacity: 0;
+      }
+
+      50% {
+        opacity: 1;
+      }
+
+      100% {
+        opacity: 0;
+      }
+    }
+
+    .cover-ring img {
+      width: 90px;
+      height: 90px;
+      object-fit: contain;
+      border-radius: 14px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .cover-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      border: 1px solid rgba(108, 99, 255, 0.35);
+      border-radius: 100px;
+      padding: 6px 18px;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      color: var(--primary);
+      text-transform: uppercase;
+      margin-bottom: 24px;
+      background: rgba(108, 99, 255, 0.08);
+      animation: chipGlow 2s ease-in-out infinite;
+    }
+
+    @keyframes chipGlow {
+
+      0%,
+      100% {
+        border-color: rgba(108, 99, 255, 0.35);
+      }
+
+      50% {
+        border-color: rgba(108, 99, 255, 0.7);
+        box-shadow: 0 0 20px rgba(108, 99, 255, 0.2);
+      }
+    }
+
+    .cover h1 {
+      font-size: clamp(38px, 7vw, 68px);
+      font-weight: 900;
+      line-height: 1.1;
+      background: linear-gradient(135deg, #fff 20%, #6C63FF 50%, #00E5A0 80%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 10px;
+      animation: fadeSlideUp 0.8s ease both;
+    }
+
+    .cover-sub {
+      font-size: 17px;
+      color: var(--muted);
+      margin-bottom: 40px;
+      animation: fadeSlideUp 0.8s 0.1s ease both;
+    }
+
+    .cover-cards {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 14px;
+      max-width: 520px;
+      margin: 0 auto 40px;
+      animation: fadeSlideUp 0.8s 0.2s ease both;
+    }
+
+    .cover-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 14px 18px;
+      text-align: left;
+    }
+
+    .cover-card-label {
+      font-size: 10px;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 4px;
+    }
+
+    .cover-card-val {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    .stat-ribbon {
+      display: flex;
+      gap: 20px;
+      justify-content: center;
+      flex-wrap: wrap;
+      animation: fadeSlideUp 0.8s 0.3s ease both;
+    }
+
+    .stat-pill {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--border);
+      border-radius: 50px;
+      padding: 10px 20px;
+      transition: all 0.3s;
+    }
+
+    .stat-pill:hover {
+      border-color: var(--primary);
+      transform: translateY(-2px);
+    }
+
+    .stat-pill-num {
+      font-size: 20px;
+      font-weight: 900;
+      background: var(--grad1);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .stat-pill-lbl {
+      font-size: 11px;
+      color: var(--muted);
+      font-weight: 500;
+    }
+
+    @keyframes fadeSlideUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* ── SECTION DIVIDER ── */
+    .page-sep {
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(108, 99, 255, 0.4), rgba(0, 229, 160, 0.3), transparent);
+      margin: 56px 0;
+      position: relative;
+    }
+
+    .page-sep::after {
+      content: '';
+      position: absolute;
+      left: 50%;
+      top: -3px;
+      transform: translateX(-50%);
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--primary);
+      box-shadow: 0 0 10px var(--primary);
+    }
+
+    /* ── TOC ── */
+    .toc-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 8px;
+      margin-top: 20px;
+    }
+
+    .toc-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 10px 14px;
+      text-decoration: none;
+      color: var(--text);
+      transition: all 0.25s;
+      font-size: 13px;
+    }
+
+    .toc-item:hover {
+      border-color: var(--primary);
+      background: rgba(108, 99, 255, 0.08);
+      transform: translateX(4px);
+    }
+
+    .toc-num {
+      min-width: 26px;
+      height: 26px;
+      border-radius: 7px;
+      background: var(--grad1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      font-weight: 800;
+      color: #fff;
+    }
+
+    /* ── SECTION HEADINGS ── */
+    h2 {
+      font-size: 22px;
+      font-weight: 800;
+      margin: 48px 0 20px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      position: relative;
+    }
+
+    h2 .h2-num {
+      min-width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      background: var(--grad1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      font-weight: 800;
+      color: #fff;
+      box-shadow: 0 4px 16px rgba(108, 99, 255, 0.35);
+      flex-shrink: 0;
+    }
+
+    h2 .h2-text {
+      background: linear-gradient(135deg, #fff, var(--primary));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    h2::after {
+      content: '';
+      position: absolute;
+      bottom: -6px;
+      left: 0;
+      right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, rgba(108, 99, 255, 0.4), transparent);
+    }
+
+    h3 {
+      font-size: 14px;
+      font-weight: 800;
+      color: var(--accent);
+      margin: 24px 0 10px;
+      padding-left: 12px;
+      border-left: 3px solid var(--accent);
+    }
+
+    p {
+      margin-bottom: 12px;
+      color: rgba(232, 232, 255, 0.85);
+    }
+
+    /* ── GLASS CARD ── */
+    .glass-card {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 24px;
+      margin: 16px 0;
+      backdrop-filter: blur(10px);
+      transition: all 0.3s;
+    }
+
+    .glass-card:hover {
+      border-color: rgba(108, 99, 255, 0.25);
+      transform: translateY(-1px);
+    }
+
+    /* ── TABLES ── */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 16px 0;
+      font-size: 12.5px;
+    }
+
+    thead tr {
+      background: linear-gradient(135deg, rgba(108, 99, 255, 0.3), rgba(0, 229, 160, 0.1));
+    }
+
+    thead th {
+      padding: 11px 14px;
+      text-align: left;
+      font-weight: 700;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      color: #fff;
+    }
+
+    tbody tr {
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      transition: background 0.2s;
+    }
+
+    tbody tr:hover {
+      background: rgba(108, 99, 255, 0.06);
+    }
+
+    tbody td {
+      padding: 10px 14px;
+      color: rgba(232, 232, 255, 0.85);
+    }
+
+    tbody td:first-child {
+      font-weight: 700;
+      color: #fff;
+    }
+
+    .tbl-wrap {
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      overflow: hidden;
+      margin: 16px 0;
+    }
+
+    /* ── CODE BLOCKS ── */
+    pre {
+      background: rgba(0, 0, 0, 0.5);
+      border: 1px solid rgba(108, 99, 255, 0.2);
+      border-left: 3px solid var(--primary);
+      border-radius: 12px;
+      padding: 20px;
+      font-family: 'Fira Code', monospace;
+      font-size: 11px;
+      line-height: 1.7;
+      overflow-x: auto;
+      margin: 16px 0;
+      color: #A5B4FC;
+    }
+
+    /* ── LISTS ── */
+    ul,
+    ol {
+      padding-left: 24px;
+      margin-bottom: 12px;
+    }
+
+    li {
+      margin-bottom: 7px;
+      color: rgba(232, 232, 255, 0.85);
+    }
+
+    li::marker {
+      color: var(--primary);
+      font-weight: 700;
+    }
+
+    /* ── CHECK LIST ── */
+    .checklist {
+      list-style: none;
+      padding-left: 0;
+    }
+
+    .checklist li {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 6px 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+    }
+
+    .checklist li::before {
+      content: '✓';
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: rgba(0, 229, 160, 0.15);
+      color: var(--accent);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      font-weight: 800;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+
+    /* ── INFO BOXES ── */
+    .info-box {
+      border-radius: 12px;
+      padding: 16px 20px;
+      margin: 16px 0;
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+    }
+
+    .info-box.blue {
+      background: rgba(108, 99, 255, 0.08);
+      border: 1px solid rgba(108, 99, 255, 0.25);
+    }
+
+    .info-box.green {
+      background: rgba(0, 229, 160, 0.07);
+      border: 1px solid rgba(0, 229, 160, 0.25);
+    }
+
+    .info-box.yellow {
+      background: rgba(255, 184, 76, 0.07);
+      border: 1px solid rgba(255, 184, 76, 0.25);
+    }
+
+    .info-box .ib-icon {
+      font-size: 22px;
+      flex-shrink: 0;
+    }
+
+    .info-box .ib-text strong {
+      display: block;
+      font-size: 11px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 5px;
+    }
+
+    .info-box.blue .ib-text strong {
+      color: var(--primary);
+    }
+
+    .info-box.green .ib-text strong {
+      color: var(--accent);
+    }
+
+    .info-box.yellow .ib-text strong {
+      color: var(--gold);
+    }
+
+    /* ── STAT CARDS ── */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 14px;
+      margin: 20px 0;
+    }
+
+    .stat-card {
+      background: rgba(255, 255, 255, 0.03);
+      border-radius: 14px;
+      padding: 18px 14px;
+      text-align: center;
+      border: 1px solid var(--border);
+      position: relative;
+      overflow: hidden;
+      transition: all 0.3s;
+    }
+
+    .stat-card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      background: radial-gradient(circle at 50% 0%, rgba(108, 99, 255, 0.15), transparent 60%);
+      transition: opacity 0.3s;
+    }
+
+    .stat-card:hover::before {
+      opacity: 1;
+    }
+
+    .stat-card:hover {
+      border-color: rgba(108, 99, 255, 0.35);
+      transform: translateY(-3px);
+    }
+
+    .stat-card .val {
+      font-size: 30px;
+      font-weight: 900;
+      line-height: 1;
+      background: var(--grad1);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .stat-card .lbl {
+      font-size: 10px;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-top: 8px;
+    }
+
+    /* ── MODULE GRID ── */
+    .module-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin: 16px 0;
+    }
+
+    .module-card {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px;
+      transition: all 0.3s;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .module-card::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: var(--grad1);
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform 0.3s;
+    }
+
+    .module-card:hover::after {
+      transform: scaleX(1);
+    }
+
+    .module-card:hover {
+      border-color: rgba(108, 99, 255, 0.3);
+      transform: translateY(-2px);
+    }
+
+    .module-card .tag {
+      font-size: 10px;
+      color: var(--accent);
+      font-weight: 700;
+      font-family: 'Fira Code', monospace;
+      margin-bottom: 6px;
+    }
+
+    .module-card h4 {
+      font-size: 13px;
+      font-weight: 800;
+      color: #fff;
+      margin-bottom: 6px;
+    }
+
+    .module-card p {
+      font-size: 11.5px;
+      color: var(--muted);
+      line-height: 1.6;
+      margin: 0;
+    }
+
+    /* ── ARCH BOX ── */
+    .arch-cols {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+      margin: 16px 0;
+    }
+
+    .arch-col {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 18px;
+      text-align: center;
+      transition: all 0.3s;
+    }
+
+    .arch-col:hover {
+      border-color: rgba(108, 99, 255, 0.3);
+      transform: translateY(-3px);
+    }
+
+    .arch-col .arch-icon {
+      font-size: 30px;
+      margin-bottom: 10px;
+    }
+
+    .arch-col h4 {
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    .arch-col p {
+      font-size: 11px;
+      color: var(--muted);
+      margin: 6px 0 0;
+    }
+
+    /* ── FLOW ── */
+    .flow {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin: 14px 0;
+    }
+
+    .flow-step {
+      background: rgba(108, 99, 255, 0.1);
+      border: 1px solid rgba(108, 99, 255, 0.3);
+      border-radius: 8px;
+      padding: 7px 14px;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--primary);
+      transition: all 0.2s;
+    }
+
+    .flow-step:hover {
+      background: rgba(108, 99, 255, 0.2);
+    }
+
+    .flow-arrow {
+      color: var(--muted);
+      font-size: 18px;
+    }
+
+    /* ── TECH BADGE ── */
+    .tech-badges {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin: 12px 0;
+    }
+
+    .tech-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 8px;
+      padding: 5px 12px;
+      font-size: 11.5px;
+      font-weight: 600;
+      transition: all 0.2s;
+    }
+
+    .tech-badge:hover {
+      border-color: var(--primary);
+      background: rgba(108, 99, 255, 0.1);
+    }
+
+    /* ── SECURITY GRID ── */
+    .sec-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+      margin: 16px 0;
+    }
+
+    .sec-item {
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 12px 14px;
+      transition: all 0.25s;
+    }
+
+    .sec-item:hover {
+      border-color: rgba(0, 229, 160, 0.3);
+      background: rgba(0, 229, 160, 0.03);
+    }
+
+    .sec-icon {
+      font-size: 18px;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+
+    .sec-title {
+      font-size: 12px;
+      font-weight: 800;
+      color: #fff;
+      margin-bottom: 3px;
+    }
+
+    .sec-desc {
+      font-size: 11px;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    /* ── FUTURE CARD ── */
+    .future-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+      margin: 16px 0;
+    }
+
+    .future-card {
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 12px 14px;
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+      transition: all 0.25s;
+    }
+
+    .future-card:hover {
+      border-color: rgba(255, 107, 157, 0.3);
+      background: rgba(255, 107, 157, 0.03);
+    }
+
+    .future-tag {
+      background: var(--grad3);
+      border-radius: 6px;
+      padding: 3px 8px;
+      font-size: 10px;
+      font-weight: 800;
+      color: #fff;
+      margin-top: 4px;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    .future-title {
+      font-size: 12px;
+      font-weight: 800;
+      color: #fff;
+      margin-bottom: 3px;
+    }
+
+    .future-desc {
+      font-size: 11px;
+      color: var(--muted);
+    }
+
+    /* ── REF GRID ── */
+    .ref-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 8px;
+      margin: 16px 0;
+    }
+
+    .ref-item {
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 10px 14px;
+      font-size: 12px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .ref-num {
+      width: 24px;
+      height: 24px;
+      border-radius: 6px;
+      background: var(--grad1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 10px;
+      font-weight: 800;
+      color: #fff;
+      flex-shrink: 0;
+    }
+
+    /* ── FOOTER ── */
+    .report-footer {
+      margin-top: 80px;
+      padding: 40px;
+      background: rgba(108, 99, 255, 0.05);
+      border: 1px solid rgba(108, 99, 255, 0.15);
+      border-radius: 20px;
+      text-align: center;
+    }
+
+    .report-footer h3 {
+      font-size: 20px;
+      font-weight: 800;
+      margin-bottom: 12px;
+      background: var(--grad1);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      border: none;
+      padding: 0;
+    }
+
+    .footer-meta {
+      display: flex;
+      gap: 24px;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin: 16px 0;
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .footer-meta span {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    /* ── SCROLL REVEAL ── */
+    .reveal {
+      opacity: 0;
+      transform: translateY(28px);
+      transition: opacity 0.6s ease, transform 0.6s ease;
+    }
+
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* ── GRADIENT BADGE ── */
+    .grad-badge {
+      display: inline-block;
+      border-radius: 6px;
+      padding: 2px 9px;
+      font-size: 10px;
+      font-weight: 800;
+      font-family: 'Fira Code', monospace;
+      color: #fff;
+    }
+
+    .grad-badge.p {
+      background: var(--grad1);
+    }
+
+    .grad-badge.a {
+      background: var(--grad2);
+    }
+
+    .grad-badge.g {
+      background: var(--grad3);
+    }
+
+    /* ── COUNTER ── */
+    .counter {
+      display: inline-block;
+      background: var(--grad1);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- Background -->
+  <div class="particles" id="particles"></div>
+  <div class="blob"
+    style="width:500px;height:500px;background:radial-gradient(circle,#6C63FF,transparent);top:-100px;left:-150px;">
+  </div>
+  <div class="blob"
+    style="width:400px;height:400px;background:radial-gradient(circle,#00E5A0,transparent);bottom:10%;right:-100px;animation-delay:-8s;">
+  </div>
+
+  <button class="print-btn no-print" onclick="window.print()">🖨️ Save as PDF</button>
+
+  <div class="container">
+
+    <!-- ══════════════  COVER  ══════════════ -->
+    <div class="cover">
+      <div class="cover-chip">⚡ Minor Project Report · 4th Semester · CST</div>
+      <div class="cover-ring">
+        <img src="./frontend/public/logo.png" alt="Money Mitra"
+          onerror="this.style.display='none';this.parentElement.innerHTML='<span style=\'font-size:60px\'>💰</span>'" />
+      </div>
+      <h1>Money Mitra</h1>
+      <div class="cover-sub">Next-Gen Digital Banking Platform</div>
+
+      <div class="cover-cards">
+        <div class="cover-card">
+          <div class="cover-card-label">📚 Project Type</div>
+          <div class="cover-card-val">Minor Project — Full-Stack Web App</div>
+        </div>
+        <div class="cover-card">
+          <div class="cover-card-label">🎓 Course</div>
+          <div class="cover-card-val">Diploma — Computer Science &amp; Technology</div>
+        </div>
+        <div class="cover-card">
+          <div class="cover-card-label">📅 Semester &amp; Year</div>
+          <div class="cover-card-val">4th Semester · 2025–2026</div>
+        </div>
+        <div class="cover-card">
+          <div class="cover-card-label">🪪 Roll Numbers</div>
+          <div class="cover-card-val">34, 36, 37, 38, 39, 40</div>
+        </div>
+      </div>
+
+      <div class="stat-ribbon">
+        <div class="stat-pill">
+          <div class="stat-pill-num" data-target="11619">0</div>
+          <div class="stat-pill-lbl">Lines of Code</div>
+        </div>
+        <div class="stat-pill">
+          <div class="stat-pill-num" data-target="93">0</div>
+          <div class="stat-pill-lbl">API Endpoints</div>
+        </div>
+        <div class="stat-pill">
+          <div class="stat-pill-num" data-target="11">0</div>
+          <div class="stat-pill-lbl">DB Tables</div>
+        </div>
+        <div class="stat-pill">
+          <div class="stat-pill-num" data-target="12">0</div>
+          <div class="stat-pill-lbl">Frontend Pages</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="page-sep"></div>
+
+    <!-- ══════════════  TOC  ══════════════ -->
+    <div class="reveal">
+      <h2><span class="h2-num">📋</span><span class="h2-text">Table of Contents</span></h2>
+      <div class="toc-grid">
+        <a href="#abstract" class="toc-item">
+          <div class="toc-num">1</div>Abstract
+        </a>
+        <a href="#intro" class="toc-item">
+          <div class="toc-num">2</div>Introduction
+        </a>
+        <a href="#problem" class="toc-item">
+          <div class="toc-num">3</div>Problem Statement
+        </a>
+        <a href="#objectives" class="toc-item">
+          <div class="toc-num">4</div>Objectives
+        </a>
+        <a href="#arch" class="toc-item">
+          <div class="toc-num">5</div>System Architecture
+        </a>
+        <a href="#tech" class="toc-item">
+          <div class="toc-num">6</div>Technology Stack
+        </a>
+        <a href="#modules" class="toc-item">
+          <div class="toc-num">7</div>System Modules
+        </a>
+        <a href="#database" class="toc-item">
+          <div class="toc-num">8</div>Database Design
+        </a>
+        <a href="#api" class="toc-item">
+          <div class="toc-num">9</div>API Architecture
+        </a>
+        <a href="#security" class="toc-item">
+          <div class="toc-num">10</div>Security Features
+        </a>
+        <a href="#ui" class="toc-item">
+          <div class="toc-num">11</div>UI &amp; UX
+        </a>
+        <a href="#flow" class="toc-item">
+          <div class="toc-num">12</div>System Flow
+        </a>
+        <a href="#stats" class="toc-item">
+          <div class="toc-num">13</div>Project Statistics
+        </a>
+        <a href="#limits" class="toc-item">
+          <div class="toc-num">14</div>Limitations
+        </a>
+        <a href="#future" class="toc-item">
+          <div class="toc-num">15</div>Future Scope
+        </a>
+        <a href="#conclusion" class="toc-item">
+          <div class="toc-num">16</div>Conclusion
+        </a>
+        <a href="#refs" class="toc-item">
+          <div class="toc-num">17</div>References
+        </a>
+      </div>
+    </div>
+
+    <div class="page-sep"></div>
+
+    <!-- ══════════════  1. ABSTRACT  ══════════════ -->
+    <div class="section reveal" id="abstract">
+      <h2><span class="h2-num">01</span><span class="h2-text">Abstract</span></h2>
+      <p><strong style="color:#fff">Money Mitra</strong> is a full-stack digital banking simulation platform built with
+        React.js, Node.js/Express, and MySQL — replicating the core features of a real-world neobank including
+        multi-step KYC, UPI fund transfers, virtual cards, loan management, bill payments, support ticketing, and a
+        comprehensive admin panel.</p>
+      <p>The platform implements industry-standard security: JWT refresh tokens, bcrypt hashing, rate limiting, SQL
+        parameterization, and fraud detection algorithms. Its premium dark-mode glassmorphism UI features smooth
+        animations and full mobile responsiveness.</p>
+
+      <div class="stats-grid" style="margin-top:28px;">
+        <div class="stat-card">
+          <div class="val" data-target="11619">11,619+</div>
+          <div class="lbl">Lines of Code</div>
+        </div>
+        <div class="stat-card">
+          <div class="val" data-target="93">93</div>
+          <div class="lbl">REST API Endpoints</div>
+        </div>
+        <div class="stat-card">
+          <div class="val" data-target="11">11</div>
+          <div class="lbl">MySQL Tables</div>
+        </div>
+        <div class="stat-card">
+          <div class="val" data-target="12">12</div>
+          <div class="lbl">Frontend Pages</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════  2. INTRODUCTION  ══════════════ -->
+    <div class="section reveal" id="intro">
+      <h2><span class="h2-num">02</span><span class="h2-text">Introduction</span></h2>
+      <p>The Indian fintech sector has transformed dramatically through UPI adoption and the rise of neobanks. <strong
+          style="color:#fff">Money Mitra</strong> (meaning "Money Friend") simulates this digital banking experience — a
+        complete, paperless banking suite accessible via a stunning web interface.</p>
+      <p>This Minor Project applies knowledge from:</p>
+      <div class="tech-badges">
+        <div class="tech-badge">🌐 Web Technologies</div>
+        <div class="tech-badge">⚙️ Server-Side Programming</div>
+        <div class="tech-badge">🗄️ Database Management</div>
+        <div class="tech-badge">🔐 Software Security</div>
+        <div class="tech-badge">🏗️ Software Engineering</div>
+        <div class="tech-badge">🎨 UI/UX Design</div>
+      </div>
+    </div>
+
+    <!-- ══════════════  3. PROBLEM STATEMENT  ══════════════ -->
+    <div class="section reveal" id="problem">
+      <h2><span class="h2-num">03</span><span class="h2-text">Problem Statement</span></h2>
+      <div class="tbl-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Problem</th>
+              <th>User Impact</th>
+              <th>Money Mitra Solution</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Paper-heavy KYC</td>
+              <td>Days to open an account</td>
+              <td>Digital PAN + Aadhaar KYC, minutes</td>
+            </tr>
+            <tr>
+              <td>Slow transfers</td>
+              <td>Hours for NEFT</td>
+              <td>Instant UPI + simulated IMPS</td>
+            </tr>
+            <tr>
+              <td>Opaque loans</td>
+              <td>Hidden charges</td>
+              <td>Transparent EMI calculator</td>
+            </tr>
+            <tr>
+              <td>No financial insights</td>
+              <td>Zero analytics</td>
+              <td>Recharts spending dashboard</td>
+            </tr>
+            <tr>
+              <td>Weak admin controls</td>
+              <td>Poor fraud management</td>
+              <td>Full admin panel — freeze/refund/KYC</td>
+            </tr>
+            <tr>
+              <td>Complex UI</td>
+              <td>Low user adoption</td>
+              <td>Premium glassmorphic design, mobile-first</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ══════════════  4. OBJECTIVES  ══════════════ -->
+    <div class="section reveal" id="objectives">
+      <h2><span class="h2-num">04</span><span class="h2-text">Objectives</span></h2>
+      <div class="module-grid">
+        <div class="glass-card">
+          <h3 style="margin-top:0">Primary Objectives</h3>
+          <ul class="checklist">
+            <li>Secure full-stack digital banking platform</li>
+            <li>JWT access/refresh token authentication</li>
+            <li>Multi-step KYC registration and verification</li>
+            <li>UPI-based instant fund transfers</li>
+            <li>Loan application and EMI management</li>
+            <li>Comprehensive admin panel</li>
+          </ul>
+        </div>
+        <div class="glass-card">
+          <h3 style="margin-top:0">Secondary Objectives</h3>
+          <ul class="checklist">
+            <li>bcrypt, rate limiting, SQL injection prevention</li>
+            <li>Fraud detection on high-value transactions</li>
+            <li>Animated mobile-responsive landing page</li>
+            <li>Real-time notifications &amp; support tickets</li>
+            <li>Live transaction history with auto-refresh</li>
+            <li>Immutable CKYC number generation</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════  5. ARCHITECTURE  ══════════════ -->
+    <div class="section reveal" id="arch">
+      <h2><span class="h2-num">05</span><span class="h2-text">System Architecture</span></h2>
+      <div class="arch-cols">
+        <div class="arch-col">
+          <div class="arch-icon">🖥️</div>
+          <h4
+            style="background:var(--grad1);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">
+            Presentation Layer</h4>
+          <p>React SPA + Landing HTML<br />Vite Dev Server<br />Port <code style="color:var(--accent)">5173</code></p>
+        </div>
+        <div class="arch-col">
+          <div class="arch-icon">⚙️</div>
+          <h4
+            style="background:var(--grad2);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">
+            Business Logic Layer</h4>
+          <p>Node.js + Express REST API<br />12 Modular Controllers<br />Port <code
+              style="color:var(--accent)">5000</code></p>
+        </div>
+        <div class="arch-col">
+          <div class="arch-icon">🗄️</div>
+          <h4
+            style="background:var(--grad3);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">
+            Data Layer</h4>
+          <p>MySQL 8 · <code style="color:var(--accent)">money_mitra</code> DB<br />Connection Pooling<br />ACID
+            Transactions</p>
+        </div>
+      </div>
+      <pre>
+┌─────────────────────────────────────────────────┐
+│         CLIENT BROWSER                          │
+│  home.html ──▶  React SPA (Vite :5173)          │
+│                 React Router v6                 │
+│                 Zustand · Axios Interceptors    │
+└────────────────────┬────────────────────────────┘
+                     │  JSON REST API
+        ┌────────────▼──────────────────────┐
+        │  Node.js + Express  (:5000)        │
+        │  Auth · JWT · Helmet · Rate Limit  │
+        │  12 Modular Route Controllers      │
+        └────────────┬───────────────────────┘
+                     │  mysql2 Pool
+        ┌────────────▼───────────────────────┐
+        │  MySQL 8 · money_mitra Database    │
+        │  11 Tables · ACID Transactions     │
+        └────────────────────────────────────┘</pre>
+    </div>
+
+    <!-- ══════════════  6. TECH STACK  ══════════════ -->
+    <div class="section reveal" id="tech">
+      <h2><span class="h2-num">06</span><span class="h2-text">Technology Stack</span></h2>
+      <h3>Frontend</h3>
+      <div class="tbl-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Technology</th>
+              <th>Version</th>
+              <th>Purpose</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>React.js</td>
+              <td>18.x</td>
+              <td>Component-based UI development</td>
+            </tr>
+            <tr>
+              <td>Vite</td>
+              <td>8.x</td>
+              <td>Fast dev server &amp; bundling</td>
+            </tr>
+            <tr>
+              <td>React Router</td>
+              <td>v6</td>
+              <td>Client-side SPA navigation</td>
+            </tr>
+            <tr>
+              <td>Zustand</td>
+              <td>Latest</td>
+              <td>Auth &amp; app state with localStorage persistence</td>
+            </tr>
+            <tr>
+              <td>Axios</td>
+              <td>Latest</td>
+              <td>API calls with request/response interceptors</td>
+            </tr>
+            <tr>
+              <td>Recharts</td>
+              <td>Latest</td>
+              <td>Financial analytics charts</td>
+            </tr>
+            <tr>
+              <td>React Hot Toast</td>
+              <td>Latest</td>
+              <td>User feedback notifications</td>
+            </tr>
+            <tr>
+              <td>Outfit (Google Fonts)</td>
+              <td>—</td>
+              <td>Premium typography</td>
+            </tr>
+            <tr>
+              <td>Font Awesome 6</td>
+              <td>6.5.0</td>
+              <td>UI icons</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <h3>Backend &amp; Database</h3>
+      <div class="tbl-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Technology</th>
+              <th>Version</th>
+              <th>Purpose</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Node.js + Express.js</td>
+              <td>4.x</td>
+              <td>REST API server</td>
+            </tr>
+            <tr>
+              <td>jsonwebtoken</td>
+              <td>Latest</td>
+              <td>Access (15min) + Refresh (7d) tokens</td>
+            </tr>
+            <tr>
+              <td>bcryptjs</td>
+              <td>Latest</td>
+              <td>12-round password hashing</td>
+            </tr>
+            <tr>
+              <td>Joi</td>
+              <td>Latest</td>
+              <td>API request schema validation</td>
+            </tr>
+            <tr>
+              <td>Helmet.js</td>
+              <td>Latest</td>
+              <td>14 HTTP security headers</td>
+            </tr>
+            <tr>
+              <td>express-rate-limit</td>
+              <td>Latest</td>
+              <td>200 req/15min · 10 login/hour</td>
+            </tr>
+            <tr>
+              <td>MySQL 8</td>
+              <td>8.x</td>
+              <td>Relational data storage</td>
+            </tr>
+            <tr>
+              <td>mysql2</td>
+              <td>Latest</td>
+              <td>Promise-based MySQL client + pooling</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ══════════════  7. MODULES  ══════════════ -->
+    <div class="section reveal" id="modules">
+      <h2><span class="h2-num">07</span><span class="h2-text">System Modules</span></h2>
+
+      <h3>Landing Page</h3>
+      <p>Standalone animated HTML with glassmorphism hero, CSS keyframe animations (blob, card float, ring spin),
+        IntersectionObserver scroll-reveal, animated counters, features grid, testimonials, FAQ accordion, and smart
+        <code>file://</code> detection.
+      </p>
+
+      <h3>Authentication</h3>
+      <p>4-step smart registration form (Identity → Account → Contact → Security). Auto-advances steps, validates age
+        (18+), grants ₹10,000 welcome bonus. JWT access token (15min) + refresh token (7 days, stored in DB). Stale auth
+        prevention on frontend.</p>
+
+      <h3>Core Banking Modules</h3>
+      <div class="module-grid">
+        <div class="module-card">
+          <div class="tag">/api/transaction</div>
+          <h4>💸 Fund Transfer</h4>
+          <p>IMPS/NEFT via account + IFSC. Beneficiary management, balance validation, atomic MySQL transactions,
+            reference numbers, live history.</p>
+        </div>
+        <div class="module-card">
+          <div class="tag">/api/upi</div>
+          <h4>⚡ UPI Module</h4>
+          <p>@moneymitra UPI ID. Send/receive via UPI ID, ₹2L limit, zero fees, instant lookup, QR simulation.</p>
+        </div>
+        <div class="module-card">
+          <div class="tag">/api/cards</div>
+          <h4>💳 Cards Module</h4>
+          <p>Virtual debit card issuance. Freeze/unfreeze, spending limit config, multi-card support.</p>
+        </div>
+        <div class="module-card">
+          <div class="tag">/api/bills</div>
+          <h4>🧾 Bill Payments</h4>
+          <p>Electricity, Water, Gas, DTH, Mobile, Internet. Balance deduction, receipt generation, history.</p>
+        </div>
+        <div class="module-card">
+          <div class="tag">/api/loans</div>
+          <h4>🏦 Loans</h4>
+          <p>Personal (12.5% p.a.) &amp; Home (8.5% p.a.). EMI calculator, repayment schedule, admin disbursement.</p>
+        </div>
+        <div class="module-card">
+          <div class="tag">/api/kyc</div>
+          <h4>🪪 KYC System</h4>
+          <p>PAN + Aadhaar submission. Admin approval auto-generates immutable CKYC number (permanently locked in DB).
+          </p>
+        </div>
+        <div class="module-card">
+          <div class="tag">/api/support</div>
+          <h4>🎧 Support</h4>
+          <p>Ticket creation, status tracking, admin response, platform FAQ with accordion search.</p>
+        </div>
+        <div class="module-card">
+          <div class="tag">/api/notifications</div>
+          <h4>🔔 Notifications</h4>
+          <p>Bell icon with unread badge. Transaction alerts, KYC updates, loan events. Mark read / clear all.</p>
+        </div>
+      </div>
+
+      <h3>Admin Panel — 9 Management Sections</h3>
+      <div class="tbl-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Section</th>
+              <th>Admin Capabilities</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>👥 User Management</td>
+              <td>Search all users, view full profile, edit info, toggle active status</td>
+            </tr>
+            <tr>
+              <td>🪪 KYC Management</td>
+              <td>View PAN &amp; Aadhaar (unmasked), approve/reject, auto-generate CKYC</td>
+            </tr>
+            <tr>
+              <td>💰 Financial Control</td>
+              <td>Manually credit / debit user accounts with reason tracking</td>
+            </tr>
+            <tr>
+              <td>📊 Transaction Monitor</td>
+              <td>Live all-platform transactions, direction detection, freeze/refund</td>
+            </tr>
+            <tr>
+              <td>🏛️ Loan Administration</td>
+              <td>Issue loans, view applications, process EMI repayments</td>
+            </tr>
+            <tr>
+              <td>💳 Card Management</td>
+              <td>View, freeze, and manage all user cards across the platform</td>
+            </tr>
+            <tr>
+              <td>🎧 Support Tickets</td>
+              <td>View all tickets, respond, update status (open/in_progress/resolved)</td>
+            </tr>
+            <tr>
+              <td>❓ FAQ Management</td>
+              <td>Create, edit, delete platform FAQ entries in real-time</td>
+            </tr>
+            <tr>
+              <td>📧 Email Notifications</td>
+              <td>Send targeted or broadcast emails to users</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ══════════════  8. DATABASE  ══════════════ -->
+    <div class="section reveal" id="database">
+      <h2><span class="h2-num">08</span><span class="h2-text">Database Design</span></h2>
+      <div class="info-box blue">
+        <div class="ib-icon">🗄️</div>
+        <div class="ib-text"><strong>Database Info</strong>Name: <code>money_mitra</code> &nbsp;·&nbsp; Engine: MySQL 8
+          &nbsp;·&nbsp; Tables: 11 &nbsp;·&nbsp; All monetary values: <code>DECIMAL(15,2)</code></div>
+      </div>
+      <div class="tbl-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Table</th>
+              <th>Purpose</th>
+              <th>Key Columns</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>users</td>
+              <td>Core user accounts &amp; profile</td>
+              <td>id, email, password_hash, role, kyc_status, ckyc_number, ckyc_locked</td>
+            </tr>
+            <tr>
+              <td>accounts</td>
+              <td>Bank accounts per user</td>
+              <td>id, user_id, account_number, ifsc_code, balance (DECIMAL 15,2)</td>
+            </tr>
+            <tr>
+              <td>transactions</td>
+              <td>All financial transactions</td>
+              <td>id, from_account_id, to_account_id, amount, type, status, reference_number, balance_after</td>
+            </tr>
+            <tr>
+              <td>upi_ids</td>
+              <td>UPI ID assignments</td>
+              <td>id, user_id, upi_id, is_primary, is_active</td>
+            </tr>
+            <tr>
+              <td>cards</td>
+              <td>Virtual &amp; physical cards</td>
+              <td>id, account_id, card_number_masked, expiry, is_frozen, spending_limit</td>
+            </tr>
+            <tr>
+              <td>loans</td>
+              <td>Loan applications</td>
+              <td>id, user_id, loan_type, amount, interest_rate, tenure_months, emi_amount, status</td>
+            </tr>
+            <tr>
+              <td>loan_emi_schedule</td>
+              <td>Month-by-month EMIs</td>
+              <td>id, loan_id, due_date, emi_amount, principal, interest, status</td>
+            </tr>
+            <tr>
+              <td>bills</td>
+              <td>Bill payment records</td>
+              <td>id, user_id, bill_type, biller_name, amount, paid_at</td>
+            </tr>
+            <tr>
+              <td>notifications</td>
+              <td>User notifications</td>
+              <td>id, user_id, type, title, message, is_read</td>
+            </tr>
+            <tr>
+              <td>support_tickets</td>
+              <td>Customer support</td>
+              <td>id, user_id, subject, category, status, admin_response</td>
+            </tr>
+            <tr>
+              <td>refresh_tokens</td>
+              <td>JWT refresh store</td>
+              <td>id, user_id, token_hash, expires_at, is_revoked</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ══════════════  9. API  ══════════════ -->
+    <div class="section reveal" id="api">
+      <h2><span class="h2-num">09</span><span class="h2-text">API Architecture</span></h2>
+      <p>Modular <strong style="color:#fff">Route → Controller → Service</strong> pattern · <strong
+          style="color:var(--accent)">93 endpoints</strong> across 12 modules:</p>
+      <pre>
+backend/src/modules/
+  ├── auth/          →  /api/auth/*          (register, login, refresh, logout)
+  ├── user/          →  /api/user/*          (profile, password, avatar, kyc)
+  ├── account/       →  /api/account/*       (balance, summary, details)
+  ├── transaction/   →  /api/transaction/*   (transfer, history, analytics)
+  ├── upi/           →  /api/upi/*           (send, receive, lookup)
+  ├── cards/         →  /api/cards/*         (list, freeze, limits)
+  ├── bills/         →  /api/bills/*         (list, pay, history)
+  ├── loans/         →  /api/loans/*         (apply, schedule, repay)
+  ├── notifications/ →  /api/notifications/* (list, mark-read, clear)
+  ├── support/       →  /api/support/*       (tickets, faq)
+  ├── kyc/           →  /api/kyc/*           (submit, status)
+  └── admin/         →  /api/admin/*         (full management suite)</pre>
+      <h3>Standard Response Format</h3>
+      <pre>
+{
+  "success": true,
+  "message": "Transfer completed successfully",
+  "data": {
+    "transactionId": "MM202604180001-DR",
+    "amount": 5000.00,
+    "newBalance": 119500.00,
+    "direction": "SENT"
+  }
+}</pre>
+    </div>
+
+    <!-- ══════════════  10. SECURITY  ══════════════ -->
+    <div class="section reveal" id="security">
+      <h2><span class="h2-num">10</span><span class="h2-text">Security Features</span></h2>
+      <div class="sec-grid">
+        <div class="sec-item">
+          <div class="sec-icon">🔑</div>
+          <div>
+            <div class="sec-title">Password Hashing</div>
+            <div class="sec-desc">bcryptjs — 12 salt rounds, ~300ms/hash — computationally expensive to brute-force
+            </div>
+          </div>
+        </div>
+        <div class="sec-item">
+          <div class="sec-icon">🎟️</div>
+          <div>
+            <div class="sec-title">JWT Authentication</div>
+            <div class="sec-desc">Access token: 15min expiry. Refresh token: 7 days, stored hashed in DB</div>
+          </div>
+        </div>
+        <div class="sec-item">
+          <div class="sec-icon">🔄</div>
+          <div>
+            <div class="sec-title">Token Rotation</div>
+            <div class="sec-desc">Refresh tokens revoked immediately on logout — prevents token reuse</div>
+          </div>
+        </div>
+        <div class="sec-item">
+          <div class="sec-icon">🚦</div>
+          <div>
+            <div class="sec-title">Rate Limiting</div>
+            <div class="sec-desc">200 req/15min global · 10 login attempts/hour per IP</div>
+          </div>
+        </div>
+        <div class="sec-item">
+          <div class="sec-icon">🛡️</div>
+          <div>
+            <div class="sec-title">Helmet.js</div>
+            <div class="sec-desc">Sets 14 HTTP security headers (CSP, HSTS, X-Frame-Options, etc.)</div>
+          </div>
+        </div>
+        <div class="sec-item">
+          <div class="sec-icon">🌐</div>
+          <div>
+            <div class="sec-title">CORS Policy</div>
+            <div class="sec-desc">Restricted to <code>http://localhost:5173</code> only in development</div>
+          </div>
+        </div>
+        <div class="sec-item">
+          <div class="sec-icon">💉</div>
+          <div>
+            <div class="sec-title">SQL Injection Prevention</div>
+            <div class="sec-desc">All DB queries use <code>?</code> parameterized placeholders via mysql2</div>
+          </div>
+        </div>
+        <div class="sec-item">
+          <div class="sec-icon">✅</div>
+          <div>
+            <div class="sec-title">Joi Schema Validation</div>
+            <div class="sec-desc">Every API endpoint validates request body against a defined schema</div>
+          </div>
+        </div>
+        <div class="sec-item">
+          <div class="sec-icon">🚨</div>
+          <div>
+            <div class="sec-title">Fraud Detection</div>
+            <div class="sec-desc">Auto-flags transactions &gt;₹50,000 or rapid successive transfers</div>
+          </div>
+        </div>
+        <div class="sec-item">
+          <div class="sec-icon">🔒</div>
+          <div>
+            <div class="sec-title">CKYC Immutability</div>
+            <div class="sec-desc"><code>ckyc_locked = true</code> after KYC approval — permanently immutable</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════  11. UI  ══════════════ -->
+    <div class="section reveal" id="ui">
+      <h2><span class="h2-num">11</span><span class="h2-text">User Interface &amp; UX</span></h2>
+      <div class="tbl-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Element</th>
+              <th>Details</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Primary Color</td>
+              <td>#6C63FF (Indigo Purple)</td>
+            </tr>
+            <tr>
+              <td>Accent Color</td>
+              <td>#00E5A0 (Teal Green)</td>
+            </tr>
+            <tr>
+              <td>Background</td>
+              <td>#07071A (Deep Navy Dark)</td>
+            </tr>
+            <tr>
+              <td>Design Language</td>
+              <td>Glassmorphism — backdrop-filter: blur() + rgba transparency</td>
+            </tr>
+            <tr>
+              <td>Typography</td>
+              <td>Outfit (Google Fonts) — weights 300 to 900</td>
+            </tr>
+            <tr>
+              <td>Animations</td>
+              <td>CSS @keyframes + IntersectionObserver scroll-reveal + counter animations</td>
+            </tr>
+            <tr>
+              <td>Charts</td>
+              <td>Recharts AreaChart + BarChart for financial analytics</td>
+            </tr>
+            <tr>
+              <td>Breakpoints</td>
+              <td>&gt;1024px Desktop · 768–1024px Tablet · &lt;768px Mobile</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ══════════════  12. FLOW  ══════════════ -->
+    <div class="section reveal" id="flow">
+      <h2><span class="h2-num">12</span><span class="h2-text">System Flow</span></h2>
+
+      <h3>User Registration Flow</h3>
+      <div class="flow">
+        <div class="flow-step">Landing Page</div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step">4-Step Form</div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step">POST /api/auth/register</div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step">Account + UPI Created</div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step">₹10K Welcome Bonus</div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step">Login Page ✅</div>
+      </div>
+
+      <h3>KYC Verification Flow</h3>
+      <div class="flow">
+        <div class="flow-step">Submit PAN + Aadhaar</div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step">POST /api/kyc/submit</div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step">Admin Reviews</div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step">Admin Approves</div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step">CKYC Auto-Generated</div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step">Locked in DB 🔒</div>
+      </div>
+
+      <h3>Fund Transfer Flow (Atomic)</h3>
+      <div class="flow">
+        <div class="flow-step">Enter Amount + Account</div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step">Balance Check</div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step">Fraud Check &gt;₹50K</div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step">BEGIN TRANSACTION</div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step">Debit Sender</div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step">Credit Receiver</div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step">COMMIT + Notify 🎉</div>
+      </div>
+    </div>
+
+    <!-- ══════════════  13. STATS  ══════════════ -->
+    <div class="section reveal" id="stats">
+      <h2><span class="h2-num">13</span><span class="h2-text">Project Statistics</span></h2>
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="val">11,619+</div>
+          <div class="lbl">Lines of Code</div>
+        </div>
+        <div class="stat-card">
+          <div class="val">93</div>
+          <div class="lbl">API Endpoints</div>
+        </div>
+        <div class="stat-card">
+          <div class="val">11</div>
+          <div class="lbl">MySQL Tables</div>
+        </div>
+        <div class="stat-card">
+          <div class="val">12</div>
+          <div class="lbl">Frontend Pages</div>
+        </div>
+      </div>
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="val">12</div>
+          <div class="lbl">Backend Modules</div>
+        </div>
+        <div class="stat-card">
+          <div class="val">15+</div>
+          <div class="lbl">React Components</div>
+        </div>
+        <div class="stat-card">
+          <div class="val">12+</div>
+          <div class="lbl">CSS Animations</div>
+        </div>
+        <div class="stat-card">
+          <div class="val">~2 wks</div>
+          <div class="lbl">Dev Duration</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════  14. LIMITATIONS  ══════════════ -->
+    <div class="section reveal" id="limits">
+      <h2><span class="h2-num">14</span><span class="h2-text">Limitations</span></h2>
+      <div class="info-box yellow">
+        <div class="ib-icon">⚠️</div>
+        <div class="ib-text"><strong>Simulation Notice</strong>The following exist due to the academic/educational
+          nature of this project and do not affect the core demonstration of software engineering concepts.</div>
+      </div>
+      <ol>
+        <li><strong>Simulation Only</strong> — No real payment gateways (Razorpay, PayU) or RBI connectivity</li>
+        <li><strong>No OTP</strong> — Phone/email verification does not send real SMS/email OTPs</li>
+        <li><strong>No 2FA</strong> — TOTP concept shown in UI but not fully implemented</li>
+        <li><strong>Local Only</strong> — Requires local MySQL; not deployed to cloud</li>
+        <li><strong>No WebSockets</strong> — Real-time updates use polling (10-second intervals)</li>
+        <li><strong>Single Currency</strong> — Indian Rupees (₹) only; no multi-currency</li>
+        <li><strong>Rule-Based Fraud</strong> — Threshold-based detection, not ML/AI anomaly detection</li>
+        <li><strong>Dev Mode</strong> — Vite dev server only; no Nginx/PM2 production setup</li>
+      </ol>
+    </div>
+
+    <!-- ══════════════  15. FUTURE  ══════════════ -->
+    <div class="section reveal" id="future">
+      <h2><span class="h2-num">15</span><span class="h2-text">Future Scope</span></h2>
+      <div class="future-grid">
+        <div class="future-card">
+          <div class="future-tag">Payment</div>
+          <div>
+            <div class="future-title">Real Payment Gateway</div>
+            <div class="future-desc">Razorpay / PayU API integration for actual fund transfers</div>
+          </div>
+        </div>
+        <div class="future-card">
+          <div class="future-tag">Auth</div>
+          <div>
+            <div class="future-title">OTP Verification</div>
+            <div class="future-desc">Twilio SMS API — real OTP for phone &amp; email verification</div>
+          </div>
+        </div>
+        <div class="future-card">
+          <div class="future-tag">Security</div>
+          <div>
+            <div class="future-title">Two-Factor Auth</div>
+            <div class="future-desc">TOTP using Google Authenticator for enhanced login security</div>
+          </div>
+        </div>
+        <div class="future-card">
+          <div class="future-tag">Real-time</div>
+          <div>
+            <div class="future-title">WebSocket Notifications</div>
+            <div class="future-desc">Socket.io for true real-time push notifications</div>
+          </div>
+        </div>
+        <div class="future-card">
+          <div class="future-tag">AI/ML</div>
+          <div>
+            <div class="future-title">ML Fraud Detection</div>
+            <div class="future-desc">TensorFlow.js machine learning anomaly detection model</div>
+          </div>
+        </div>
+        <div class="future-card">
+          <div class="future-tag">Mobile</div>
+          <div>
+            <div class="future-title">React Native App</div>
+            <div class="future-desc">iOS and Android native app from shared codebase</div>
+          </div>
+        </div>
+        <div class="future-card">
+          <div class="future-tag">Cloud</div>
+          <div>
+            <div class="future-title">Cloud Deployment</div>
+            <div class="future-desc">AWS/GCP with MySQL RDS, Nginx, PM2 production setup</div>
+          </div>
+        </div>
+        <div class="future-card">
+          <div class="future-tag">Biometric</div>
+          <div>
+            <div class="future-title">WebAuthn Login</div>
+            <div class="future-desc">Fingerprint / Face recognition via WebAuthn API</div>
+          </div>
+        </div>
+        <div class="future-card">
+          <div class="future-tag">Finance</div>
+          <div>
+            <div class="future-title">Investment Module</div>
+            <div class="future-desc">Mutual funds, FD, stock portfolio tracking integration</div>
+          </div>
+        </div>
+        <div class="future-card">
+          <div class="future-tag">KYC</div>
+          <div>
+            <div class="future-title">Video KYC</div>
+            <div class="future-desc">Live video verification session with admin via WebRTC</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════  16. CONCLUSION  ══════════════ -->
+    <div class="section reveal" id="conclusion">
+      <h2><span class="h2-num">16</span><span class="h2-text">Conclusion</span></h2>
+      <p><strong style="color:#fff">Money Mitra</strong> successfully demonstrates the development of a production-grade
+        full-stack web application simulating a complete digital banking experience. The project integrates:</p>
+      <ul class="checklist">
+        <li>Animated landing page as the platform's public interface</li>
+        <li>Secure React SPA with 12 functional pages covering the full user banking journey</li>
+        <li>Robust Node.js/Express REST API — 93 endpoints across 12 modules</li>
+        <li>MySQL relational database with 11 tables, proper integrity &amp; ACID transactions</li>
+        <li>Industry-standard security: JWT, bcrypt, rate limiting, SQL parameterization, fraud detection</li>
+        <li>Comprehensive admin panel enabling full platform oversight and management</li>
+        <li>Live transaction monitoring with direction-aware Debit/Credit display</li>
+      </ul>
+      <div class="info-box green" style="margin-top:20px;">
+        <div class="ib-icon">🏆</div>
+        <div class="ib-text"><strong>Project Outcome</strong>Money Mitra meets all defined primary and secondary
+          objectives, demonstrating comprehensive command of modern full-stack development — a strong foundation for
+          future enhancements including real payment gateway integration and cloud deployment.</div>
+      </div>
+    </div>
+
+    <!-- ══════════════  17. REFERENCES  ══════════════ -->
+    <div class="section reveal" id="refs">
+      <h2><span class="h2-num">17</span><span class="h2-text">References</span></h2>
+      <div class="ref-grid">
+        <div class="ref-item">
+          <div class="ref-num">1</div>React.js Documentation — reactjs.org
+        </div>
+        <div class="ref-item">
+          <div class="ref-num">2</div>Node.js + Express.js — expressjs.com
+        </div>
+        <div class="ref-item">
+          <div class="ref-num">3</div>MySQL 8.0 Reference — dev.mysql.com
+        </div>
+        <div class="ref-item">
+          <div class="ref-num">4</div>JWT RFC 7519 — tools.ietf.org
+        </div>
+        <div class="ref-item">
+          <div class="ref-num">5</div>OWASP Top 10 — owasp.org/Top10
+        </div>
+        <div class="ref-item">
+          <div class="ref-num">6</div>Zustand Docs — zustand-demo.pmnd.rs
+        </div>
+        <div class="ref-item">
+          <div class="ref-num">7</div>Vite.js — vitejs.dev/guide
+        </div>
+        <div class="ref-item">
+          <div class="ref-num">8</div>Recharts — recharts.org
+        </div>
+        <div class="ref-item">
+          <div class="ref-num">9</div>React Router v6 — reactrouter.com
+        </div>
+        <div class="ref-item">
+          <div class="ref-num">10</div>bcryptjs — npmjs.com/package/bcryptjs
+        </div>
+        <div class="ref-item">
+          <div class="ref-num">11</div>Helmet.js — helmetjs.github.io
+        </div>
+        <div class="ref-item">
+          <div class="ref-num">12</div>NPCI UPI Guidelines — npci.org.in
+        </div>
+        <div class="ref-item">
+          <div class="ref-num">13</div>RBI Digital Banking — rbi.org.in
+        </div>
+        <div class="ref-item">
+          <div class="ref-num">14</div>DICGC Insurance — dicgc.org.in
+        </div>
+      </div>
+    </div>
+
+    <!-- FOOTER -->
+    <div class="reveal report-footer">
+      <h3>Money Mitra — Next-Gen Digital Banking Platform</h3>
+      <div class="footer-meta">
+        <span>🎓 B.Tech CST · 4th Semester</span>
+        <span>🪪 Roll No: 34, 36, 37, 38, 39, 40</span>
+        <span>📅 Academic Year 2025–2026</span>
+        <span>🔖 Version 1.0.0</span>
+      </div>
+      <p style="font-size:11px;color:var(--muted);margin:0;">
+        ⚠️ This is a simulation platform built for educational purposes only. No real banking operations are performed.
+      </p>
+    </div>
+
+  </div><!-- /container -->
+
+  <script>
+    // ── PARTICLES ──────────────────────────────────
+    const particlesEl = document.getElementById('particles');
+    const colors = ['#6C63FF', '#00E5A0', '#FF6B9D', '#FFB84C', '#5BC8FB'];
+    for (let i = 0; i < 28; i++) {
+      const p = document.createElement('div');
+      p.className = 'particle';
+      const size = 3 + Math.random() * 6;
+      p.style.cssText = `
+    width:${size}px;height:${size}px;
+    background:${colors[Math.floor(Math.random() * colors.length)]};
+    left:${Math.random() * 100}%;
+    animation-duration:${10 + Math.random() * 20}s;
+    animation-delay:${Math.random() * 15}s;
+  `;
+      particlesEl.appendChild(p);
+    }
+
+    // ── COUNTER ANIMATION ──────────────────────────
+    function animateCounter(el, target, duration = 1800) {
+      const start = performance.now();
+      const isLarge = target > 999;
+      const update = (now) => {
+        const p = Math.min((now - start) / duration, 1);
+        const ease = 1 - Math.pow(1 - p, 3);
+        const val = Math.round(ease * target);
+        el.textContent = isLarge ? val.toLocaleString('en-IN') + '+' : val;
+        if (p < 1) requestAnimationFrame(update);
+        else el.textContent = isLarge ? target.toLocaleString('en-IN') + '+' : target;
+      };
+      requestAnimationFrame(update);
+    }
+
+    // ── SCROLL REVEAL + COUNTER TRIGGER ───────────
+    const revealEls = document.querySelectorAll('.reveal');
+    const counterEls = document.querySelectorAll('[data-target]');
+    const triggered = new Set();
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          e.target.classList.add('visible');
+          // Trigger counters inside this element
+          e.target.querySelectorAll('[data-target]').forEach(c => {
+            if (!triggered.has(c)) {
+              triggered.add(c);
+              setTimeout(() => animateCounter(c, parseInt(c.dataset.target)), 200);
+            }
+          });
+        }
+      });
+    }, { threshold: 0.12 });
+
+    revealEls.forEach(el => observer.observe(el));
+
+    // Trigger cover counters immediately
+    counterEls.forEach(el => {
+      if (!el.closest('.reveal')) {
+        animateCounter(el, parseInt(el.dataset.target));
+      }
+    });
+
+    // Cover counters (not inside .reveal)
+    document.querySelectorAll('.cover [data-target]').forEach(el => {
+      setTimeout(() => animateCounter(el, parseInt(el.dataset.target), 2000), 600);
+    });
+  </script>
+</body>
+
+</html>
