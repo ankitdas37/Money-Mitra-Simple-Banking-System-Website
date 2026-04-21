@@ -53,6 +53,116 @@
 ---
 
 ## 📷 Preview
+![Money Mitra Banner](.# 💸 Money Mitra  
+### Next-Gen Digital Banking Platform  
+
+⚡ **Minor Project Report · 4th Semester · CST**
+
+---
+
+## 📌 Project Overview
+**Money Mitra** is a full-stack web application designed as a next-generation digital banking platform. It aims to provide seamless financial management with modern UI/UX and robust backend functionality.
+
+---
+
+## 🧩 Project Details
+
+- **📁 Project Type:**  
+  Minor Project – Full-Stack Web App  
+
+- **🎓 Course:**  
+  Diploma – Computer Science & Technology  
+
+- **📅 Semester & Year:**  
+  4th Semester · 2025–2026  
+
+- **🆔 Roll Numbers:**  
+  34, 36, 37, 38, 39, 40  
+
+---
+
+## 📊 Project Stats
+
+- 💻 **11,619+** Lines of Code  
+- 🔗 **93** API Endpoints  
+- 🗄️ **11** Database Tables  
+- 🖥️ **12** Frontend Pages  
+
+---
+
+## 🚀 Features (suggested)
+- User authentication & authorization  
+- Account management  
+- Transaction tracking  
+- Secure API integration  
+- Responsive UI  
+
+---
+
+## 🛠️ Tech Stack (you can customize)
+- Frontend: HTML, CSS, JavaScript / React  
+- Backend: Node.js / Express  
+- Database: MongoDB / MySQL  
+- API: RESTful services  
+
+---
+
+## 📷 Preview
+![Money Mitra Banner](.# 💸 Money Mitra  
+### Next-Gen Digital Banking Platform  
+
+⚡ **Minor Project Report · 4th Semester · CST**
+
+---
+
+## 📌 Project Overview
+**Money Mitra** is a full-stack web application designed as a next-generation digital banking platform. It aims to provide seamless financial management with modern UI/UX and robust backend functionality.
+
+---
+
+## 🧩 Project Details
+
+- **📁 Project Type:**  
+  Minor Project – Full-Stack Web App  
+
+- **🎓 Course:**  
+  Diploma – Computer Science & Technology  
+
+- **📅 Semester & Year:**  
+  4th Semester · 2025–2026  
+
+- **🆔 Roll Numbers:**  
+  34, 36, 37, 38, 39, 40  
+
+---
+
+## 📊 Project Stats
+
+- 💻 **11,619+** Lines of Code  
+- 🔗 **93** API Endpoints  
+- 🗄️ **11** Database Tables  
+- 🖥️ **12** Frontend Pages  
+
+---
+
+## 🚀 Features (suggested)
+- User authentication & authorization  
+- Account management  
+- Transaction tracking  
+- Secure API integration  
+- Responsive UI  
+
+---
+
+## 🛠️ Tech Stack (you can customize)
+- Frontend: HTML, CSS, JavaScript / React  
+- Backend: Node.js / Express  
+- Database: MongoDB / MySQL  
+- API: RESTful services  
+
+---
+
+## 📷 Preview
 ![Money Mitra Banner](./assets/banner.png)
 
 ---
@@ -68,13 +178,34 @@
 ---
 
 ## 📄 License
-This project is for educational purposes only.
-
-# 💰 Money Mitra — Digital Banking Platform
-
-A full-stack digital banking platform built with **React + Vite** (frontend) and **Node.js + Express** (backend), using **MySQL** as the database.
+This project is for educational purposes only)
 
 ---
+
+## 👥 Team Members
+- Roll No: 34  
+- Roll No: 36  
+- Roll No: 37  
+- Roll No: 38  
+- Roll No: 39  
+- Roll No: 40  
+
+---
+
+
+
+---
+
+## 👥 Team Members
+- Roll No: 34  
+- Roll No: 36  
+- Roll No: 37  
+- Roll No: 38  
+- Roll No: 39  
+- Roll No: 40  
+
+---
+
 
 ## 📋 Table of Contents
 
