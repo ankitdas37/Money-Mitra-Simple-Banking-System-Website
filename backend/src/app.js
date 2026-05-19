@@ -1,4 +1,5 @@
 const express = require('express');
+const path    = require('path');
 const helmet  = require('helmet');
 const cors    = require('cors');
 const morgan  = require('morgan');
@@ -64,6 +65,10 @@ app.use(express.urlencoded({ extended: true }));
 app.use(morgan('dev'));
 app.use(globalRateLimiter);
 
+// ── Serve Static Files (Frontend) ────────────────────────────────
+const frontendDistPath = path.join(__dirname, '../../frontend/dist');
+app.use(express.static(frontendDistPath));
+
 // ── Health Check ─────────────────────────────────────────────────
 app.get('/health', (req, res) => {
   res.json({
@@ -90,8 +95,18 @@ app.use('/api/admin',         adminRoutes);
 app.use('/api/beneficiaries', beneficiaryRoutes);
 app.use('/api/support',       supportRoutes);
 
-// ── 404 Handler ─────────────────────────────────────────────────
-app.use('*', (req, res) => {
+// ── SPA Fallback (serve index.html for all non-API routes) ───────
+app.get('*', (req, res) => {
+  // Only serve index.html for non-API and non-static routes
+  if (!req.path.startsWith('/api')) {
+    res.sendFile(path.join(frontendDistPath, 'index.html'), (err) => {
+      if (err) {
+        res.status(404).json({ success: false, message: 'Frontend not built. Run: npm run build in frontend/' });
+      }
+    });
+    return;
+  }
+  // API not found
   res.status(404).json({ success: false, message: `Route ${req.originalUrl} not found` });
 });
 

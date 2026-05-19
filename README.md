@@ -2,6 +2,10 @@
 # 💸 Money Mitra  
 ### Next-Gen Digital Banking Platform  
 
+<div align="center">
+  <img src="frontend/public/logo.png" alt="Money Mitra Logo" width="200" height="200" style="border-radius: 20px; box-shadow: 0 4px 20px rgba(108, 99, 255, 0.4);">
+</div>
+
 ⚡ **Minor Project Report · 4th Semester · CST**
 
 ---
@@ -54,7 +58,7 @@
 ---
 
 ## 📷 Preview
-![Money Mitra Banner](./assets/banner.png)
+![Money Mitra Banner](./frontend/public/logo.png)
 
 ---
 
