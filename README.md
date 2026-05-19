@@ -58,6 +58,9 @@
 ---
 
 ## 📷 Preview
+<h1> Bank Logo</h1>
+<br>
+
 ![Money Mitra Banner](./frontend/public/logo.png)
 
 ---
