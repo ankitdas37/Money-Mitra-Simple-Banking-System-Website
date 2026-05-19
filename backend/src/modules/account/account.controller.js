@@ -36,7 +36,15 @@ const createAccount = async (req, res, next) => {
     if (!validTypes.includes(account_type)) return sendError(res, 400, 'Invalid account type');
 
     const accountId = uuidv4();
-    const accountNumber = generateAccountNumber();
+
+    // Retry up to 5 times to get a unique account number
+    let accountNumber;
+    for (let attempt = 0; attempt < 5; attempt++) {
+      const candidate = generateAccountNumber();
+      const [existing] = await db.query('SELECT id FROM accounts WHERE account_number = ?', [candidate]);
+      if (existing.length === 0) { accountNumber = candidate; break; }
+    }
+    if (!accountNumber) return sendError(res, 500, 'Could not generate unique account number. Please try again.');
 
     await db.query(
       `INSERT INTO accounts (id, user_id, account_number, account_type, balance) VALUES (?,?,?,?,0.00)`,
@@ -44,7 +52,13 @@ const createAccount = async (req, res, next) => {
     );
 
     sendSuccess(res, { id: accountId, account_number: accountNumber, account_type }, 'Account created successfully', 201);
-  } catch (err) { next(err); }
+  } catch (err) {
+    // Friendly message for any remaining duplicate key errors
+    if (err.code === 'ER_DUP_ENTRY') {
+      return sendError(res, 409, 'A resource with this information already exists. Please try again.');
+    }
+    next(err);
+  }
 };
 
 // GET /api/accounts/:id/balance

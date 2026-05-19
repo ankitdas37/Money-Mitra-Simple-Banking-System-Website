@@ -7,6 +7,35 @@ const { generateAccountNumber } = require('../../utils/helpers');
 /**
  * Register new user + create default savings account
  */
+/**
+ * Generate a unique account number (retries on collision)
+ */
+const generateUniqueAccountNumber = async () => {
+  for (let i = 0; i < 5; i++) {
+    const num = generateAccountNumber();
+    const [rows] = await db.query('SELECT id FROM accounts WHERE account_number = ?', [num]);
+    if (rows.length === 0) return num;
+  }
+  throw { status: 500, message: 'Could not generate unique account number. Please try again.' };
+};
+
+/**
+ * Generate a unique UPI handle (adds numeric suffix on collision)
+ */
+const generateUniqueUpiHandle = async (emailPrefix) => {
+  const base = `${emailPrefix}@moneymitra`;
+  const [existing] = await db.query('SELECT id FROM upi_ids WHERE upi_handle = ?', [base]);
+  if (existing.length === 0) return base;
+
+  // Try with numeric suffix until unique
+  for (let i = 1; i <= 999; i++) {
+    const handle = `${emailPrefix}${i}@moneymitra`;
+    const [rows] = await db.query('SELECT id FROM upi_ids WHERE upi_handle = ?', [handle]);
+    if (rows.length === 0) return handle;
+  }
+  throw { status: 500, message: 'Could not generate a unique UPI handle. Please try again.' };
+};
+
 const register = async (userData) => {
   const {
     full_name, email, phone, password, avatar_id = 1,
@@ -27,7 +56,10 @@ const register = async (userData) => {
   const password_hash = await bcrypt.hash(password, 12);
   const userId = uuidv4();
   const accountId = uuidv4();
-  const accountNumber = generateAccountNumber();
+
+  // Generate unique account number and UPI handle BEFORE starting transaction
+  const accountNumber = await generateUniqueAccountNumber();
+  const upiHandle = await generateUniqueUpiHandle(email.split('@')[0]);
 
   const conn = await db.getConnection();
   await conn.beginTransaction();
@@ -50,8 +82,7 @@ const register = async (userData) => {
       [accountId, userId, accountNumber, account_type]
     );
 
-    // Create UPI ID from email prefix
-    const upiHandle = `${email.split('@')[0]}@moneymitra`;
+    // Create UPI ID (unique handle pre-validated above)
     await conn.query(
       `INSERT INTO upi_ids (id, user_id, account_id, upi_handle, is_primary) VALUES (?,?,?,?,TRUE)`,
       [uuidv4(), userId, accountId, upiHandle]
@@ -85,6 +116,16 @@ const register = async (userData) => {
   } catch (err) {
     await conn.rollback();
     conn.release();
+    // Convert MySQL duplicate key errors into friendly messages
+    if (err.code === 'ER_DUP_ENTRY') {
+      if (err.message.includes('upi_handle')) {
+        throw { status: 409, message: 'UPI handle already exists. Please try again.' };
+      }
+      if (err.message.includes('account_number')) {
+        throw { status: 409, message: 'Account number collision. Please try again.' };
+      }
+      throw { status: 409, message: 'A resource with this information already exists.' };
+    }
     throw err;
   }
 };

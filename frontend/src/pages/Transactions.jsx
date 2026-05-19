@@ -41,232 +41,288 @@ async function generatePDF({ user, accounts, transactions, filters }) {
   const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
   const W = doc.internal.pageSize.getWidth();
   const H = doc.internal.pageSize.getHeight();
-  const navy = [13, 20, 60];
+  const navy   = [13, 20, 60];
   const purple = [108, 99, 255];
-  const green = [0, 200, 150];
-  const gray = [120, 130, 160];
-  const light = [230, 232, 245];
-  const white = [255, 255, 255];
+  const green  = [0, 180, 120];
+  const teal   = [0, 180, 200];
+  const gray   = [120, 130, 160];
+  const light  = [235, 237, 252];
+  const white  = [255, 255, 255];
+  const gold   = [200, 150, 0];
+  const red    = [220, 50, 50];
 
-  // Load logo
-  const logoBase64 = await loadImageAsBase64('/logo.png');
+  const stmtRef = 'MM-STMT-' + Date.now().toString().slice(-8);
+  const genDate = new Date().toLocaleString('en-IN');
 
-  // ── PAGE 1: Account Details ────────────────────────────────────────────────
-  // Header navy background
-  doc.setFillColor(...navy);
-  doc.rect(0, 0, W, 60, 'F');
-  // Purple left accent strip
-  doc.setFillColor(...purple);
-  doc.rect(0, 0, 4, 60, 'F');
+  // Load logo & profile photo
+  const logoBase64  = await loadImageAsBase64('/logo.png');
+  const photoBase64 = user.profile_photo || null;
 
-  // Logo image
-  if (logoBase64) {
-    doc.setFillColor(255, 255, 255);
-    doc.roundedRect(10, 7, 44, 44, 6, 6, 'F');
-    doc.addImage(logoBase64, 'PNG', 11, 8, 42, 42);
+  // ─── HELPERS ──────────────────────────────────────────────────────────────────
+  function drawPageHeader(pageTitle, pageSubtitle, bgH = 52) {
+    doc.setFillColor(...navy);
+    doc.rect(0, 0, W, bgH, 'F');
+    doc.setFillColor(...purple);
+    doc.rect(0, 0, 5, bgH, 'F');
+    if (logoBase64) {
+      doc.setFillColor(...white);
+      doc.roundedRect(10, 7, 36, 36, 5, 5, 'F');
+      doc.addImage(logoBase64, 'PNG', 11, 8, 34, 34);
+    } else {
+      doc.setFillColor(...purple);
+      doc.roundedRect(10, 7, 36, 36, 5, 5, 'F');
+      doc.setTextColor(...white); doc.setFont('helvetica', 'bold'); doc.setFontSize(14);
+      doc.text('MM', 28, 29, { align: 'center' });
+    }
+    doc.setTextColor(...white); doc.setFont('helvetica', 'bold'); doc.setFontSize(16);
+    doc.text('Money Mitra Bank', 53, 19);
+    doc.setFont('helvetica', 'normal'); doc.setFontSize(9.5); doc.setTextColor(200, 210, 250);
+    doc.text(pageTitle, 53, 28);
+    doc.setFontSize(7.5); doc.setTextColor(150, 160, 220);
+    doc.text(pageSubtitle + '  |  Ref: ' + stmtRef, 53, 36);
+    doc.text('Generated: ' + genDate, 53, 43);
+    doc.setFillColor(...green);
+    doc.roundedRect(W - 52, 15, 42, 7, 2, 2, 'F');
+    doc.setTextColor(...navy); doc.setFont('helvetica', 'bold'); doc.setFontSize(6.5);
+    doc.text('OFFICIAL DOCUMENT', W - 51, 20);
+  }
+
+  function drawSectionHeader(label, color, yPos) {
+    doc.setFillColor(...color);
+    doc.rect(10, yPos - 6, W - 20, 9, 'F');
+    doc.setTextColor(...white); doc.setFont('helvetica', 'bold'); doc.setFontSize(9.5);
+    doc.text(label, 14, yPos);
+  }
+
+  function drawInfoGrid(rows, startY) {
+    const rowH = 8;
+    doc.setFillColor(...light);
+    doc.rect(10, startY - 3, W - 20, rows.length * rowH + 4, 'F');
+    rows.forEach(([label, value, vColor], i) => {
+      const ry = startY + i * rowH;
+      if (i % 2 === 0) { doc.setFillColor(220, 223, 248); doc.rect(10, ry - 3, W - 20, rowH, 'F'); }
+      doc.setFont('helvetica', 'bold'); doc.setFontSize(8.5); doc.setTextColor(...navy);
+      doc.text(label + ':', 14, ry + 2);
+      doc.setFont('helvetica', 'normal'); doc.setTextColor(...(vColor || [40, 40, 90]));
+      doc.text(String(value ?? '-'), 85, ry + 2);
+    });
+    return startY + rows.length * rowH + 6;
+  }
+
+  // ════════════════════════════════════════════════════════════════════════════
+  // PAGE 1 — Profile Cover: Personal Info + Identity + KYC
+  // ════════════════════════════════════════════════════════════════════════════
+  drawPageHeader('Account Holder Statement', 'Complete Banking & Identity Report');
+  let y = 60;
+
+  // Profile hero card
+  doc.setFillColor(240, 241, 255);
+  doc.roundedRect(10, y, W - 20, 38, 4, 4, 'F');
+  doc.setDrawColor(...purple); doc.setLineWidth(0.4);
+  doc.roundedRect(10, y, W - 20, 38, 4, 4, 'D');
+
+  const photoX = 18, photoY = y + 5, photoSize = 28;
+  if (photoBase64) {
+    try {
+      doc.setFillColor(...white);
+      doc.circle(photoX + photoSize / 2, photoY + photoSize / 2, photoSize / 2 + 1, 'F');
+      const fmt = photoBase64.includes('image/png') ? 'PNG' : 'JPEG';
+      doc.addImage(photoBase64, fmt, photoX, photoY, photoSize, photoSize);
+    } catch {
+      doc.setFillColor(...purple);
+      doc.circle(photoX + photoSize / 2, photoY + photoSize / 2, photoSize / 2, 'F');
+      doc.setTextColor(...white); doc.setFont('helvetica', 'bold'); doc.setFontSize(14);
+      doc.text((user.full_name || 'U')[0].toUpperCase(), photoX + photoSize / 2, photoY + photoSize / 2 + 4, { align: 'center' });
+    }
   } else {
     doc.setFillColor(...purple);
-    doc.roundedRect(10, 7, 44, 44, 6, 6, 'F');
-    doc.setTextColor(...white);
-    doc.setFont('helvetica', 'bold');
-    doc.setFontSize(16);
-    doc.text('MM', 32, 34, { align: 'center' });
+    doc.circle(photoX + photoSize / 2, photoY + photoSize / 2, photoSize / 2, 'F');
+    doc.setTextColor(...white); doc.setFont('helvetica', 'bold'); doc.setFontSize(14);
+    doc.text((user.full_name || 'U')[0].toUpperCase(), photoX + photoSize / 2, photoY + photoSize / 2 + 4, { align: 'center' });
   }
 
-  // Bank name + subtitle
-  doc.setTextColor(...white);
-  doc.setFont('helvetica', 'bold');
-  doc.setFontSize(18);
-  doc.text('Money Mitra Bank', 62, 22);
-  doc.setFont('helvetica', 'normal');
-  doc.setFontSize(10);
-  doc.setTextColor(200, 205, 240);
-  doc.text('Account Statement & Transaction History', 62, 31);
-  doc.setFontSize(8.5);
-  doc.setTextColor(160, 170, 210);
-  doc.text('Generated: ' + new Date().toLocaleString('en-IN'), 62, 39);
-  doc.text('Ref: MM-STMT-' + Date.now().toString().slice(-8), 62, 46);
-  // Green verified badge
-  doc.setFillColor(...green);
-  doc.roundedRect(62, 50, 46, 6, 2, 2, 'F');
-  doc.setTextColor(...navy);
-  doc.setFontSize(7);
-  doc.setFont('helvetica', 'bold');
-  doc.text('OFFICIAL BANK DOCUMENT', 65, 54.5);
+  const nx = photoX + photoSize + 10;
+  doc.setTextColor(...navy); doc.setFont('helvetica', 'bold'); doc.setFontSize(14);
+  doc.text(user.full_name || '-', nx, y + 13);
+  doc.setFontSize(8.5); doc.setFont('helvetica', 'normal'); doc.setTextColor(60, 70, 130);
+  doc.text('Email : ' + (user.email || '-'), nx, y + 21);
+  doc.text('Phone : ' + (user.phone || '-'), nx, y + 29);
 
+  const kycBadgeColor = user.kyc_status === 'verified' ? [...green] : user.kyc_status === 'rejected' ? [...red] : [...gold];
+  doc.setFillColor(...kycBadgeColor);
+  doc.roundedRect(W - 52, y + 8, 40, 10, 3, 3, 'F');
+  doc.setTextColor(...white); doc.setFont('helvetica', 'bold'); doc.setFontSize(8);
+  doc.text('KYC: ' + (user.kyc_status || 'PENDING').toUpperCase(), W - 50, y + 14.5);
+  doc.setFillColor(...navy); doc.roundedRect(W - 52, y + 22, 40, 9, 3, 3, 'F');
+  doc.setTextColor(...purple); doc.setFontSize(7.5);
+  doc.text((user.role || 'user').toUpperCase() + ' ACCOUNT', W - 50, y + 28);
 
-  let y = 72;
-  doc.setFillColor(...purple);
-  doc.rect(10, y - 6, W - 20, 8, 'F');
-  doc.setTextColor(...white);
-  doc.setFontSize(10);
-  doc.setFont('helvetica', 'bold');
-  doc.text('ACCOUNT HOLDER INFORMATION', 14, y);
+  y += 44;
+
+  // Personal Information
+  drawSectionHeader('PERSONAL INFORMATION', [...purple], y + 6);
+  y += 10;
+  y = drawInfoGrid([
+    ['Full Name',           user.full_name || '-'],
+    ['Email Address',       user.email || '-'],
+    ['Phone Number',        user.phone || '-'],
+    ['Date of Birth',       user.date_of_birth ? new Date(user.date_of_birth).toLocaleDateString('en-IN') : '-'],
+    ['Gender',             (user.gender || '-').replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase())],
+    ['Nationality',         user.nationality || 'Indian'],
+    ['Occupation',          user.occupation || '-'],
+    ['Annual Income',       user.annual_income || '-'],
+    ['Residential Address', user.residential_address || '-'],
+    ['Account Opened On',   user.created_at ? new Date(user.created_at).toLocaleDateString('en-IN', { day: '2-digit', month: 'long', year: 'numeric' }) : '-'],
+    ['Last Login',          user.last_login ? new Date(user.last_login).toLocaleString('en-IN') : '-'],
+  ], y);
+
+  y += 3;
+
+  // Identity Details
+  drawSectionHeader('IDENTITY DETAILS', [...teal], y + 6);
+  y += 10;
+  const rawAadhaar = user.aadhaar_number || '';
+  const maskedAadhaar = rawAadhaar.length >= 4 ? 'XXXX XXXX ' + rawAadhaar.slice(-4) : (rawAadhaar || 'Not Submitted');
+  y = drawInfoGrid([
+    ['PAN Number',       user.pan_number || 'Not Submitted'],
+    ['Aadhaar Number',   maskedAadhaar],
+    ['CKYC Number',      user.ckyc_number || '-'],
+    ['Risk Category',    user.risk_category ? user.risk_category.toUpperCase() : '-'],
+    ['KYC Status',       (user.kyc_status || 'PENDING').toUpperCase(),
+      user.kyc_status === 'verified' ? [...green] : user.kyc_status === 'rejected' ? [...red] : [...gold]],
+    ['KYC Submitted On', user.kyc_submitted_at
+      ? new Date(user.kyc_submitted_at).toLocaleDateString('en-IN', { day: '2-digit', month: 'long', year: 'numeric' })
+      : 'Not Submitted'],
+    ['CKYC Lock Status', user.ckyc_locked ? 'LOCKED (Permanently set)' : 'Unlocked',
+      user.ckyc_locked ? [...red] : [...green]],
+  ], y);
+
+  // Aadhaar privacy notice
+  doc.setFillColor(255, 250, 220); doc.setDrawColor(...gold); doc.setLineWidth(0.35);
+  doc.roundedRect(10, y + 2, W - 20, 10, 2, 2, 'FD');
+  doc.setTextColor(130, 90, 0); doc.setFont('helvetica', 'bold'); doc.setFontSize(7.5);
+  doc.text('PRIVACY NOTICE: Aadhaar is partially masked per UIDAI guidelines. PAN & CKYC stored as per RBI norms.', 14, y + 8.5);
+
+  // ════════════════════════════════════════════════════════════════════════════
+  // PAGE 2 — Bank Account Details
+  // ════════════════════════════════════════════════════════════════════════════
+  doc.addPage();
+  drawPageHeader('Bank Account Details', 'Accounts, IFSC & Balance Overview');
+  y = 60;
+
+  drawSectionHeader('BANK ACCOUNT DETAILS', [...green], y + 6);
   y += 10;
 
-  // User info grid
-  const userRows = [
-    ['Full Name', user.full_name || '-'],
-    ['Username', user.username || '-'],
-    ['Email Address', user.email || '-'],
-    ['Phone Number', user.phone || '-'],
-    ['Date of Birth', user.date_of_birth ? new Date(user.date_of_birth).toLocaleDateString('en-IN') : '-'],
-    ['KYC Status', user.kyc_status?.toUpperCase() || 'PENDING'],
-    ['Member Since', user.created_at ? new Date(user.created_at).toLocaleDateString('en-IN') : '-'],
-  ];
-
-  doc.setFillColor(...light);
-  doc.rect(10, y - 3, W - 20, userRows.length * 8 + 4, 'F');
-
-  userRows.forEach(([label, value], i) => {
-    const row_y = y + i * 8;
-    if (i % 2 === 0) {
-      doc.setFillColor(220, 222, 240);
-      doc.rect(10, row_y - 3, W - 20, 8, 'F');
-    }
-    doc.setFont('helvetica', 'bold');
-    doc.setFontSize(9);
-    doc.setTextColor(...navy);
-    doc.text(label + ':', 14, row_y + 2);
-    doc.setFont('helvetica', 'normal');
-    doc.setTextColor(40, 40, 80);
-    doc.text(String(value), 70, row_y + 2);
-  });
-
-  y += userRows.length * 8 + 10;
-
-  // ── Section: Bank Accounts ─────────────────────────────────────────────────
-  doc.setFillColor(...green);
-  doc.rect(10, y - 6, W - 20, 8, 'F');
-  doc.setTextColor(...white);
-  doc.setFont('helvetica', 'bold');
-  doc.setFontSize(10);
-  doc.text('BANK ACCOUNT DETAILS', 14, y);
-  y += 6;
-
   if (accounts.length === 0) {
-    doc.setTextColor(...gray);
-    doc.setFont('helvetica', 'normal');
-    doc.setFontSize(9);
-    doc.text('No accounts found.', 14, y + 8);
-    y += 16;
+    doc.setTextColor(...gray); doc.setFont('helvetica', 'normal'); doc.setFontSize(9.5);
+    doc.text('No bank accounts found.', 14, y + 10); y += 20;
   } else {
-    autoTable(doc, {
-      startY: y,
-      head: [['Account Number', 'IFSC Code', 'Type', 'Status', 'Current Balance', 'Bank Name']],
-      body: accounts.map(acc => [
-        acc.account_number || '-',
-        acc.ifsc_code || 'MMIB0001234',
-        (acc.account_type || '').toUpperCase(),
-        (acc.status || '').toUpperCase(),
-        fmtPDF(acc.balance),
-        acc.bank_name || 'Money Mitra Bank',
-      ]),
-      styles: { fontSize: 8.5, cellPadding: 3, font: 'helvetica' },
-      headStyles: { fillColor: navy, textColor: white, fontStyle: 'bold' },
-      alternateRowStyles: { fillColor: [238, 240, 252] },
-      columnStyles: {
-        0: { fontStyle: 'bold', cellWidth: 38 },
-        1: { fontStyle: 'bold', cellWidth: 28 },
-        4: { halign: 'right', fontStyle: 'bold', textColor: [0, 140, 80] },
-      },
-      margin: { left: 10, right: 10 },
+    accounts.forEach((acc, idx) => {
+      const cardH = 64;
+      doc.setFillColor(240, 242, 255); doc.roundedRect(10, y, W - 20, cardH, 4, 4, 'F');
+      doc.setFillColor(...navy); doc.roundedRect(10, y, 5, cardH, 2, 2, 'F');
+      doc.setDrawColor(...purple); doc.setLineWidth(0.3); doc.roundedRect(10, y, W - 20, cardH, 4, 4, 'D');
+      // header strip
+      doc.setFillColor(...navy); doc.roundedRect(15, y + 4, W - 30, 11, 2, 2, 'F');
+      doc.setTextColor(...white); doc.setFont('helvetica', 'bold'); doc.setFontSize(9);
+      doc.text(`Account ${idx + 1}  —  ${(acc.account_type || 'SAVINGS').toUpperCase()} ACCOUNT`, 19, y + 11);
+      doc.setFillColor(...green); doc.roundedRect(W - 60, y + 5, 46, 9, 2, 2, 'F');
+      doc.setTextColor(...white); doc.setFontSize(8);
+      doc.text('Balance: ' + fmtPDF(acc.balance), W - 58, y + 11);
+      // two columns
+      const col1 = [['Account Number', acc.account_number || '-'], ['IFSC Code', acc.ifsc_code || 'MMIT0001001'], ['Account Type', (acc.account_type || 'savings').toUpperCase()], ['Min. Balance', fmtPDF(acc.min_balance || 1000)]];
+      const col2 = [['Bank Name', acc.bank_name || 'Money Mitra Bank'], ['Branch', acc.branch || 'Digital Branch - India'], ['Status', (acc.status || 'ACTIVE').toUpperCase()], ['Interest Rate', parseFloat(acc.interest_rate || 3.5).toFixed(2) + '% p.a.']];
+      const cY = y + 20, rH = 9, cx = W / 2 + 4;
+      col1.forEach(([lbl, val], i) => {
+        const ry = cY + i * rH;
+        doc.setFont('helvetica', 'bold'); doc.setFontSize(8.5); doc.setTextColor(...navy); doc.text(lbl + ':', 18, ry);
+        doc.setFont('helvetica', 'normal'); doc.setTextColor(30, 40, 100); doc.text(String(val), 60, ry);
+      });
+      col2.forEach(([lbl, val], i) => {
+        const ry = cY + i * rH;
+        doc.setFont('helvetica', 'bold'); doc.setFontSize(8.5); doc.setTextColor(...navy); doc.text(lbl + ':', cx, ry);
+        doc.setFont('helvetica', 'normal'); doc.setTextColor(30, 40, 100); doc.text(String(val), cx + 32, ry);
+      });
+      y += cardH + 6;
     });
-    y = doc.lastAutoTable.finalY + 10;
   }
 
-  // ── IFSC / Branch info box ─────────────────────────────────────────────────
-  doc.setFillColor(235, 238, 255);
-  doc.roundedRect(10, y, W - 20, 22, 3, 3, 'F');
-  doc.setDrawColor(...purple);
-  doc.setLineWidth(0.5);
-  doc.roundedRect(10, y, W - 20, 22, 3, 3, 'D');
-  doc.setTextColor(...navy);
-  doc.setFont('helvetica', 'bold');
-  doc.setFontSize(9);
-  doc.text('Bank Details', 14, y + 7);
-  doc.setFont('helvetica', 'normal');
-  doc.setFontSize(8.5);
-  doc.text('Bank Name: Money Mitra Bank Ltd.', 14, y + 13);
-  doc.text('IFSC Code: MMIB0001234  |  Branch: Digital Banking Division  |  MICR: 400002001', 14, y + 19);
+  // Bank legal info box
+  doc.setFillColor(245, 246, 255); doc.setDrawColor(...navy); doc.setLineWidth(0.3);
+  doc.roundedRect(10, y, W - 20, 28, 3, 3, 'FD');
+  doc.setFillColor(...navy); doc.roundedRect(10, y, W - 20, 10, 2, 2, 'F');
+  doc.setTextColor(...white); doc.setFont('helvetica', 'bold'); doc.setFontSize(8.5);
+  doc.text('BANKING DETAILS', 14, y + 7);
+  doc.setFont('helvetica', 'normal'); doc.setFontSize(8); doc.setTextColor(...navy);
+  doc.text('Bank Name  :  Money Mitra Bank Ltd.', 14, y + 16);
+  doc.text('IFSC Code  :  MMIT0001001   |   Branch  :  Digital Banking Division, India   |   MICR  :  400002001', 14, y + 23);
+  y += 34;
 
-  // ── PAGE 2: Transaction History ────────────────────────────────────────────
+  // UPI & Primary Account Summary
+  if (accounts.length > 0) {
+    const pa = accounts[0];
+    y += 2;
+    drawSectionHeader('UPI & PRIMARY ACCOUNT SUMMARY', [...teal], y + 6);
+    y += 10;
+    y = drawInfoGrid([
+      ['Primary Account No.', pa.account_number || '-'],
+      ['Primary UPI Handle',  pa.primary_upi || ((user.email?.split('@')[0] || '') + '@moneymitra')],
+      ['Current Balance',     fmtPDF(pa.balance), [...green]],
+      ['Account Status',      (pa.status || 'active').toUpperCase(), pa.status === 'active' ? [...green] : [...red]],
+      ['Total Accounts',      String(accounts.length)],
+    ], y);
+  }
+
+  // ════════════════════════════════════════════════════════════════════════════
+  // PAGE 3 — Transaction History
+  // ════════════════════════════════════════════════════════════════════════════
   doc.addPage();
+  drawPageHeader('Transaction History', 'Complete Financial Activity Log', 52);
+  y = 60;
 
-  // Header navy bg
-  doc.setFillColor(...navy);
-  doc.rect(0, 0, W, 48, 'F');
-  // Purple accent
-  doc.setFillColor(...purple);
-  doc.rect(0, 0, 4, 48, 'F');
-
-  // Logo (small version)
-  if (logoBase64) {
-    doc.setFillColor(255, 255, 255);
-    doc.roundedRect(10, 6, 34, 34, 5, 5, 'F');
-    doc.addImage(logoBase64, 'PNG', 11, 7, 32, 32);
-  }
-
-  doc.setTextColor(...white);
-  doc.setFont('helvetica', 'bold');
-  doc.setFontSize(15);
-  doc.text('Transaction History', 52, 18);
-  doc.setFont('helvetica', 'normal');
-  doc.setFontSize(8.5);
-  doc.setTextColor(180, 185, 220);
-  doc.text('Account Holder: ' + (user.full_name || '-') + '  |  Period: ' + (filters.start_date || 'All') + ' to ' + (filters.end_date || 'Present'), 52, 27);
-  doc.text('Total Transactions: ' + transactions.length, 52, 34);
-  doc.setFontSize(7.5);
-  doc.setTextColor(140, 150, 200);
-  doc.text('Generated: ' + new Date().toLocaleString('en-IN'), 52, 41);
-
-  // Summary stats
   const creditTypes = ['credit', 'upi_receive', 'loan_credit', 'refund'];
   const totalCredit = transactions.filter(t => creditTypes.includes(t.type)).reduce((s, t) => s + parseFloat(t.amount || 0), 0);
-  const totalDebit = transactions.filter(t => !creditTypes.includes(t.type)).reduce((s, t) => s + parseFloat(t.amount || 0), 0);
+  const totalDebit  = transactions.filter(t => !creditTypes.includes(t.type)).reduce((s, t) => s + parseFloat(t.amount || 0), 0);
   const netFlow = totalCredit - totalDebit;
 
-  y = 56;
   const statBoxes = [
-    { label: 'Total Credits', value: fmtPDF(totalCredit), color: [0, 150, 90] },
-    { label: 'Total Debits', value: fmtPDF(totalDebit), color: [210, 50, 50] },
-    { label: 'Net Flow', value: (netFlow >= 0 ? '+' : '-') + ' Rs. ' + Math.abs(netFlow).toLocaleString('en-IN', { minimumFractionDigits: 2 }), color: netFlow >= 0 ? [0, 150, 90] : [210, 50, 50] },
-    { label: 'Transactions', value: String(transactions.length) + ' records', color: [80, 70, 200] },
+    { label: 'Total Credits', value: fmtPDF(totalCredit), color: green },
+    { label: 'Total Debits',  value: fmtPDF(totalDebit),  color: [...red] },
+    { label: 'Net Flow', value: (netFlow >= 0 ? '+ ' : '- ') + 'Rs. ' + Math.abs(netFlow).toLocaleString('en-IN', { minimumFractionDigits: 2 }), color: netFlow >= 0 ? green : [...red] },
+    { label: 'Transactions', value: String(transactions.length) + ' records', color: [...purple] },
   ];
-
   const bw = (W - 20 - 9) / 4;
   statBoxes.forEach((s, i) => {
     const bx = 10 + i * (bw + 3);
-    doc.setFillColor(...light);
-    doc.roundedRect(bx, y, bw, 20, 2, 2, 'F');
-    // colored left stripe
-    doc.setFillColor(...s.color);
-    doc.roundedRect(bx, y, 2, 20, 1, 1, 'F');
-    doc.setFontSize(7.5);
-    doc.setFont('helvetica', 'normal');
-    doc.setTextColor(...gray);
-    doc.text(s.label, bx + 5, y + 7);
-    doc.setFontSize(9.5);
-    doc.setFont('helvetica', 'bold');
-    doc.setTextColor(...s.color);
-    // Wrap long amounts
-    doc.text(s.value, bx + 5, y + 15, { maxWidth: bw - 6 });
+    doc.setFillColor(...light); doc.roundedRect(bx, y, bw, 22, 2, 2, 'F');
+    doc.setFillColor(...s.color); doc.roundedRect(bx, y, 3, 22, 1, 1, 'F');
+    doc.setFontSize(7.5); doc.setFont('helvetica', 'normal'); doc.setTextColor(...gray);
+    doc.text(s.label, bx + 6, y + 8);
+    doc.setFontSize(9); doc.setFont('helvetica', 'bold'); doc.setTextColor(...s.color);
+    doc.text(s.value, bx + 6, y + 17, { maxWidth: bw - 8 });
   });
+  y += 30;
 
-  y += 28;
+  if (filters.start_date || filters.end_date || filters.type) {
+    doc.setFillColor(230, 255, 245); doc.setDrawColor(...green); doc.setLineWidth(0.3);
+    doc.roundedRect(10, y, W - 20, 9, 2, 2, 'FD');
+    doc.setTextColor(0, 100, 60); doc.setFont('helvetica', 'normal'); doc.setFontSize(8);
+    let ft = 'Filters Applied:';
+    if (filters.type) ft += '  Type: ' + filters.type;
+    if (filters.start_date) ft += '  |  From: ' + filters.start_date;
+    if (filters.end_date) ft += '  |  To: ' + filters.end_date;
+    doc.text(ft, 14, y + 6); y += 13;
+  }
 
-  // Transaction table
   if (transactions.length === 0) {
-    doc.setTextColor(...gray);
-    doc.setFont('helvetica', 'normal');
-    doc.setFontSize(11);
+    doc.setTextColor(...gray); doc.setFont('helvetica', 'normal'); doc.setFontSize(11);
     doc.text('No transactions found for the selected filters.', 14, y + 20);
   } else {
     autoTable(doc, {
       startY: y,
       head: [['#', 'Date & Time', 'Type', 'Description', 'Reference No.', 'Amount', 'Bal. After', 'Status']],
       body: transactions.map((txn, idx) => {
-        const isCredit = ['credit', 'upi_receive', 'loan_credit', 'refund'].includes(txn.type);
+        const isCredit = creditTypes.includes(txn.type);
         const style = TXN_STYLES[txn.type] || TXN_STYLES.debit;
         return [
           idx + 1,
@@ -285,54 +341,54 @@ async function generatePDF({ user, accounts, transactions, filters }) {
       columnStyles: {
         0: { cellWidth: 8, halign: 'center' },
         1: { cellWidth: 26 },
-        2: { cellWidth: 20 },
-        3: { cellWidth: 42 },
-        4: { cellWidth: 30, fontSize: 7 },
-        5: { cellWidth: 28, halign: 'right', fontStyle: 'bold' },
+        2: { cellWidth: 22 },
+        3: { cellWidth: 40 },
+        4: { cellWidth: 28, fontSize: 7 },
+        5: { cellWidth: 26, halign: 'right', fontStyle: 'bold' },
         6: { cellWidth: 22, halign: 'right' },
         7: { cellWidth: 16, halign: 'center' },
       },
       didParseCell(data) {
         if (data.column.index === 5 && data.section === 'body') {
-          const row = transactions[data.row.index];
-          const isCredit = ['credit', 'upi_receive', 'loan_credit', 'refund'].includes(row?.type);
-          data.cell.styles.textColor = isCredit ? [0, 140, 80] : [200, 40, 40];
+          data.cell.styles.textColor = creditTypes.includes(transactions[data.row.index]?.type) ? [0, 140, 80] : [200, 40, 40];
         }
-        if (data.column.index === 6 && data.section === 'body') {
-          data.cell.styles.textColor = [60, 80, 140];
-        }
+        if (data.column.index === 6 && data.section === 'body') data.cell.styles.textColor = [60, 80, 140];
         if (data.column.index === 7 && data.section === 'body') {
-          const status = String(data.cell.raw);
-          data.cell.styles.textColor = status === 'COMPLETED' ? [0, 140, 80] : status === 'FAILED' ? [200, 40, 40] : [160, 100, 0];
+          const s = String(data.cell.raw);
+          data.cell.styles.textColor = s === 'COMPLETED' ? [0, 140, 80] : s === 'FAILED' ? [200, 40, 40] : [160, 100, 0];
         }
       },
       margin: { left: 10, right: 10 },
     });
   }
 
-  // ── Footer on every page ───────────────────────────────────────────────────
+  // ─── FOOTER on every page ──────────────────────────────────────────────────
   const pageCount = doc.internal.getNumberOfPages();
   for (let i = 1; i <= pageCount; i++) {
     doc.setPage(i);
+    // Navy band
     doc.setFillColor(...navy);
-    doc.rect(0, H - 14, W, 14, 'F');
-    doc.setTextColor(160, 170, 210);
-    doc.setFont('helvetica', 'normal');
-    doc.setFontSize(7.5);
-    doc.text('Money Mitra Bank Ltd.  |  Digital Banking Division  |  support@moneymitra.in  |  1800-XXX-0000', 14, H - 7);
-    doc.text(`Page ${i} of ${pageCount}`, W - 24, H - 7);
-    doc.setFontSize(6.5);
-    doc.setTextColor(120, 130, 160);
-    doc.text('⚠ CONFIDENTIAL: This statement is for personal use only. Do not share with unauthorized persons.', 14, H - 2.5);
+    doc.rect(0, H - 18, W, 10, 'F');
+    doc.setTextColor(160, 170, 210); doc.setFont('helvetica', 'normal'); doc.setFontSize(7);
+    doc.text('Money Mitra Bank Ltd.  |  Digital Banking Division  |  support@moneymitra.in  |  Helpline: 1800-XXX-0000', 14, H - 11);
+    doc.setFont('helvetica', 'bold'); doc.setFontSize(7.5); doc.setTextColor(200, 210, 255);
+    doc.text(`Page ${i} of ${pageCount}`, W - 26, H - 11);
+    doc.setFont('helvetica', 'normal'); doc.setFontSize(6); doc.setTextColor(130, 140, 190);
+    doc.text('CONFIDENTIAL — For authorized use only', 14, H - 21);
+    // Purple college footer strip
+    doc.setFillColor(...purple);
+    doc.rect(0, H - 8, W, 8, 'F');
+    doc.setTextColor(230, 228, 255); doc.setFont('helvetica', 'bold'); doc.setFontSize(7);
+    doc.text(
+      'College Minor Project  \u00B7  4th Sem  \u00B7  CST  \u00B7  Roll No: 34, 36, 37, 38, 39, 40',
+      W / 2, H - 3.2, { align: 'center' }
+    );
   }
 
-  // Download
   const filename = `MoneyMitra_Statement_${user.full_name?.replace(/\s+/g, '_') || 'User'}_${new Date().toISOString().slice(0, 10)}.pdf`;
   doc.save(filename);
   return filename;
 }
-
-// ── Transactions Page ────────────────────────────────────────────────────────
 export default function Transactions() {
   const [transactions, setTransactions] = useState([]);
   const [pagination, setPagination] = useState({ page: 1, limit: 20, total: 0, pages: 0 });
@@ -671,16 +727,19 @@ export default function Transactions() {
 
             {/* What's included */}
             <div style={{ background: 'rgba(108,99,255,0.07)', border: '1px solid rgba(108,99,255,0.2)', borderRadius: 14, padding: '14px 18px', marginBottom: 20 }}>
-              <div style={{ fontSize: 12, fontWeight: 700, color: 'var(--primary-light)', marginBottom: 10, textTransform: 'uppercase', letterSpacing: 0.5 }}>Included in PDF</div>
+              <div style={{ fontSize: 12, fontWeight: 700, color: 'var(--primary-light)', marginBottom: 10, textTransform: 'uppercase', letterSpacing: 0.5 }}>Included in PDF (3 Pages)</div>
               {[
-                ['👤', 'Full Name, Email & Phone Number'],
-                ['🏦', 'Account Number & IFSC Code'],
-                ['💳', 'Account Type, Balance & Bank Name'],
-                ['🔐', 'KYC Status & Member Since Date'],
-                ['📊', 'Complete Transaction History'],
+                ['🖼️', 'Profile Photo, Full Name, Email & Phone'],
+                ['🪪', 'PAN, Aadhaar (masked), CKYC & Risk Category'],
+                ['✅', 'KYC Status, KYC Submitted Date & CKYC Lock'],
+                ['📅', 'DOB, Gender, Occupation & Account Opening Date'],
+                ['🏦', 'Account Number, IFSC Code, Branch & Bank Name'],
+                ['💰', 'Balance, Interest Rate, Min. Balance & UPI Handle'],
+                ['📊', 'Complete Transaction History with Reference Nos.'],
                 ['📈', 'Credit / Debit Summary & Net Flow'],
+                ['🎓', 'College Minor Project Footer (4th Sem · CST · Roll: 34–40)'],
               ].map(([icon, text]) => (
-                <div key={text} style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 7, fontSize: 13 }}>
+                <div key={text} style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 7, fontSize: 12.5 }}>
                   <span>{icon}</span>
                   <span style={{ color: 'var(--text-secondary)' }}>{text}</span>
                 </div>
