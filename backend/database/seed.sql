@@ -4,9 +4,9 @@
 -- ================================================================
 USE money_mitra;
 
--- Admin User (password: Admin@123)
+-- Admin User (password: AKKU@2006)
 INSERT INTO users (id, full_name, email, phone, password_hash, avatar_id, role, kyc_status) VALUES
-('admin-001', 'Money Mitra Admin', 'admin@moneymitra.in', '9999000001', '$2a$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/LewdBPj2NXabCTszi', 1, 'admin', 'verified');
+('admin-001', 'Money Mitra Admin', 'admin@moneymitra.in', '9999000001', '$2a$12$pvK5h5Tn2iDVOaAIeKhRie8ZBCA5mQQ5CGDXUF1bWcuf4Yorlj/jm', 1, 'admin', 'verified');
 
 -- Regular Users (password: User@1234)
 INSERT INTO users (id, full_name, email, phone, password_hash, avatar_id, role, kyc_status) VALUES

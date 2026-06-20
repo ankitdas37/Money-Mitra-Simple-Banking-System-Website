@@ -358,14 +358,15 @@ money-mitra/
 
 ---
 
-## 👤 Default Admin Credentials
+## 👤 Default Credentials
 
 After seeding the database, you can log in with:
 
-| Role    | Email                    | Password    |
-|---------|--------------------------|-------------|
-| Admin   | `admin@moneymitra.com`   | `Admin@123` |
-| User    | `user@moneymitra.com`    | `User@123`  |
+| Role    | Email / Username                 | Password    |
+|---------|----------------------------------|-------------|
+| Admin   | `admin` or `admin@moneymitra.in` | `AKKU@2006` |
+| User 1  | `rahul@moneymitra.in`            | `User@1234` |
+| User 2  | `priya@moneymitra.in`            | `User@1234` |
 
 > ⚠️ Change these credentials immediately in a production environment!
 

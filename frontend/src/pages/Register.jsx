@@ -232,7 +232,7 @@ export default function Register() {
         <div style={{ width: '100%', maxWidth: 500 }}>
 
           {/* Back to Home */}
-          <a href="http://localhost:5173/home.html"
+          <a href="/home.html"
             style={{ display:'inline-flex', alignItems:'center', gap:6, fontSize:13, color:'rgba(255,255,255,0.45)', textDecoration:'none', marginBottom:20, transition:'color 0.2s', fontWeight:500 }}
             onMouseEnter={e=>e.currentTarget.style.color='rgba(255,255,255,0.85)'}
             onMouseLeave={e=>e.currentTarget.style.color='rgba(255,255,255,0.45)'}>

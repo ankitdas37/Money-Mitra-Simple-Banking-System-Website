@@ -1,8 +1,9 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { adminAPI, userAPI, supportAPI } from '../services/api';
+import { adminAPI, userAPI, supportAPI, authAPI } from '../services/api';
 import { formatINR, formatDate, formatDateTime } from '../utils/helpers';
 import toast from 'react-hot-toast';
+import { useAuthStore } from '../store';
 
 /* ─── tiny helpers ─────────────────────────────────────────── */
 const Badge = ({ children, color = '#6C63FF' }) => (
@@ -576,6 +577,26 @@ function BeneficiariesTab({ userId, initialBens }) {
 export default function AdminPanel() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
+  const { user } = useAuthStore();
+
+  const [isAuthorized, setIsAuthorized] = useState(false);
+  const [adminPassword, setAdminPassword] = useState('');
+  const [authChecking, setAuthChecking] = useState(false);
+
+  const verifyAdminPassword = async (e) => {
+    e.preventDefault();
+    if (!adminPassword.trim()) return;
+    setAuthChecking(true);
+    try {
+      await authAPI.login({ email: user?.email, password: adminPassword });
+      setIsAuthorized(true);
+      toast.success('Admin console unlocked successfully!');
+    } catch (err) {
+      toast.error(err.response?.data?.message || 'Incorrect password. Access denied.');
+    } finally {
+      setAuthChecking(false);
+    }
+  };
 
   /* ── tab is driven by the URL ?tab= param ── */
   const tab = searchParams.get('tab') || 'overview';
@@ -927,6 +948,76 @@ export default function AdminPanel() {
   ];
 
   /* ═══════════════════════════════════════════════════════════ */
+  if (!isAuthorized) {
+    return (
+      <div style={{
+        minHeight: '60vh',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        fontFamily: 'Outfit, sans-serif',
+        position: 'relative',
+        zIndex: 10
+      }}>
+        <div className="glass-card" style={{
+          width: '100%',
+          maxWidth: 400,
+          padding: 36,
+          textAlign: 'center',
+          boxShadow: '0 20px 50px rgba(0, 0, 0, 0.4)',
+          border: '1px solid rgba(108, 99, 255, 0.3)',
+          background: 'rgba(13, 13, 43, 0.85)',
+          backdropFilter: 'blur(20px)',
+          borderRadius: 20,
+        }}>
+          <div style={{ fontSize: 48, marginBottom: 16 }}>🔑</div>
+          <h2 style={{ fontSize: 22, fontWeight: 900, marginBottom: 8, color: 'white' }}>Admin Verification</h2>
+          <p style={{ fontSize: 13, color: 'var(--text-secondary)', marginBottom: 24, lineHeight: 1.6 }}>
+            Please enter your administrator password to unlock the console.
+          </p>
+
+          <form onSubmit={verifyAdminPassword} style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+            <div style={{ textAlign: 'left' }}>
+              <label style={{ display: 'block', fontSize: 10, fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: 0.8, marginBottom: 7 }}>
+                Admin Password
+              </label>
+              <input
+                type="password"
+                placeholder="••••••••"
+                value={adminPassword}
+                onChange={e => setAdminPassword(e.target.value)}
+                required
+                autoFocus
+                style={{ ...inputSx, fontSize: 14, padding: '12px 14px' }}
+              />
+            </div>
+
+            <button
+              type="submit"
+              className="btn-primary"
+              disabled={authChecking}
+              style={{
+                width: '100%',
+                background: 'var(--gradient-primary)',
+                border: 'none',
+                borderRadius: 10,
+                padding: '12px',
+                color: 'white',
+                fontSize: 14,
+                fontWeight: 800,
+                cursor: 'pointer',
+                transition: 'all 0.2s',
+                marginTop: 8
+              }}
+            >
+              {authChecking ? 'Verifying...' : '🔓 Unlock Admin Console'}
+            </button>
+          </form>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div>
       {/* ── Page header ── */}

@@ -135,9 +135,10 @@ const register = async (userData) => {
  * Login user and return tokens
  */
 const login = async ({ email, password }) => {
+  const queryEmail = email === 'admin' ? 'admin@moneymitra.in' : email;
   const [rows] = await db.query(
     'SELECT id, full_name, email, phone, password_hash, avatar_id, role, kyc_status, is_active FROM users WHERE email = ?',
-    [email]
+    [queryEmail]
   );
 
   if (rows.length === 0) {

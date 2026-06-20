@@ -59,7 +59,14 @@ const AppLayout = ({ children }) => (
 // Smart default redirect based on role
 const DefaultRedirect = () => {
   const { isAuthenticated, user } = useAuthStore();
-  if (!isAuthenticated) return <Navigate to="/login" replace />;
+  
+  useEffect(() => {
+    if (!isAuthenticated) {
+      window.location.replace('/home.html');
+    }
+  }, [isAuthenticated]);
+
+  if (!isAuthenticated) return null;
   return <Navigate to={user?.role === 'admin' ? '/admin' : '/dashboard'} replace />;
 };
 

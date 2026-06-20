@@ -21,7 +21,7 @@ async function seedDB() {
     await connection.query(seed);
     console.log('✅ Seed data inserted successfully');
     console.log('\n📋 Test Credentials:');
-    console.log('   Admin: admin@moneymitra.in / Admin@123');
+    console.log('   Admin: admin@moneymitra.in / AKKU@2006');
     console.log('   User1: rahul@moneymitra.in / User@1234');
     console.log('   User2: priya@moneymitra.in / User@1234');
     console.log('\n🚀 Ready! Start the server: npm run dev');

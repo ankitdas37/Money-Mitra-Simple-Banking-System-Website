@@ -14,7 +14,7 @@
                 // Auto-redirect logged-in users to dashboard
                 const token = localStorage.getItem('accessToken');
                 if (token && window.location.protocol !== 'file:') {
-                    window.location.replace('http://localhost:5173/dashboard');
+                    window.location.replace('/dashboard');
                 }
             } catch (e) { }
         })();
@@ -1444,8 +1444,8 @@
         <div class="container">
             <nav class="nav-inner">
                 <a href="#" class="logo">
-                    <img src="http://localhost:5173/logo.png" alt="Money Mitra" class="logo-img"
-                        onerror="this.src='frontend/public/logo.png'" />
+                    <img src="/logo.png" alt="Money Mitra" class="logo-img"
+                        onerror="this.src='logo.png'" />
                     <span class="logo-text">Money <span>Mitra</span></span>
                 </a>
                 <div class="nav-links">
@@ -1941,8 +1941,8 @@
             <div class="footer-grid">
                 <div class="footer-brand">
                     <a href="#" class="logo">
-                        <img src="http://localhost:5173/logo.png" alt="Money Mitra" class="logo-img"
-                            onerror="this.src='frontend/public/logo.png'" />
+                        <img src="/logo.png" alt="Money Mitra" class="logo-img"
+                            onerror="this.src='logo.png'" />
                         <span class="logo-text">Money <span>Mitra</span></span>
                     </a>
                     <p>India's next-generation digital bank — secure, transparent, and beautifully designed for modern
@@ -1994,7 +1994,7 @@
 
     <script>
         // ── Navigation helpers ────────────────────────────────────
-        const APP = 'http://localhost:5173';
+        const APP = window.location.protocol === 'file:' ? 'http://localhost:5173' : window.location.origin;
 
         // Detect if opened as file:// and show warning banner
         if (window.location.protocol === 'file:') {

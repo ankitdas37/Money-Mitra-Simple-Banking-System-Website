@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { authAPI } from '../services/api';
 import { useAuthStore } from '../store';
@@ -24,7 +24,7 @@ function showLoginError(code, message) {
           <div style={{ color: 'rgba(255,255,255,0.7)', fontSize: 13, lineHeight: 1.5 }}>
             No account exists with this email address.<br />
             <span style={{ color: '#A78BFF' }}>Want to </span>
-            <a href="http://localhost:5173/register" style={{ color: '#A78BFF', textDecoration: 'underline', fontWeight: 600 }}>create one?</a>
+            <a href="/register" style={{ color: '#A78BFF', textDecoration: 'underline', fontWeight: 600 }}>create one?</a>
           </div>
         </div>
       </div>
@@ -88,6 +88,17 @@ export default function Login() {
   const [forgotSent, setForgotSent]   = useState(false);
   const [forgotLoading, setForgotLoading] = useState(false);
   const [errorField, setErrorField]   = useState(null); // 'email' | 'password'
+  
+  const passwordInputRef = useRef(null);
+
+  const handleDemoClick = (email) => {
+    setForm({ email, password: '' });
+    setErrorField(null);
+    toast.success('Demo account filled! Please enter the password.');
+    setTimeout(() => {
+      passwordInputRef.current?.focus();
+    }, 50);
+  };
 
   // Load remembered email on mount
   useEffect(() => {
@@ -250,7 +261,7 @@ export default function Login() {
         <div style={{ width: '100%', maxWidth: 400, position: 'relative' }}>
 
           {/* Back to Home */}
-          <a href="http://localhost:5173/home.html"
+          <a href="/home.html"
             style={{ display:'inline-flex', alignItems:'center', gap:6, fontSize:13, color:'rgba(255,255,255,0.45)', textDecoration:'none', marginBottom:24, transition:'color 0.2s', fontWeight:500 }}
             onMouseEnter={e=>e.currentTarget.style.color='rgba(255,255,255,0.85)'}
             onMouseLeave={e=>e.currentTarget.style.color='rgba(255,255,255,0.45)'}>
@@ -271,15 +282,15 @@ export default function Login() {
           <div className="glass-card" style={{ padding: 28 }}>
             <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 18 }}>
 
-              {/* Email */}
+              {/* Email / Username */}
               <div>
                 <label style={{ display: 'block', fontSize: 11, fontWeight: 700, color: errorField === 'email' ? '#FF5757' : 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: 0.8, marginBottom: 7 }}>
-                  Email Address {errorField === 'email' && <span style={{ fontSize: 10, textTransform: 'none', letterSpacing: 0 }}>— not registered</span>}
+                  Email / Username {errorField === 'email' && <span style={{ fontSize: 10, textTransform: 'none', letterSpacing: 0 }}>— not registered</span>}
                 </label>
                 <input
-                  type="email"
+                  type="text"
                   className={`input-field ${errorField === 'email' ? 'err-field shake' : ''}`}
-                  placeholder="rahul@moneymitra.in"
+                  placeholder="rahul@moneymitra.in or admin"
                   value={form.email}
                   onChange={e => { setForm({ ...form, email: e.target.value }); setErrorField(null); }}
                   required
@@ -306,6 +317,7 @@ export default function Login() {
                 </div>
                 <div style={{ position: 'relative' }}>
                   <input
+                    ref={passwordInputRef}
                     type={showPassword ? 'text' : 'password'}
                     className={`input-field ${errorField === 'password' ? 'err-field shake' : ''}`}
                     placeholder="Enter your password"
@@ -359,10 +371,10 @@ export default function Login() {
             </div>
 
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
-              <button className="btn-secondary" onClick={() => demoLogin('rahul@moneymitra.in', 'User@1234')} disabled={loading} style={{ fontSize: 12, padding: '10px 8px', fontWeight: 700 }}>
+              <button type="button" className="btn-secondary" onClick={() => handleDemoClick('rahul@moneymitra.in')} disabled={loading} style={{ fontSize: 12, padding: '10px 8px', fontWeight: 700 }}>
                 👤 Rahul (User)
               </button>
-              <button className="btn-secondary" onClick={() => demoLogin('admin@moneymitra.in', 'Admin@123')} disabled={loading} style={{ fontSize: 12, padding: '10px 8px', fontWeight: 700 }}>
+              <button type="button" className="btn-secondary" onClick={() => handleDemoClick('admin')} disabled={loading} style={{ fontSize: 12, padding: '10px 8px', fontWeight: 700 }}>
                 👑 Admin
               </button>
             </div>
