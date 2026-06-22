@@ -24,15 +24,6 @@ const globalRateLimiter = rateLimit({
   legacyHeaders: false,
 });
 
-// Auth limiter — prevent brute force login
-const authRateLimiter = rateLimit({
-  windowMs: 60 * 60 * 1000,        // 1 hour
-  max: process.env.NODE_ENV === 'development' ? 100 : 10,
-  skip: skipLAN,
-  message: { success: false, message: 'Too many login attempts. Try again in 1 hour.' },
-  skipSuccessfulRequests: true,
-});
-
 // Transfer limiter — fraud prevention
 const transferRateLimiter = rateLimit({
   windowMs: 60 * 1000,              // 1 minute
@@ -41,4 +32,4 @@ const transferRateLimiter = rateLimit({
   message: { success: false, message: 'Too many transfer attempts. Please wait a moment.' },
 });
 
-module.exports = { globalRateLimiter, authRateLimiter, transferRateLimiter };
+module.exports = { globalRateLimiter, transferRateLimiter };
