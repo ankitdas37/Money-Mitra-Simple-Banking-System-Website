@@ -57,7 +57,7 @@ const payBill = async (req, res, next) => {
     try {
       await conn.query('UPDATE accounts SET balance = balance - ? WHERE id=?', [bill.amount, account_id]);
       await conn.query(
-        'UPDATE bills SET status="paid", account_id=?, transaction_id=?, paid_at=NOW() WHERE id=?',
+        `UPDATE bills SET status='paid', account_id=?, transaction_id=?, paid_at=NOW() WHERE id=?`,
         [account_id, txnId, bill.id]
       );
       await conn.query(
