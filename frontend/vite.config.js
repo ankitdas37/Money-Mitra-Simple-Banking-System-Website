@@ -2,7 +2,6 @@ import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import tailwindcss from '@tailwindcss/vite'
 
-// Backend URL: use environment variable in production, local IP in development
 const BACKEND_URL = process.env.VITE_API_URL || 'http://localhost:5000';
 
 export default defineConfig({
@@ -17,7 +16,6 @@ export default defineConfig({
     strictPort: true,
     open: true,
 
-    // ── Proxy — forward /api calls to backend ──────────────────────────────
     proxy: {
       '/api': {
         target: BACKEND_URL,
@@ -37,23 +35,23 @@ export default defineConfig({
     },
   },
 
-  // ── Build / Bundle optimisation ─────────────────────────────────────────
   build: {
     target: 'es2020',
     minify: 'esbuild',
     chunkSizeWarningLimit: 1000,
     rollupOptions: {
       output: {
-        manualChunks: {
-          vendor:  ['react', 'react-dom'],
-          pdf:     ['jspdf', 'jspdf-autotable'],
-          ui:      ['react-hot-toast'],
+        manualChunks(id) {
+          if (id.includes('node_modules')) {
+            if (id.includes('jspdf')) return 'pdf';
+            if (id.includes('react-hot-toast')) return 'ui';
+            if (id.includes('react')) return 'vendor';
+          }
         },
       },
     },
   },
 
-  // ── Dependency pre-bundling — speeds up cold start ──────────────────────
   optimizeDeps: {
     include: [
       'react',
