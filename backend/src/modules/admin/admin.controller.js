@@ -131,7 +131,7 @@ const approveLoan = async (req, res, next) => {
       if (action === 'approve') {
         // Find user's primary account
         const [accounts] = await conn.query(
-          'SELECT id, balance FROM accounts WHERE user_id=? AND status="active" ORDER BY created_at ASC LIMIT 1',
+          `SELECT id, balance FROM accounts WHERE user_id=? AND status='active' ORDER BY created_at ASC LIMIT 1`,
           [loan.user_id]
         );
         if (accounts.length === 0) throw { status: 404, message: 'No active account found for user' };
@@ -718,7 +718,7 @@ const adminGiveLoan = async (req, res, next) => {
 
     // Find user's primary account
     const [accounts] = await db.query(
-      'SELECT id, balance FROM accounts WHERE user_id=? AND status="active" ORDER BY created_at ASC LIMIT 1',
+      `SELECT id, balance FROM accounts WHERE user_id=? AND status='active' ORDER BY created_at ASC LIMIT 1`,
       [uid]
     );
     if (!accounts.length) return sendError(res, 404, 'No active account for user');

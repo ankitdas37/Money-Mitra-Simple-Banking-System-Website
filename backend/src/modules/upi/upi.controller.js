@@ -53,7 +53,7 @@ const sendUpi = async (req, res, next) => {
 
     // Verify sender
     const [fromRows] = await db.query(
-      'SELECT * FROM accounts WHERE id=? AND user_id=? AND status="active"',
+      `SELECT * FROM accounts WHERE id=? AND user_id=? AND status='active'`,
       [from_account_id, req.user.id]
     );
     if (fromRows.length === 0) return sendError(res, 404, 'Source account not found');

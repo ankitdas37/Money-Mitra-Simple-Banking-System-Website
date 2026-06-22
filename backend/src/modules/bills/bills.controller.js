@@ -45,7 +45,7 @@ const payBill = async (req, res, next) => {
     const bill = bills[0];
     if (bill.status === 'paid') return sendError(res, 400, 'Bill already paid');
 
-    const [accounts] = await db.query('SELECT * FROM accounts WHERE id=? AND user_id=? AND status="active"', [account_id, req.user.id]);
+    const [accounts] = await db.query(`SELECT * FROM accounts WHERE id=? AND user_id=? AND status='active'`, [account_id, req.user.id]);
     if (accounts.length === 0) return sendError(res, 404, 'Account not found');
     if (parseFloat(accounts[0].balance) < parseFloat(bill.amount)) return sendError(res, 400, 'Insufficient balance');
 

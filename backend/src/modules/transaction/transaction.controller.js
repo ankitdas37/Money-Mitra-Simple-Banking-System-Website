@@ -78,14 +78,14 @@ const transfer = async (req, res, next) => {
 
     // Verify sender owns the account
     const [fromRows] = await db.query(
-      'SELECT * FROM accounts WHERE id = ? AND user_id = ? AND status = "active"',
+      `SELECT * FROM accounts WHERE id = ? AND user_id = ? AND status = 'active'`,
       [from_account_id, req.user.id]
     );
     if (fromRows.length === 0) return sendError(res, 404, 'Source account not found or inactive');
 
     // Find destination account
     const [toRows] = await db.query(
-      'SELECT * FROM accounts WHERE account_number = ? AND status = "active"',
+      `SELECT * FROM accounts WHERE account_number = ? AND status = 'active'`,
       [to_account_number]
     );
     if (toRows.length === 0) return sendError(res, 404, 'Destination account not found');

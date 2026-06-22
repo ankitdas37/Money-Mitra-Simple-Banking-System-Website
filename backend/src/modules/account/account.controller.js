@@ -77,7 +77,7 @@ const getBalance = async (req, res, next) => {
 const getSummary = async (req, res, next) => {
   try {
     const [accounts] = await db.query(
-      'SELECT COALESCE(SUM(balance), 0) as total_balance, COUNT(*) as account_count FROM accounts WHERE user_id = ? AND status = "active"',
+      `SELECT COALESCE(SUM(balance), 0) as total_balance, COUNT(*) as account_count FROM accounts WHERE user_id = ? AND status = 'active'`,
       [req.user.id]
     );
 
