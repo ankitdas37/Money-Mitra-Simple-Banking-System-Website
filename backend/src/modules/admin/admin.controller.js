@@ -276,7 +276,7 @@ const adjustBalance = async (req, res, next) => {
       [
         type === 'debit' ? acc.id : null,
         type === 'credit' ? acc.id : null,
-        type === 'credit' ? 'deposit' : 'withdrawal',
+        type,
         amt,
         `[ADMIN] ${txnDesc}`
       ]
