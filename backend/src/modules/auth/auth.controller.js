@@ -76,4 +76,14 @@ const logout = async (req, res, next) => {
   }
 };
 
-module.exports = { register, login, refresh, logout };
+const checkUser = async (req, res, next) => {
+  try {
+    const { email, phone } = req.body;
+    const result = await authService.checkUser({ email, phone });
+    sendSuccess(res, result, 'User check completed');
+  } catch (err) {
+    next(err);
+  }
+};
+
+module.exports = { register, login, refresh, logout, checkUser };

@@ -14,7 +14,7 @@ CREATE TABLE IF NOT EXISTS users (
   id VARCHAR(36) PRIMARY KEY DEFAULT (UUID()),
   full_name VARCHAR(100) NOT NULL,
   email VARCHAR(100) NOT NULL UNIQUE,
-  phone VARCHAR(15) NOT NULL UNIQUE,
+  phone VARCHAR(15) NOT NULL,
   password_hash VARCHAR(255) NOT NULL,
   avatar_id INT DEFAULT 1 COMMENT 'Anime avatar selection 1-9',
   role ENUM('user', 'admin') DEFAULT 'user',

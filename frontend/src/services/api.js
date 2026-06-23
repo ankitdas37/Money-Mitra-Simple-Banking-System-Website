@@ -51,6 +51,7 @@ export const authAPI = {
   login: (data) => api.post('/auth/login', data),
   logout: () => api.post('/auth/logout'),
   refresh: (token) => api.post('/auth/refresh', { refreshToken: token }),
+  checkUser: (data) => api.post('/auth/check-user', data),
 };
 
 // ── User ──────────────────────────────────────────────────────

@@ -47,10 +47,10 @@ const register = async (userData) => {
   // Normalise date_of_birth → strip any ISO timestamp to plain YYYY-MM-DD
   const dob = date_of_birth ? date_of_birth.toString().slice(0, 10) : null;
 
-  // Check existing user
-  const [existing] = await db.query('SELECT id FROM users WHERE email = ? OR phone = ?', [email, phone]);
+  // Check existing user (only email must be unique)
+  const [existing] = await db.query('SELECT id FROM users WHERE email = ?', [email]);
   if (existing.length > 0) {
-    throw { status: 409, message: 'Email or phone already registered' };
+    throw { status: 409, message: 'Email already registered' };
   }
 
   const password_hash = await bcrypt.hash(password, 12);
@@ -216,10 +216,41 @@ const refreshAccessToken = async (refreshToken) => {
 };
 
 /**
+ * Check if user exists by email or phone
+ */
+const checkUser = async ({ email, phone }) => {
+  let result = { emailExists: false, emailUser: null, phoneExists: false, phoneUsers: [] };
+  
+  if (email) {
+    const [rows] = await db.query(
+      'SELECT u.full_name, a.account_number FROM users u LEFT JOIN accounts a ON u.id = a.user_id WHERE u.email = ? LIMIT 1',
+      [email]
+    );
+    if (rows.length > 0) {
+      result.emailExists = true;
+      result.emailUser = rows[0];
+    }
+  }
+
+  if (phone) {
+    const [rows] = await db.query(
+      'SELECT u.full_name, a.account_number FROM users u LEFT JOIN accounts a ON u.id = a.user_id WHERE u.phone = ?',
+      [phone]
+    );
+    if (rows.length > 0) {
+      result.phoneExists = true;
+      result.phoneUsers = rows;
+    }
+  }
+
+  return result;
+};
+
+/**
  * Logout — revoke refresh tokens
  */
 const logout = async (userId) => {
   await db.query('UPDATE refresh_tokens SET is_revoked = TRUE WHERE user_id = ?', [userId]);
 };
 
-module.exports = { register, login, refreshAccessToken, logout };
+module.exports = { register, login, refreshAccessToken, logout, checkUser };

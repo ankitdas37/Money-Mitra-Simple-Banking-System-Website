@@ -81,6 +81,8 @@ export default function Register() {
   const [showPw, setShowPw] = useState(false);
   const [showConfirmPw, setShowConfirmPw] = useState(false);
   const [termsAccepted, setTermsAccepted] = useState(false);
+  const [phoneDetails, setPhoneDetails] = useState(null);
+  const [emailError, setEmailError] = useState(null);
 
   const [form, setForm] = useState({
     full_name: '', date_of_birth: '', gender: '',
@@ -105,6 +107,36 @@ export default function Register() {
       setUsePhoto(true);
     };
     reader.readAsDataURL(file);
+  };
+
+  const handlePhoneBlur = async () => {
+    if (form.phone.length === 10) {
+      try {
+        const res = await authAPI.checkUser({ phone: form.phone });
+        if (res.data.data.phoneExists) {
+          setPhoneDetails(res.data.data.phoneUsers);
+        } else {
+          setPhoneDetails(null);
+        }
+      } catch (e) {
+        console.error(e);
+      }
+    }
+  };
+
+  const handleEmailBlur = async () => {
+    if (form.email.includes('@')) {
+      try {
+        const res = await authAPI.checkUser({ email: form.email });
+        if (res.data.data.emailExists) {
+          setEmailError(`Email already registered to ${res.data.data.emailUser.full_name} (Account: ${res.data.data.emailUser.account_number})`);
+        } else {
+          setEmailError(null);
+        }
+      } catch (e) {
+        console.error(e);
+      }
+    }
   };
 
   const handleSubmit = async () => {
@@ -161,6 +193,7 @@ export default function Register() {
       if (!form.residential_address.trim()) { toast.error('Residential address is required'); return; }
       if (!/^[6-9]\d{9}$/.test(form.phone)) { toast.error('Enter valid 10-digit mobile number'); return; }
       if (!form.email.includes('@')) { toast.error('Enter valid email address'); return; }
+      if (emailError) { toast.error('Email is already registered. Please use another email.'); return; }
     }
     setStep(s => s + 1);
   };
@@ -347,14 +380,24 @@ export default function Register() {
                 <label style={labelS}>Phone Number (10 digits) *</label>
                 <div style={{ position: 'relative' }}>
                   <span style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)', fontSize: 13, fontWeight: 700 }}>+91</span>
-                  <input style={{ ...inputS, paddingLeft: 44 }} type="tel" placeholder="9876543210" maxLength={10} value={form.phone} onChange={e => set('phone', e.target.value.replace(/\D/g, '').slice(0, 10))} required />
+                  <input style={{ ...inputS, paddingLeft: 44 }} type="tel" placeholder="9876543210" maxLength={10} value={form.phone} onChange={e => { set('phone', e.target.value.replace(/\D/g, '').slice(0, 10)); setPhoneDetails(null); }} onBlur={handlePhoneBlur} required />
                 </div>
                 {form.phone && !/^[6-9]\d{9}$/.test(form.phone) && <div style={{ fontSize: 11, color: '#FF5757', marginTop: 4 }}>⚠️ Enter valid 10-digit mobile number starting with 6-9</div>}
+                {phoneDetails && phoneDetails.length > 0 && (
+                  <div style={{ fontSize: 11, color: '#FFB84C', marginTop: 8, background: 'rgba(255, 184, 76, 0.1)', padding: '8px 12px', borderRadius: 8, border: '1px solid rgba(255, 184, 76, 0.2)' }}>
+                    <strong style={{ color: '#FFB84C' }}>ℹ️ This phone number is already registered to:</strong>
+                    <div style={{ marginTop: 4, marginBottom: 4 }}>
+                      {phoneDetails.map((u, i) => <div key={i} style={{ color: 'white', fontWeight: 600 }}>• {u.full_name} (Acc: {u.account_number})</div>)}
+                    </div>
+                    <div style={{ color: 'rgba(255,255,255,0.7)' }}>You can still proceed to create another account.</div>
+                  </div>
+                )}
               </div>
 
               <div style={{ marginBottom: 14 }}>
                 <label style={labelS}>Email Address *</label>
-                <input style={inputS} type="email" placeholder="rahul@example.com" value={form.email} onChange={e => set('email', e.target.value)} required />
+                <input style={inputS} type="email" placeholder="rahul@example.com" value={form.email} onChange={e => { set('email', e.target.value); setEmailError(null); }} onBlur={handleEmailBlur} required />
+                {emailError && <div style={{ fontSize: 11, color: '#FF5757', marginTop: 8, background: 'rgba(255, 87, 87, 0.1)', padding: '8px 12px', borderRadius: 8, border: '1px solid rgba(255, 87, 87, 0.2)' }}>⚠️ {emailError}</div>}
               </div>
 
               <div style={{ marginBottom: 6 }}>
