@@ -20,6 +20,25 @@ import HelpSupport from './pages/HelpSupport';
 // Components
 import Sidebar from './components/Sidebar';
 
+// Strict 10-minute session auto-logout
+const StrictAutoLogout = () => {
+  const { isAuthenticated, logout } = useAuthStore();
+
+  useEffect(() => {
+    if (!isAuthenticated) return;
+
+    // Set timer for 10 minutes
+    const timer = setTimeout(() => {
+      logout();
+      toast.error('Session expired after 10 minutes for security reasons. Please log in again.', { duration: 6000 });
+    }, 10 * 60 * 1000);
+
+    return () => clearTimeout(timer);
+  }, [isAuthenticated, logout]);
+
+  return null;
+};
+
 // Protected Route wrapper
 const ProtectedRoute = ({ children, adminOnly = false }) => {
   const { isAuthenticated, user } = useAuthStore();
@@ -87,6 +106,8 @@ export default function App() {
           error:   { iconTheme: { primary: '#FF5757', secondary: '#1a1a3e' } },
         }}
       />
+
+      <StrictAutoLogout />
 
       <Routes>
         {/* Public routes */}

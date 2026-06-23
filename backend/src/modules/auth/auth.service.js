@@ -172,8 +172,8 @@ const login = async ({ email, password }) => {
     full_name: user.full_name
   };
 
-  const accessToken = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: process.env.JWT_EXPIRY || '15m' });
-  const refreshToken = jwt.sign(payload, process.env.JWT_REFRESH_SECRET, { expiresIn: process.env.JWT_REFRESH_EXPIRY || '7d' });
+  const accessToken = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: process.env.JWT_EXPIRY || '10m' });
+  const refreshToken = jwt.sign(payload, process.env.JWT_REFRESH_SECRET, { expiresIn: process.env.JWT_REFRESH_EXPIRY || '10m' });
 
   // Store refresh token hash
   const tokenHash = await bcrypt.hash(refreshToken, 8);
@@ -214,7 +214,7 @@ const refreshAccessToken = async (refreshToken) => {
     }
 
     const payload = { id: decoded.id, email: decoded.email, role: decoded.role, full_name: decoded.full_name };
-    const newAccessToken = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '15m' });
+    const newAccessToken = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: process.env.JWT_EXPIRY || '10m' });
     return { accessToken: newAccessToken };
   } catch (err) {
     throw { status: 401, message: 'Invalid refresh token' };
