@@ -3,6 +3,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import { authAPI } from '../services/api';
 import toast from 'react-hot-toast';
 import { AVATARS } from '../utils/helpers';
+import { useAuthStore } from '../store';
 
 const COUNTRIES = [
   'Afghan', 'Albanian', 'Algerian', 'Andorran', 'Angolan', 'Argentine', 'Armenian', 'Australian',
@@ -72,6 +73,7 @@ const labelS = {
 export default function Register() {
   const navigate = useNavigate();
   const fileRef = useRef();
+  const { setAuth } = useAuthStore();
   const [step, setStep] = useState(0);
   const [loading, setLoading] = useState(false);
   const [photoPreview, setPhotoPreview] = useState(null);
@@ -163,9 +165,8 @@ export default function Register() {
         password: payload.password,
       });
 
-      const { access_token, user } = loginRes.data.data;
-      localStorage.setItem('token', access_token);
-      localStorage.setItem('user', JSON.stringify(user));
+      const { user, accessToken, refreshToken } = loginRes.data.data;
+      setAuth(user, accessToken, refreshToken);
 
       toast.success(`Welcome, ${user.full_name}! 🚀`);
       navigate('/dashboard');
