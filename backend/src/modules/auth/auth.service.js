@@ -124,7 +124,13 @@ const register = async (userData) => {
       if (err.message.includes('account_number')) {
         throw { status: 409, message: 'Account number collision. Please try again.' };
       }
-      throw { status: 409, message: 'A resource with this information already exists.' };
+      if (err.message.includes('email')) {
+        throw { status: 409, message: 'Email already registered.' };
+      }
+      if (err.message.includes('phone')) {
+        throw { status: 409, message: 'Phone number already registered.' };
+      }
+      throw { status: 409, message: `Duplicate entry error: ${err.message}` };
     }
     throw err;
   }
