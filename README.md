@@ -41,8 +41,12 @@
 ---
 
 ## 🚀 Features (suggested)
-- User authentication & authorization  
-- Account management  
+- User authentication & authorization (JWT based)
+- Strict 10-minute automatic session timeout for security
+- Support for multiple accounts per phone number
+- Smart duplicate entry detection (shows existing account details)
+- Automatic login upon registration
+- Account & Balance management  
 - Transaction tracking  
 - Secure API integration  
 - Responsive UI  
