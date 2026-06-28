@@ -260,6 +260,11 @@ export default function Login() {
 
         <div style={{ width: '100%', maxWidth: 400, position: 'relative' }}>
 
+          {/* Demo Banner */}
+          <div style={{ background:'#fff3cd', border:'1px solid #ffc107', padding:'12px', textAlign:'center', fontWeight:'bold', color:'#856404', marginBottom:'20px', borderRadius:'8px', fontSize:'13px' }}>
+            ⚠️ Demo Project — Not a Real Bank. This is a coding portfolio project. Do not enter real card or personal details.
+          </div>
+
           {/* Back to Home */}
           <a href="/home.html"
             style={{ display:'inline-flex', alignItems:'center', gap:6, fontSize:13, color:'rgba(255,255,255,0.45)', textDecoration:'none', marginBottom:24, transition:'color 0.2s', fontWeight:500 }}
