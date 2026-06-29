@@ -37,6 +37,12 @@ export default function Sidebar() {
   const { unreadCount, setNotifications } = useNotificationStore();
   const [showNotifications, setShowNotifications] = useState(false);
   const [notifications, setLocalNotifications] = useState([]);
+  const [isMobileOpen, setIsMobileOpen] = useState(false);
+
+  // Close mobile menu on route change
+  useEffect(() => {
+    setIsMobileOpen(false);
+  }, [location.pathname, location.search]);
 
   useEffect(() => {
     // Poll notifications every 30s
@@ -78,104 +84,155 @@ export default function Sidebar() {
   const isAdmin = user?.role === 'admin';
   const avatarEmoji = AVATARS[(user?.avatar_id || 1) - 1] || '🦊';
 
-  return (
-    <aside className="sidebar">
-      {/* Logo */}
-      <div className="sidebar-logo" style={{ padding: '16px 16px 12px', borderBottom: '1px solid var(--border)' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-          <img
-            src="/logo.png"
-            alt="Money Mitra Logo"
-            style={{
-              width: 52, height: 52, borderRadius: 12, objectFit: 'cover',
-              boxShadow: '0 4px 16px rgba(108,99,255,0.3)',
-              border: '2px solid rgba(108,99,255,0.3)',
-              flexShrink: 0,
-            }}
-          />
-          <div>
-            <div style={{ fontWeight: 800, fontSize: 17, letterSpacing: '-0.5px', lineHeight: 1.2 }}>
-              <span className="text-gradient">Money</span>
-              <span style={{ color: 'var(--text-primary)' }}> Mitra</span>
+  const renderNotificationDropdown = (isMobile) => {
+    if (!showNotifications) return null;
+    return (
+      <div style={{
+        position: 'absolute',
+        left: isMobile ? 'auto' : 16,
+        right: isMobile ? 0 : 16,
+        top: isMobile ? 40 : 75,
+        width: isMobile ? 300 : 'auto',
+        maxWidth: 'calc(100vw - 32px)',
+        background: '#13132a', border: '1px solid var(--border)',
+        borderRadius: 12, maxHeight: 340, display: 'flex', flexDirection: 'column', zIndex: 999,
+        boxShadow: '0 10px 40px rgba(0,0,0,0.5)'
+      }}>
+        <div style={{ padding: '10px 14px', borderBottom: '1px solid var(--border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexShrink: 0 }}>
+          <span style={{ fontWeight: 700, fontSize: 13 }}>🔔 Notifications</span>
+          <button onClick={() => setShowNotifications(false)} style={{ background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer', fontSize: 18, lineHeight: 1 }}>×</button>
+        </div>
+        <div style={{ overflowY: 'auto', flex: 1 }}>
+          {notifications.length === 0 ? (
+            <div style={{ padding: '24px 16px', textAlign: 'center', color: 'var(--text-muted)', fontSize: 13 }}>
+              <div style={{ fontSize: 28, marginBottom: 6 }}>🎉</div>No notifications
             </div>
-            <div style={{ fontSize: 9.5, color: 'var(--text-muted)', letterSpacing: '2px', textTransform: 'uppercase', marginTop: 1 }}>
-              {isAdmin ? 'Admin Console' : 'Digital Bank'}
+          ) : notifications.slice(0, 8).map(n => (
+            <div key={n.id} style={{
+              padding: '11px 14px', borderBottom: '1px solid rgba(255,255,255,0.04)',
+              background: n.is_read ? 'transparent' : 'rgba(108,99,255,0.06)'
+            }}>
+              <div style={{ fontSize: 12, fontWeight: 600, marginBottom: 2 }}>{n.title}</div>
+              <div style={{ fontSize: 11, color: 'var(--text-muted)', lineHeight: 1.4 }}>{n.body}</div>
             </div>
+          ))}
+        </div>
+        {notifications.length > 0 && (
+          <div style={{ padding: '8px 10px', borderTop: '1px solid var(--border)', display: 'flex', gap: 6, flexShrink: 0 }}>
+            <button onClick={handleMarkAllRead} style={{ flex: 1, background: 'rgba(108,99,255,0.12)', border: '1px solid rgba(108,99,255,0.25)', borderRadius: 8, padding: '7px 4px', color: 'var(--primary-light)', fontSize: 11, fontWeight: 600, cursor: 'pointer', fontFamily: 'Outfit, sans-serif' }}>✅ Mark All Read</button>
+            <button onClick={handleClearAll} style={{ flex: 1, background: 'rgba(255,87,87,0.1)', border: '1px solid rgba(255,87,87,0.25)', borderRadius: 8, padding: '7px 4px', color: '#FF5757', fontSize: 11, fontWeight: 600, cursor: 'pointer', fontFamily: 'Outfit, sans-serif' }}>🗑️ Clear All</button>
           </div>
+        )}
+      </div>
+    );
+  };
+
+  return (
+    <>
+      {/* ── Mobile Top Bar ── */}
+      <div className="mobile-top-bar">
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+          <img src="/logo.png" alt="Logo" style={{ width: 32, height: 32, borderRadius: 8, objectFit: 'cover' }} />
+          <div style={{ fontWeight: 800, fontSize: 16, letterSpacing: '-0.5px' }}>
+            <span className="text-gradient">Money</span> <span style={{ color: 'var(--text-primary)' }}>Mitra</span>
+          </div>
+        </div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
+          <div style={{ position: 'relative' }}>
+            <button onClick={() => setShowNotifications(!showNotifications)} style={{ background: 'none', border: 'none', position: 'relative', fontSize: 20 }}>
+              🔔
+              {unreadCount > 0 && <span style={{ position: 'absolute', top: -4, right: -4, background: 'var(--accent)', color: 'white', borderRadius: 999, fontSize: 10, fontWeight: 700, padding: '1px 5px', minWidth: 16, textAlign: 'center' }}>{unreadCount > 9 ? '9+' : unreadCount}</span>}
+            </button>
+            {renderNotificationDropdown(true)}
+          </div>
+          {!isAdmin && (
+            <button onClick={() => setIsMobileOpen(true)} style={{ background: 'none', border: 'none', fontSize: 24, color: 'white' }}>
+              <i className="fa-solid fa-bars"></i>
+            </button>
+          )}
+          {isAdmin && (
+            <button onClick={() => setIsMobileOpen(true)} style={{ background: 'none', border: 'none', fontSize: 24, color: 'white' }}>
+              ☰
+            </button>
+          )}
         </div>
       </div>
 
-      {/* User Quick Info */}
-      <div style={{ padding: '0 16px 16px', borderBottom: '1px solid var(--border)' }}>
-        <div style={{
-          background: isAdmin ? 'rgba(108,99,255,0.08)' : 'var(--bg-card)',
-          border: isAdmin ? '1px solid rgba(108,99,255,0.35)' : '1px solid var(--border)',
-          borderRadius: 12, padding: '12px',
-          display: 'flex', alignItems: 'center', gap: 10, cursor: 'pointer'
-        }} onClick={() => navigate(isAdmin ? '/admin' : '/profile')}>
-          <div className="avatar" style={{ width: 36, height: 36, fontSize: 18 }}>
-            {isAdmin ? '👑' : avatarEmoji}
-          </div>
-          <div style={{ flex: 1, minWidth: 0 }}>
-            <div style={{ fontSize: 13, fontWeight: 600, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-              {user?.full_name}
-            </div>
-            <div style={{ fontSize: 11, color: isAdmin ? 'rgba(108,99,255,0.9)' : 'var(--text-muted)', fontWeight: isAdmin ? 700 : 400 }}>
-              {isAdmin ? '⚙️ Administrator' : user?.kyc_status === 'verified' ? '✅ Verified' : '⏳ KYC Pending'}
-            </div>
-          </div>
-          {/* Notification Bell */}
-          <button
-            onClick={(e) => { e.stopPropagation(); setShowNotifications(!showNotifications); }}
-            style={{ background: 'none', border: 'none', cursor: 'pointer', position: 'relative', padding: 4 }}
-          >
-            <span style={{ fontSize: 18 }}>🔔</span>
-            {unreadCount > 0 && (
-              <span style={{
-                position: 'absolute', top: -2, right: -2,
-                background: 'var(--accent)', color: 'white',
-                borderRadius: 999, fontSize: 10, fontWeight: 700,
-                padding: '1px 5px', minWidth: 16, textAlign: 'center'
-              }}>{unreadCount > 9 ? '9+' : unreadCount}</span>
-            )}
+      {/* ── Mobile Overlay ── */}
+      {isMobileOpen && (
+        <div className="mobile-overlay" onClick={() => setIsMobileOpen(false)} />
+      )}
+
+      {/* ── Mobile Bottom Nav (User Only) ── */}
+      {!isAdmin && (
+        <nav className="mobile-bottom-nav">
+          {userNavItems.slice(0, 4).map(item => (
+            <button key={item.path} className={`mob-nav-item ${location.pathname === item.path ? 'active' : ''}`} onClick={() => navigate(item.path)}>
+              <span style={{ fontSize: 24, marginBottom: 4 }}>{item.icon}</span>
+              <span style={{ fontSize: 12, fontWeight: location.pathname === item.path ? 700 : 500 }}>{item.label.split(' ')[0]}</span>
+            </button>
+          ))}
+          <button className="mob-nav-item" onClick={() => setIsMobileOpen(true)}>
+            <span style={{ fontSize: 24, marginBottom: 4 }}>☰</span>
+            <span style={{ fontSize: 12, fontWeight: 500 }}>Menu</span>
           </button>
+        </nav>
+      )}
+
+      {/* ── Desktop/Overlay Sidebar ── */}
+      <aside className={`sidebar ${isMobileOpen ? 'open' : ''}`}>
+        {/* Logo */}
+        <div className="sidebar-logo" style={{ padding: '16px 16px 12px', borderBottom: '1px solid var(--border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+            <img
+              src="/logo.png"
+              alt="Money Mitra Logo"
+              style={{
+                width: 52, height: 52, borderRadius: 12, objectFit: 'cover',
+                boxShadow: '0 4px 16px rgba(108,99,255,0.3)',
+                border: '2px solid rgba(108,99,255,0.3)',
+                flexShrink: 0,
+              }}
+            />
+            <div>
+              <div style={{ fontWeight: 800, fontSize: 17, letterSpacing: '-0.5px', lineHeight: 1.2 }}>
+                <span className="text-gradient">Money</span>
+                <span style={{ color: 'var(--text-primary)' }}> Mitra</span>
+              </div>
+              <div style={{ fontSize: 9.5, color: 'var(--text-muted)', letterSpacing: '2px', textTransform: 'uppercase', marginTop: 1 }}>
+                {isAdmin ? 'Admin Console' : 'Digital Bank'}
+              </div>
+            </div>
+          </div>
+          {/* Mobile close button inside sidebar */}
+          <button className="mobile-only-close" onClick={() => setIsMobileOpen(false)} style={{ display: 'none', background: 'none', border: 'none', color: 'var(--text-muted)', fontSize: 24 }}>✕</button>
         </div>
 
-        {/* Notification Dropdown */}
-        {showNotifications && (
+        {/* User Quick Info */}
+        <div style={{ padding: '0 16px 16px', borderBottom: '1px solid var(--border)', position: 'relative' }}>
           <div style={{
-            position: 'absolute', left: 16, right: 16, top: 130,
-            background: '#13132a', border: '1px solid var(--border)',
-            borderRadius: 12, maxHeight: 340, display: 'flex', flexDirection: 'column', zIndex: 200,
-            boxShadow: 'var(--shadow-card)'
-          }}>
-            <div style={{ padding: '10px 14px', borderBottom: '1px solid var(--border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexShrink: 0 }}>
-              <span style={{ fontWeight: 700, fontSize: 13 }}>🔔 Notifications</span>
-              <button onClick={() => setShowNotifications(false)} style={{ background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer', fontSize: 18, lineHeight: 1 }}>×</button>
+            background: isAdmin ? 'rgba(108,99,255,0.08)' : 'var(--bg-card)',
+            border: isAdmin ? '1px solid rgba(108,99,255,0.35)' : '1px solid var(--border)',
+            borderRadius: 12, padding: '12px',
+            display: 'flex', alignItems: 'center', gap: 10, cursor: 'pointer', marginTop: 16
+          }} onClick={() => navigate(isAdmin ? '/admin' : '/profile')}>
+            <div className="avatar" style={{ width: 36, height: 36, fontSize: 18 }}>
+              {isAdmin ? '👑' : avatarEmoji}
             </div>
-            <div style={{ overflowY: 'auto', flex: 1 }}>
-              {notifications.length === 0 ? (
-                <div style={{ padding: '24px 16px', textAlign: 'center', color: 'var(--text-muted)', fontSize: 13 }}>
-                  <div style={{ fontSize: 28, marginBottom: 6 }}>🎉</div>No notifications
-                </div>
-              ) : notifications.slice(0, 8).map(n => (
-                <div key={n.id} style={{
-                  padding: '11px 14px', borderBottom: '1px solid rgba(255,255,255,0.04)',
-                  background: n.is_read ? 'transparent' : 'rgba(108,99,255,0.06)'
-                }}>
-                  <div style={{ fontSize: 12, fontWeight: 600, marginBottom: 2 }}>{n.title}</div>
-                  <div style={{ fontSize: 11, color: 'var(--text-muted)', lineHeight: 1.4 }}>{n.body}</div>
-                </div>
-              ))}
-            </div>
-            {notifications.length > 0 && (
-              <div style={{ padding: '8px 10px', borderTop: '1px solid var(--border)', display: 'flex', gap: 6, flexShrink: 0 }}>
-                <button onClick={handleMarkAllRead} style={{ flex: 1, background: 'rgba(108,99,255,0.12)', border: '1px solid rgba(108,99,255,0.25)', borderRadius: 8, padding: '7px 4px', color: 'var(--primary-light)', fontSize: 11, fontWeight: 600, cursor: 'pointer', fontFamily: 'Outfit, sans-serif' }}>✅ Mark All Read</button>
-                <button onClick={handleClearAll} style={{ flex: 1, background: 'rgba(255,87,87,0.1)', border: '1px solid rgba(255,87,87,0.25)', borderRadius: 8, padding: '7px 4px', color: '#FF5757', fontSize: 11, fontWeight: 600, cursor: 'pointer', fontFamily: 'Outfit, sans-serif' }}>🗑️ Clear All</button>
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <div style={{ fontSize: 13, fontWeight: 600, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                {user?.full_name}
               </div>
-            )}
+              <div style={{ fontSize: 11, color: isAdmin ? 'rgba(108,99,255,0.9)' : 'var(--text-muted)', fontWeight: isAdmin ? 700 : 400 }}>
+                {isAdmin ? '⚙️ Administrator' : user?.kyc_status === 'verified' ? '✅ Verified' : '⏳ KYC Pending'}
+              </div>
+            </div>
           </div>
-        )}
+
+          {/* Notification Dropdown (Desktop) */}
+          <div className="hide-on-mobile">
+            {renderNotificationDropdown(false)}
+          </div>
       </div>
 
       {/* Navigation */}
@@ -252,5 +309,6 @@ export default function Sidebar() {
         </div>
       </div>
     </aside>
+    </>
   );
 }

@@ -170,7 +170,7 @@ export default function Transfer() {
       {activeTab === 'transfer' && (
         <>
           {/* From Account Cards */}
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: 24 }}>
+          <div className="grid-responsive-2" style={{ marginBottom: 24 }}>
             {accounts.map(acc => (
               <button key={acc.id} className="acc-card" onClick={() => setForm(f => ({ ...f, from_account_id: acc.id }))} style={{
                 background: form.from_account_id === acc.id ? 'rgba(108,99,255,0.12)' : 'var(--bg-card)',
@@ -377,7 +377,7 @@ export default function Transfer() {
                 </div>
               </div>
 
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+              <div className="grid-responsive-2">
                 <div>
                   <label style={{ display: 'block', fontSize: 13, fontWeight: 600, color: 'var(--text-secondary)', marginBottom: 8 }}>Category</label>
                   <select className="input-field" value={form.category} onChange={e => setForm({ ...form, category: e.target.value })}
@@ -423,7 +423,7 @@ export default function Transfer() {
                     <div style={{ fontSize: 12, color: 'var(--text-muted)' }}>Your money has been sent</div>
                   </div>
                 </div>
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
+                <div className="grid-responsive-2">
                   {[
                     ['Amount Sent', formatINR(result.amount)],
                     ['New Balance', formatINR(result.new_balance)],
@@ -550,7 +550,7 @@ export default function Transfer() {
                   value={benForm.nickname} onChange={e => setBenForm({ ...benForm, nickname: e.target.value })}
                   required maxLength={60} />
               </div>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+              <div className="grid-responsive-2">
                 <div>
                   <label style={{ display: 'block', fontSize: 13, fontWeight: 600, color: 'var(--text-secondary)', marginBottom: 8 }}>Bank Name</label>
                   <input type="text" className="input-field" placeholder="Money Mitra Bank"

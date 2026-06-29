@@ -197,7 +197,7 @@ export default function Login() {
   };
 
   return (
-    <div style={{ minHeight: '100vh', display: 'flex', fontFamily: 'Outfit, sans-serif', background: 'var(--bg-base)', overflowX: 'hidden' }}>
+    <div style={{ minHeight: '100vh', display: 'flex', fontFamily: 'Outfit, sans-serif', background: 'var(--bg-base)', overflow: 'hidden' }}>
       <style>{`
         @keyframes floatBadge { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-6px)} }
         @keyframes fadeInDown { from{opacity:0;transform:translateY(-10px)} to{opacity:1;transform:translateY(0)} }
@@ -205,28 +205,11 @@ export default function Login() {
         .shake { animation: shake 0.4s ease; }
         .err-field { border-color: #FF5757 !important; box-shadow: 0 0 0 3px rgba(255,87,87,0.15) !important; }
         .ok-field  { border-color: rgba(108,99,255,0.5) !important; }
-        .remember-check { accent-color: var(--primary); cursor:pointer; }
-        .login-left-panel { flex: 0 0 42%; position: relative; overflow: hidden; display: flex; flex-direction: column; justify-content: flex-end; }
-        .login-right-panel { flex: 1; display: flex; align-items: center; justify-content: center; padding: 40px 48px; position: relative; overflow-y: auto; }
-        .login-form-inner { width: 100%; max-width: 400px; position: relative; }
-        .login-mobile-header { display: none; }
-        @media (max-width: 768px) {
-          .login-left-panel { display: none !important; }
-          .login-right-panel { padding: 0; align-items: flex-start; overflow-y: auto; min-height: 100vh; }
-          .login-form-inner { max-width: 100%; padding: 20px 20px 40px; }
-          .login-mobile-header { display: flex; align-items: center; gap: 10px; margin-bottom: 18px; }
-        }
-        @media (max-width: 480px) {
-          .login-form-inner { padding: 16px 16px 40px; }
-        }
-        @media (hover: none) and (pointer: coarse) {
-          .input-field { font-size: 16px !important; min-height: 48px; }
-          .btn-primary, .btn-secondary { min-height: 48px; }
-        }
+        .remember-check { accent-color: var(--primary); width:16px; height:16px; cursor:pointer; }
       `}</style>
 
-      {/* ── Left: Anime Background Panel (desktop only) ── */}
-      <div className="login-left-panel">
+      {/* ── Left: Anime Background Panel ── */}
+      <div style={{ flex: '0 0 42%', position: 'relative', overflow: 'hidden', display: 'flex', flexDirection: 'column', justifyContent: 'flex-end' }}>
         <img src="/anime-login-bg.png" alt="Secure Login" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center top' }} />
         <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to bottom, rgba(10,8,30,0.15) 0%, rgba(10,8,30,0.3) 50%, rgba(10,8,30,0.92) 100%)' }} />
         <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to right, transparent 60%, var(--bg-base) 100%)' }} />
@@ -271,20 +254,11 @@ export default function Login() {
       </div>
 
       {/* ── Right: Login Form ── */}
-      <div className="login-right-panel">
+      <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '40px 48px', position: 'relative' }}>
         <div style={{ position: 'absolute', top: '15%', right: '10%', width: 280, height: 280, background: 'radial-gradient(circle, rgba(108,99,255,0.07) 0%, transparent 70%)', pointerEvents: 'none' }} />
         <div style={{ position: 'absolute', bottom: '20%', left: '5%', width: 200, height: 200, background: 'radial-gradient(circle, rgba(0,229,160,0.05) 0%, transparent 70%)', pointerEvents: 'none' }} />
 
-        <div className="login-form-inner">
-
-          {/* Mobile branding header — visible only on mobile */}
-          <div className="login-mobile-header">
-            <img src="/logo.png" alt="Money Mitra" style={{ width: 38, height: 38, borderRadius: 10, objectFit: 'cover', border: '2px solid rgba(108,99,255,0.4)' }} />
-            <div>
-              <div style={{ fontSize: 17, fontWeight: 800 }}><span className="text-gradient">Money Mitra</span></div>
-              <div style={{ fontSize: 11, color: 'var(--text-muted)' }}>Digital Banking Platform</div>
-            </div>
-          </div>
+        <div style={{ width: '100%', maxWidth: 400, position: 'relative' }}>
 
           {/* Demo Banner */}
           <div style={{ background:'#fff3cd', border:'1px solid #ffc107', padding:'12px', textAlign:'center', fontWeight:'bold', color:'#856404', marginBottom:'20px', borderRadius:'8px', fontSize:'13px' }}>
@@ -300,17 +274,17 @@ export default function Login() {
           </a>
 
           {/* Header */}
-          <div style={{ marginBottom: 28 }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 14 }}>
+          <div style={{ marginBottom: 36 }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 16 }}>
               <img src="/logo.png" alt="Money Mitra" style={{ width: 44, height: 44, borderRadius: 13, objectFit: 'cover', boxShadow: 'var(--shadow-neon)', border: '2px solid rgba(108,99,255,0.4)' }} />
               <span style={{ fontSize: 20, fontWeight: 800 }}><span className="text-gradient">Money Mitra</span></span>
             </div>
-            <h1 style={{ fontSize: 'clamp(22px, 6vw, 28px)', fontWeight: 900, margin: '0 0 6px', lineHeight: 1.2 }}>Welcome Back 👋</h1>
+            <h1 style={{ fontSize: 28, fontWeight: 900, margin: '0 0 6px', lineHeight: 1.2 }}>Welcome Back 👋</h1>
             <p style={{ fontSize: 13, color: 'var(--text-muted)', margin: 0 }}>Sign in to access your digital bank vault</p>
           </div>
 
           {/* Form Card */}
-          <div className="glass-card" style={{ padding: 'clamp(16px, 4vw, 28px)' }}>
+          <div className="glass-card" style={{ padding: 28 }}>
             <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 18 }}>
 
               {/* Email / Username */}
@@ -325,9 +299,7 @@ export default function Login() {
                   value={form.email}
                   onChange={e => { setForm({ ...form, email: e.target.value }); setErrorField(null); }}
                   required
-                  style={{ fontSize: 14, width: '100%' }}
-                  autoComplete="email"
-                  inputMode="email"
+                  style={{ fontSize: 14 }}
                 />
                 {errorField === 'email' && (
                   <div style={{ fontSize: 12, color: '#FF5757', marginTop: 5, display: 'flex', alignItems: 'center', gap: 5 }}>
@@ -338,16 +310,14 @@ export default function Login() {
 
               {/* Password */}
               <div>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 7, flexWrap: 'wrap', gap: 4 }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 7 }}>
                   <label style={{ fontSize: 11, fontWeight: 700, color: errorField === 'password' ? '#FFB84C' : 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: 0.8 }}>
                     Password {errorField === 'password' && <span style={{ fontSize: 10, textTransform: 'none', letterSpacing: 0 }}>— incorrect</span>}
                   </label>
                   <button type="button" onClick={() => setShowForgot(true)} style={{
                     background: 'none', border: 'none', cursor: 'pointer',
                     fontSize: 12, color: 'var(--primary-light)', fontFamily: 'Outfit, sans-serif',
-                    fontWeight: 600, textDecoration: 'underline', padding: 0,
-                    minHeight: 32, display: 'flex', alignItems: 'center',
-                    WebkitTapHighlightColor: 'transparent',
+                    fontWeight: 600, textDecoration: 'underline', padding: 0
                   }}>Forgot Password?</button>
                 </div>
                 <div style={{ position: 'relative' }}>
@@ -359,15 +329,11 @@ export default function Login() {
                     value={form.password}
                     onChange={e => { setForm({ ...form, password: e.target.value }); setErrorField(null); }}
                     required
-                    style={{ paddingRight: 52, fontSize: 14, width: '100%' }}
-                    autoComplete="current-password"
+                    style={{ paddingRight: 48, fontSize: 14 }}
                   />
                   <button type="button" onClick={() => setShowPassword(!showPassword)} style={{
                     position: 'absolute', right: 14, top: '50%', transform: 'translateY(-50%)',
-                    background: 'none', border: 'none', cursor: 'pointer', fontSize: 18,
-                    color: 'var(--text-muted)', minWidth: 32, minHeight: 32,
-                    display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    WebkitTapHighlightColor: 'transparent',
+                    background: 'none', border: 'none', cursor: 'pointer', fontSize: 16, color: 'var(--text-muted)'
                   }}>{showPassword ? '🙈' : '👁️'}</button>
                 </div>
                 {errorField === 'password' && (
@@ -380,20 +346,19 @@ export default function Login() {
               </div>
 
               {/* Remember Me */}
-              <label style={{ display: 'flex', alignItems: 'center', gap: 10, cursor: 'pointer', userSelect: 'none', minHeight: 36 }}>
+              <label style={{ display: 'flex', alignItems: 'center', gap: 10, cursor: 'pointer', userSelect: 'none' }}>
                 <input
                   type="checkbox"
                   className="remember-check"
                   checked={rememberMe}
                   onChange={e => setRememberMe(e.target.checked)}
-                  style={{ width: 18, height: 18, flexShrink: 0 }}
                 />
                 <span style={{ fontSize: 13, color: 'var(--text-secondary)', fontWeight: 500 }}>
                   Remember my email on this device
                 </span>
               </label>
 
-              <button type="submit" className="btn-primary" disabled={loading} style={{ padding: '14px', fontSize: 15, fontWeight: 800, marginTop: 4, minHeight: 50, width: '100%' }}>
+              <button type="submit" className="btn-primary" disabled={loading} style={{ padding: '13px', fontSize: 15, fontWeight: 800, marginTop: 4 }}>
                 {loading ? (
                   <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
                     <span className="spinner" style={{ width: 18, height: 18, borderWidth: 2 }} />
@@ -411,10 +376,10 @@ export default function Login() {
             </div>
 
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
-              <button type="button" className="btn-secondary" onClick={() => handleDemoClick('rahul@moneymitra.in')} disabled={loading} style={{ fontSize: 13, padding: '12px 8px', fontWeight: 700, minHeight: 46 }}>
+              <button type="button" className="btn-secondary" onClick={() => handleDemoClick('rahul@moneymitra.in')} disabled={loading} style={{ fontSize: 12, padding: '10px 8px', fontWeight: 700 }}>
                 👤 Rahul (User)
               </button>
-              <button type="button" className="btn-secondary" onClick={() => handleDemoClick('admin')} disabled={loading} style={{ fontSize: 13, padding: '12px 8px', fontWeight: 700, minHeight: 46 }}>
+              <button type="button" className="btn-secondary" onClick={() => handleDemoClick('admin')} disabled={loading} style={{ fontSize: 12, padding: '10px 8px', fontWeight: 700 }}>
                 👑 Admin
               </button>
             </div>
@@ -427,9 +392,7 @@ export default function Login() {
                 style={{
                   background: 'none', border: 'none', cursor: 'pointer',
                   color: 'var(--primary-light)', fontWeight: 700, fontSize: 13,
-                  fontFamily: 'Outfit, sans-serif', textDecoration: 'underline', padding: 0,
-                  minHeight: 36, display: 'inline-flex', alignItems: 'center',
-                  WebkitTapHighlightColor: 'transparent',
+                  fontFamily: 'Outfit, sans-serif', textDecoration: 'underline', padding: 0
                 }}
               >
                 Create Account →
@@ -452,10 +415,8 @@ export default function Login() {
         }} onClick={e => { if (e.target === e.currentTarget) { setShowForgot(false); setForgotSent(false); setForgotEmail(''); } }}>
           <div style={{
             background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: 22,
-            padding: 'clamp(20px, 5vw, 36px)', width: '100%', maxWidth: 420,
-            boxShadow: '0 32px 80px rgba(0,0,0,0.6)',
+            padding: 36, width: '100%', maxWidth: 420, boxShadow: '0 32px 80px rgba(0,0,0,0.6)',
             fontFamily: 'Outfit, sans-serif',
-            maxHeight: '90vh', overflowY: 'auto',
           }}>
             {!forgotSent ? (
               <>
@@ -482,12 +443,11 @@ export default function Login() {
 
                   <div style={{ display: 'flex', gap: 10 }}>
                     <button type="button" onClick={() => { setShowForgot(false); setForgotSent(false); setForgotEmail(''); }} style={{
-                      flex: 1, padding: '13px 0', borderRadius: 10, border: '1px solid var(--border)',
+                      flex: 1, padding: '12px 0', borderRadius: 10, border: '1px solid var(--border)',
                       background: 'transparent', color: 'var(--text-secondary)',
-                      fontFamily: 'Outfit, sans-serif', fontWeight: 600, cursor: 'pointer', fontSize: 14,
-                      minHeight: 48,
+                      fontFamily: 'Outfit, sans-serif', fontWeight: 600, cursor: 'pointer', fontSize: 14
                     }}>Cancel</button>
-                    <button type="submit" className="btn-primary" style={{ flex: 2, minHeight: 48 }} disabled={forgotLoading}>
+                    <button type="submit" className="btn-primary" style={{ flex: 2 }} disabled={forgotLoading}>
                       {forgotLoading ? (
                         <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
                           <span className="spinner" style={{ width: 16, height: 16, borderWidth: 2 }} /> Checking...
@@ -510,7 +470,7 @@ export default function Login() {
                 <div style={{ background: 'rgba(0,229,160,0.07)', border: '1px solid rgba(0,229,160,0.2)', borderRadius: 12, padding: '12px 16px', fontSize: 12, color: 'var(--text-muted)', marginBottom: 20, textAlign: 'left' }}>
                   📌 <strong>Demo Note:</strong> Since this is a simulation platform, please contact the admin to reset your password directly.
                 </div>
-                <button className="btn-primary" style={{ width: '100%', padding: '13px 0', minHeight: 50 }}
+                <button className="btn-primary" style={{ width: '100%', padding: '12px 0' }}
                   onClick={() => { setShowForgot(false); setForgotSent(false); setForgotEmail(''); }}>
                   ← Back to Login
                 </button>

@@ -1,6 +1,28 @@
 // Avatar emojis — original set
 export const AVATARS = ['🦊', '🐺', '🦋', '🐉', '🦅', '🌸', '⚡', '🌙', '🔮'];
 
+// Robust copy to clipboard (works on local network HTTP where navigator is blocked)
+export const copyToClipboard = (text) => {
+  if (navigator.clipboard && window.isSecureContext) {
+    return navigator.clipboard.writeText(text);
+  } else {
+    const textArea = document.createElement("textarea");
+    textArea.value = text;
+    textArea.style.position = "absolute";
+    textArea.style.left = "-999999px";
+    document.body.prepend(textArea);
+    textArea.select();
+    try {
+      document.execCommand('copy');
+    } catch (error) {
+      console.error(error);
+    } finally {
+      textArea.remove();
+    }
+    return Promise.resolve();
+  }
+};
+
 // Format INR currency
 export const formatINR = (amount) => {
   if (amount === null || amount === undefined) return '₹0.00';

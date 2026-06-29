@@ -493,19 +493,35 @@ export default function Transactions() {
   };
 
   return (
-    <div>
+    <div style={{ width: '100%' }}>
       {/* Live pulse CSS */}
       <style>{`
         @keyframes livePulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
         @keyframes txnFlash { 0%{background:rgba(0,229,160,0.18)} 100%{background:transparent} }
         .live-dot { width:8px;height:8px;border-radius:50%;background:#00e5a0;animation:livePulse 1.5s ease-in-out infinite; }
         .txn-flash { animation:txnFlash 1.2s ease-out; }
+        .download-btn { padding: 12px 24px; font-size: 14px; }
+        
+        /* Direct mobile overrides to prevent CSS caching issues */
+        @media (max-width: 768px) { 
+          .download-btn { width: 100% !important; justify-content: center !important; margin-top: 12px; } 
+          .grid-responsive-4, .grid-responsive-2 { display: flex !important; flex-direction: column !important; }
+          .dashboard-header-flex { display: flex !important; flex-direction: column !important; align-items: stretch !important; }
+          
+          /* Force Transaction Table to Cards */
+          .data-table, .data-table tbody, .data-table tr, .data-table td { display: block !important; width: 100% !important; }
+          .data-table thead { display: none !important; }
+          .data-table tr { margin-bottom: 16px !important; background: var(--bg-card) !important; border: 1px solid var(--border) !important; border-radius: 12px !important; padding: 12px !important; }
+          .data-table td { display: flex !important; justify-content: space-between !important; align-items: center !important; padding: 10px 0 !important; border-bottom: 1px solid rgba(255,255,255,0.06) !important; text-align: right !important; }
+          .data-table td:last-child { border-bottom: none !important; }
+          .data-table td::before { content: attr(data-label) !important; font-weight: 700 !important; font-size: 11px !important; text-transform: uppercase !important; color: var(--text-muted) !important; margin-right: 12px !important; text-align: left !important; }
+        }
       `}</style>
 
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
+      <div className="dashboard-header-flex" style={{ marginBottom: 16 }}>
         <div className="page-header" style={{ marginBottom: 0 }}>
           <h1 className="page-title">📊 Transaction History</h1>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginTop: 4 }}>
+          <div style={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: 12, marginTop: 4 }}>
             <p className="page-subtitle" style={{ margin: 0 }}>Complete record of all your financial activity</p>
             {/* Live Toggle */}
             <button
@@ -527,12 +543,13 @@ export default function Transactions() {
 
         {/* Download PDF button */}
         <button onClick={() => setShowPdfModal(true)}
+          className="download-btn"
           style={{
-            display: 'flex', alignItems: 'center', gap: 8,
+            display: 'flex', alignItems: 'center', gap: 10,
             background: 'linear-gradient(135deg,#e53935,#c62828)',
-            border: 'none', borderRadius: 12, padding: '12px 22px',
+            border: 'none', borderRadius: 12,
             cursor: 'pointer', color: '#fff', fontFamily: 'Outfit, sans-serif',
-            fontWeight: 700, fontSize: 14, boxShadow: '0 4px 18px rgba(229,57,53,0.35)',
+            fontWeight: 700, boxShadow: '0 4px 18px rgba(229,57,53,0.35)',
             transition: 'all 0.2s',
           }}
           onMouseEnter={e => e.currentTarget.style.transform = 'translateY(-2px)'}
@@ -543,48 +560,59 @@ export default function Transactions() {
       </div>
 
       {/* Filters */}
-      <div className="glass-card" style={{ padding: 20, marginBottom: 20 }}>
-        <form onSubmit={handleSearch} style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr) auto auto', gap: 12, alignItems: 'end' }}>
-          <div>
-            <label style={{ fontSize: 12, color: 'var(--text-muted)', display: 'block', marginBottom: 6 }}>Search</label>
-            <input type="text" className="input-field" placeholder="Description or ref no."
-              value={filters.search} onChange={e => setFilters(f => ({ ...f, search: e.target.value }))} />
+      <div className="glass-card" style={{ marginBottom: 24 }}>
+        <form onSubmit={handleSearch}>
+          <div className="grid-responsive-4" style={{ gap: 16, marginBottom: 16 }}>
+            <div>
+              <label style={{ fontSize: 11, fontWeight: 700, color: 'var(--text-muted)', display: 'block', marginBottom: 8, textTransform: 'uppercase', letterSpacing: 0.5 }}>Search</label>
+              <input type="text" className="input-field" placeholder="Description or ref no."
+                value={filters.search} onChange={e => setFilters(f => ({ ...f, search: e.target.value }))} />
+            </div>
+            <div>
+              <label style={{ fontSize: 11, fontWeight: 700, color: 'var(--text-muted)', display: 'block', marginBottom: 8, textTransform: 'uppercase', letterSpacing: 0.5 }}>Type</label>
+              <select className="input-field" value={filters.type} onChange={e => setFilters(f => ({ ...f, type: e.target.value }))} style={{ background: 'var(--bg-input)' }}>
+                <option value="" style={{ background: '#1a1a3e' }}>All Types</option>
+                {Object.entries(TXN_STYLES).map(([k, v]) => <option key={k} value={k} style={{ background: '#1a1a3e' }}>{v.icon} {v.label}</option>)}
+              </select>
+            </div>
+            <div>
+              <label style={{ fontSize: 11, fontWeight: 700, color: 'var(--text-muted)', display: 'block', marginBottom: 8, textTransform: 'uppercase', letterSpacing: 0.5 }}>From Date</label>
+              <input type="date" className="input-field" value={filters.start_date} onChange={e => setFilters(f => ({ ...f, start_date: e.target.value }))} />
+            </div>
+            <div>
+              <label style={{ fontSize: 11, fontWeight: 700, color: 'var(--text-muted)', display: 'block', marginBottom: 8, textTransform: 'uppercase', letterSpacing: 0.5 }}>To Date</label>
+              <input type="date" className="input-field" value={filters.end_date} onChange={e => setFilters(f => ({ ...f, end_date: e.target.value }))} />
+            </div>
           </div>
-          <div>
-            <label style={{ fontSize: 12, color: 'var(--text-muted)', display: 'block', marginBottom: 6 }}>Type</label>
-            <select className="input-field" value={filters.type} onChange={e => setFilters(f => ({ ...f, type: e.target.value }))} style={{ background: 'var(--bg-input)' }}>
-              <option value="" style={{ background: '#1a1a3e' }}>All Types</option>
-              {Object.entries(TXN_STYLES).map(([k, v]) => <option key={k} value={k} style={{ background: '#1a1a3e' }}>{v.icon} {v.label}</option>)}
-            </select>
+          
+          {/* Amount Filters */}
+          <div className="grid-responsive-2" style={{ gap: 16, marginBottom: 16 }}>
+            <div>
+              <label style={{ fontSize: 11, fontWeight: 700, color: 'var(--text-muted)', display: 'block', marginBottom: 8, textTransform: 'uppercase', letterSpacing: 0.5 }}>Min Amount</label>
+              <input type="number" className="input-field" placeholder="0.00" value={filters.min_amount}
+                onChange={e => setFilters(f => ({ ...f, min_amount: e.target.value }))} />
+            </div>
+            <div>
+              <label style={{ fontSize: 11, fontWeight: 700, color: 'var(--text-muted)', display: 'block', marginBottom: 8, textTransform: 'uppercase', letterSpacing: 0.5 }}>Max Amount</label>
+              <input type="number" className="input-field" placeholder="10000.00" value={filters.max_amount}
+                onChange={e => setFilters(f => ({ ...f, max_amount: e.target.value }))} />
+            </div>
           </div>
-          <div>
-            <label style={{ fontSize: 12, color: 'var(--text-muted)', display: 'block', marginBottom: 6 }}>From Date</label>
-            <input type="date" className="input-field" value={filters.start_date} onChange={e => setFilters(f => ({ ...f, start_date: e.target.value }))} />
-          </div>
-          <div>
-            <label style={{ fontSize: 12, color: 'var(--text-muted)', display: 'block', marginBottom: 6 }}>To Date</label>
-            <input type="date" className="input-field" value={filters.end_date} onChange={e => setFilters(f => ({ ...f, end_date: e.target.value }))} />
-          </div>
-          <button type="submit" className="btn-primary" style={{ padding: '12px 20px' }}>🔍</button>
-          <button type="button" className="btn-secondary" onClick={handleReset} style={{ padding: '12px 20px' }}>↺</button>
-        </form>
-      </div>
 
-      {/* Amount Filters */}
-      <div style={{ display: 'flex', gap: 12, marginBottom: 20 }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8, background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: 10, padding: '8px 14px' }}>
-          <span style={{ fontSize: 13, color: 'var(--text-muted)' }}>₹</span>
-          <input type="number" placeholder="Min amount" value={filters.min_amount}
-            onChange={e => setFilters(f => ({ ...f, min_amount: e.target.value }))}
-            style={{ background: 'none', border: 'none', color: 'var(--text-primary)', fontFamily: 'Outfit, sans-serif', fontSize: 13, width: 100, outline: 'none' }} />
-          <span style={{ fontSize: 13, color: 'var(--text-muted)' }}>—</span>
-          <input type="number" placeholder="Max amount" value={filters.max_amount}
-            onChange={e => setFilters(f => ({ ...f, max_amount: e.target.value }))}
-            style={{ background: 'none', border: 'none', color: 'var(--text-primary)', fontFamily: 'Outfit, sans-serif', fontSize: 13, width: 100, outline: 'none' }} />
-        </div>
-        <div style={{ fontSize: 13, color: 'var(--text-muted)', display: 'flex', alignItems: 'center' }}>
-          {pagination.total || 0} transactions found
-        </div>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12, alignItems: 'center', justifyContent: 'space-between', marginTop: 8 }}>
+            <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--primary)', padding: '0 8px' }}>
+              {pagination.total || 0} transactions found
+            </div>
+            <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
+              <button type="button" className="btn-secondary" onClick={handleReset} style={{ padding: '12px 24px', flex: '1 1 auto' }}>
+                Reset
+              </button>
+              <button type="submit" className="btn-primary" style={{ padding: '12px 24px', flex: '1 1 auto', display: 'flex', justifyContent: 'center', gap: 8 }}>
+                <span>🔍</span> Apply Filters
+              </button>
+            </div>
+          </div>
+        </form>
       </div>
 
       {/* Transactions Table */}
@@ -623,7 +651,7 @@ export default function Transactions() {
                 return (
                   <tr key={txn.id}>
                     {/* Type column */}
-                    <td>
+                    <td data-label="Type">
                       <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
                         <div style={{ width: 36, height: 36, borderRadius: 10, background: dirBg, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 18, border: `1px solid ${dirBorder}` }}>
                           {dirArrow}
@@ -636,14 +664,14 @@ export default function Transactions() {
                     </td>
 
                     {/* Description column */}
-                    <td>
+                    <td data-label="Description">
                       <div style={{ fontSize: 13, fontWeight: 600, maxWidth: 200, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{txn.description || '—'}</div>
                       <div style={{ fontSize: 11, color: 'var(--text-muted)', fontFamily: 'monospace' }}>{txn.reference_number}</div>
                       {txn.fraud_flagged && <div style={{ fontSize: 10, color: 'var(--warning)', marginTop: 2 }}>⚠️ Fraud Flagged</div>}
                     </td>
 
                     {/* From / To column */}
-                    <td>
+                    <td data-label="From / To">
                       <div style={{ fontSize: 12 }}>
                         {txn.type === 'transfer' && txn.to_user_name && (
                           <span style={{ color: 'var(--error)' }}>↑ To: <strong>{txn.to_user_name}</strong></span>
@@ -662,10 +690,10 @@ export default function Transactions() {
                     </td>
 
                     {/* Date column */}
-                    <td><div style={{ fontSize: 12 }}>{formatDateTime(txn.created_at)}</div></td>
+                    <td data-label="Date & Time"><div style={{ fontSize: 12 }}>{formatDateTime(txn.created_at)}</div></td>
 
                     {/* Amount column */}
-                    <td style={{ textAlign: 'right' }}>
+                    <td data-label="Amount" style={{ textAlign: 'right' }}>
                       <div style={{ fontSize: 16, fontWeight: 800, color: dirColor, letterSpacing: '-0.5px' }}>
                         {dirSign} {formatINR(txn.amount)}
                       </div>
@@ -675,7 +703,7 @@ export default function Transactions() {
                     </td>
 
                     {/* Status column */}
-                    <td>
+                    <td data-label="Status">
                       <span className={`badge ${txn.status === 'completed' ? 'badge-success' : txn.status === 'failed' ? 'badge-error' : 'badge-warning'}`}>
                         {txn.status}
                       </span>

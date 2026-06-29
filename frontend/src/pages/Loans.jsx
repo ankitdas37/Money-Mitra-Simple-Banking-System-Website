@@ -65,7 +65,7 @@ export default function Loans() {
       </div>
 
       {/* Loan Types Banner */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: 12, marginBottom: 24 }}>
+      <div className="dashboard-actions-grid" style={{ marginBottom: 24 }}>
         {Object.entries(LOAN_TYPES).map(([key, type]) => (
           <div key={key} onClick={() => { setForm(f => ({ ...f, loan_type: key })); setShowApply(true); }} style={{
             background: form.loan_type === key && showApply ? 'rgba(108,99,255,0.12)' : 'var(--bg-card)',
@@ -85,7 +85,7 @@ export default function Loans() {
           <div style={{ fontWeight: 700, fontSize: 18, marginBottom: 20 }}>
             {LOAN_TYPES[form.loan_type]?.icon} Apply for {LOAN_TYPES[form.loan_type]?.label}
           </div>
-          <form onSubmit={handleApply} style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
+          <form onSubmit={handleApply} className="grid-responsive-2" style={{ gap: 16 }}>
             <div>
               <label style={{ fontSize: 12, color: 'var(--text-muted)', display: 'block', marginBottom: 6 }}>Loan Type</label>
               <select className="input-field" value={form.loan_type} onChange={e => { setForm(f => ({ ...f, loan_type: e.target.value })); setEmiPreview(null); }}
@@ -138,7 +138,7 @@ export default function Loans() {
           {emiPreview && (
             <div style={{ marginTop: 20, background: 'rgba(108,99,255,0.06)', border: '1px solid rgba(108,99,255,0.2)', borderRadius: 12, padding: 20 }}>
               <div style={{ fontWeight: 700, marginBottom: 12, color: 'var(--primary-light)' }}>📊 EMI Calculation Preview</div>
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 12 }}>
+              <div className="grid-responsive-4" style={{ gap: 12 }}>
                 {[
                   ['Monthly EMI', formatINR(emiPreview.emi)],
                   ['Principal', formatINR(form.amount_requested)],

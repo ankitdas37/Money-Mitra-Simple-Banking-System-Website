@@ -307,7 +307,7 @@ export default function Profile() {
       </div>
 
       {/* ── Tabs ── */}
-      <div style={{ display: 'flex', background: 'var(--bg-card)', borderRadius: 14, padding: 5, marginBottom: 24, border: '1px solid var(--border)', gap: 4 }}>
+      <div style={{ display: 'flex', flexWrap: 'wrap', background: 'var(--bg-card)', borderRadius: 14, padding: 5, marginBottom: 24, border: '1px solid var(--border)', gap: 4 }}>
         {[
           { id: 'personal', icon: '👤', label: 'Personal' },
           { id: 'bank',     icon: '🏦', label: 'Bank Details' },
@@ -331,7 +331,7 @@ export default function Profile() {
                 <div style={{ fontSize: 12, color: 'var(--text-muted)' }}>These fields are set at account creation and cannot be changed</div>
               </div>
             </div>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0 24px' }}>
+            <div className="grid-responsive-2" style={{ gap: '0 24px' }}>
               <ReadField label="Full Name" value={profile.full_name} icon="👤" />
               <ReadField label="Date of Birth" value={profile.date_of_birth ? new Date(profile.date_of_birth).toLocaleDateString('en-IN', { day: '2-digit', month: 'long', year: 'numeric' }) : null} icon="🎂" />
               <ReadField label="Gender" value={profile.gender ? profile.gender.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase()) : null} icon="🧑" />
@@ -552,7 +552,7 @@ export default function Profile() {
               </div>
 
               {/* ── Info Grid below card ── */}
-              <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr 1fr', gap:12, marginBottom:12 }}>
+              <div className="grid-responsive-3" style={{ gap:12, marginBottom:12 }}>
                 {[
                   { icon:'🔢', label:'Account Number', value: acc.account_number, mono:true },
                   { icon:'🏷️', label:'IFSC Code',       value: acc.ifsc_code || 'MMIT0001001', mono:true },
@@ -608,7 +608,7 @@ export default function Profile() {
           {profile.kyc_status === 'verified' && (
             <div className="glass-card" style={{ padding: 24, marginBottom: 16 }}>
               <div style={{ fontWeight: 700, fontSize: 15, marginBottom: 16, display: 'flex', alignItems: 'center', gap: 8 }}>🔒 Verified KYC Documents</div>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0 24px' }}>
+              <div className="grid-responsive-2" style={{ gap: '0 24px' }}>
                 <MaskedField label="PAN Number" value={profile.pan_number} icon="🪪" />
                 <MaskedField label="Aadhaar Number" value={profile.aadhaar_number} icon="🆔" />
                 <MaskedField label="CKYC Number" value={profile.ckyc_number} icon="📋" />
@@ -628,7 +628,7 @@ export default function Profile() {
                 : 'Fill in your documents and submit. An admin will verify and approve permanently.'}
             </div>
 
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14 }}>
+            <div className="grid-responsive-2" style={{ gap: 14 }}>
               <div>
                 <label style={{ fontSize: 11, fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: 0.8, display: 'block', marginBottom: 6 }}>🪪 PAN Number *</label>
                 <input className="input-field" placeholder="ABCDE1234F" maxLength={10} value={kycForm.pan_number}
@@ -830,7 +830,7 @@ export default function Profile() {
           {/* ── Section 2: Emoji Avatar Picker ─────────────────────── */}
           <div className="glass-card" style={{ padding: 28 }}>
             <div style={{ fontWeight: 700, fontSize: 16, marginBottom: 20 }}>Choose Your Anime Avatar</div>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(9, 1fr)', gap: 12, marginBottom: 24 }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(48px, 1fr))', gap: 12, marginBottom: 24 }}>
               {AVATARS.map((avatar, i) => (
                 <button key={i} type="button" onClick={() => setAvatarId(i + 1)} style={{
                   width: '100%', aspectRatio: '1', borderRadius: 14,

@@ -1307,19 +1307,191 @@
             flex-direction: column;
             gap: 5px;
             cursor: pointer;
-            padding: 4px;
+            padding: 8px;
+            min-width: 44px;
+            min-height: 44px;
+            align-items: center;
+            justify-content: center;
+            border-radius: 10px;
+            transition: background 0.2s;
+            -webkit-tap-highlight-color: transparent;
+            margin-left: auto;  /* ← always push to right edge */
+        }
+
+        .hamburger:active {
+            background: rgba(255, 255, 255, 0.08);
         }
 
         .hamburger span {
-            width: 24px;
+            width: 22px;
             height: 2px;
             background: var(--text);
             border-radius: 2px;
-            transition: all 0.3s;
+            transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+            transform-origin: center;
         }
 
-        /* ── Responsive ── */
-        @media(max-width:1024px) {
+        .hamburger.active span:nth-child(1) {
+            transform: translateY(7px) rotate(45deg);
+        }
+
+        .hamburger.active span:nth-child(2) {
+            opacity: 0;
+            transform: scaleX(0);
+        }
+
+        .hamburger.active span:nth-child(3) {
+            transform: translateY(-7px) rotate(-45deg);
+        }
+
+        /* ── Mobile menu overlay ── */
+        .mobile-menu {
+            position: fixed;
+            inset: 0;
+            background: rgba(7, 7, 26, 0.98);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            z-index: 1001; /* Above navbar (1000) so it covers completely */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.35s ease, visibility 0.35s ease;
+            padding: 80px 24px 60px; /* room for navbar top + bottom CTA */
+        }
+
+        .mobile-menu.open {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .mobile-menu a {
+            color: rgba(255, 255, 255, 0.65);
+            text-decoration: none;
+            font-size: 22px;
+            font-weight: 700;
+            padding: 14px 40px;
+            border-radius: 16px;
+            width: 100%;
+            max-width: 320px;
+            text-align: center;
+            transition: all 0.25s ease;
+            transform: translateY(20px);
+            opacity: 0;
+            -webkit-tap-highlight-color: transparent;
+            letter-spacing: 0.3px;
+        }
+
+        .mobile-menu.open a {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        /* stagger delays (header is child 1, links are 2-6) */
+        .mobile-menu.open a:nth-child(2) { transition-delay: 0.08s; }
+        .mobile-menu.open a:nth-child(3) { transition-delay: 0.14s; }
+        .mobile-menu.open a:nth-child(4) { transition-delay: 0.20s; }
+        .mobile-menu.open a:nth-child(5) { transition-delay: 0.26s; }
+        .mobile-menu.open a:nth-child(6) { transition-delay: 0.32s; }
+
+        .mobile-menu a:active {
+            color: white;
+            background: rgba(108, 99, 255, 0.2);
+            transform: scale(0.97);
+        }
+
+        .mobile-menu a.mob-active {
+            color: var(--accent);
+            background: rgba(0, 229, 160, 0.08);
+            border: 1px solid rgba(0, 229, 160, 0.2);
+        }
+
+        .mobile-menu-actions {
+            display: flex;
+            gap: 14px;
+            margin-top: 24px;
+            transform: translateY(20px);
+            opacity: 0;
+            transition: all 0.35s ease 0.32s;
+            width: 100%;
+            max-width: 320px;
+        }
+
+        .mobile-menu.open .mobile-menu-actions {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .mobile-menu-actions .btn {
+            flex: 1;
+            padding: 14px 10px;
+            font-size: 15px;
+            border-radius: 14px;
+            min-height: 50px;
+        }
+
+        /* Menu Header (Logo + Close) */
+        .mobile-menu-header {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 20px 24px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            transform: translateY(-10px);
+            opacity: 0;
+            transition: all 0.3s ease 0.05s;
+            width: 100%;
+        }
+
+        .mobile-menu.open .mobile-menu-header {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .mob-close-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .mob-close-btn:active {
+            background: rgba(255, 255, 255, 0.15);
+            transform: scale(0.92);
+        }
+
+        /* ── Touch-friendly global ── */
+        @media (hover: none) and (pointer: coarse) {
+            .btn, .faq-q, .nav-links a, .socials a, .trust-item {
+                -webkit-tap-highlight-color: transparent;
+            }
+
+            .feature-card:hover,
+            .testi-card:hover,
+            .g-card:hover {
+                transform: none;
+                box-shadow: none;
+            }
+        }
+
+        /* ── Responsive: Tablet landscape ── */
+        @media (max-width: 1024px) {
             .features-grid {
                 grid-template-columns: repeat(2, 1fr);
             }
@@ -1362,21 +1534,151 @@
             .steps-grid::before {
                 display: none;
             }
+
+            .ring-outer {
+                width: 320px;
+                height: 320px;
+            }
+
+            .ring-inner {
+                width: 230px;
+                height: 230px;
+            }
         }
 
-        @media(max-width:768px) {
-
+        /* ── Responsive: Tablet portrait / large phones ── */
+        @media (max-width: 768px) {
             .nav-links,
             .nav-actions.desktop {
                 display: none;
             }
 
+            /* Hamburger stays right-aligned — logo left, hamburger right */
+            .nav-inner {
+                justify-content: space-between;
+                width: 100%;
+            }
+
             .hamburger {
                 display: flex;
+                margin-left: auto;
+            }
+
+            section {
+                padding: 70px 0;
+            }
+
+            .hero {
+                min-height: auto;
+                padding-top: 80px;
+                padding-bottom: 40px;
             }
 
             .hero h1 {
-                font-size: 36px;
+                font-size: 32px;
+                letter-spacing: -0.5px;
+            }
+
+            .hero-desc {
+                font-size: 16px;
+            }
+
+            .hero-badge {
+                font-size: 12px;
+                padding: 5px 14px;
+            }
+
+            .hero-visual {
+                height: 340px;
+                margin: 0 auto;
+                max-width: 400px;
+            }
+
+            .hero-card-main {
+                width: 260px;
+                height: 160px;
+                padding: 18px;
+            }
+
+            .card-number-hero {
+                font-size: 14px;
+                letter-spacing: 2px;
+                margin-bottom: 12px;
+            }
+
+            .card-chip-visual {
+                width: 28px;
+                height: 22px;
+                margin-bottom: 12px;
+            }
+
+            .ring-outer {
+                width: 300px;
+                height: 300px;
+            }
+
+            .ring-inner {
+                width: 220px;
+                height: 220px;
+            }
+
+            .float-widget {
+                padding: 10px 14px;
+                border-radius: 12px;
+            }
+
+            .float-widget.w1 {
+                top: 20px;
+                right: -5px;
+            }
+
+            .float-widget.w2 {
+                bottom: 40px;
+                left: -5px;
+            }
+
+            .float-widget.w3 {
+                top: 85px;
+                left: 10px;
+            }
+
+            .w-value {
+                font-size: 16px;
+            }
+
+            .w-label {
+                font-size: 9px;
+            }
+
+            .hero-stats {
+                flex-direction: row;
+                gap: 0;
+                justify-content: center;
+                flex-wrap: wrap;
+            }
+
+            .stat {
+                padding: 0 20px;
+            }
+
+            .stat-val {
+                font-size: 22px;
+            }
+
+            .stat-label {
+                font-size: 11px;
+            }
+
+            .hero-cta {
+                flex-direction: column;
+                align-items: center;
+                gap: 10px;
+            }
+
+            .hero-cta .btn {
+                width: 100%;
+                max-width: 300px;
+                justify-content: center;
             }
 
             .testi-grid {
@@ -1385,34 +1687,552 @@
 
             .features-grid {
                 grid-template-columns: 1fr;
+                gap: 12px;
+            }
+
+            .feature-card {
+                padding: 22px;
+            }
+
+            .fc-icon {
+                width: 46px;
+                height: 46px;
+                font-size: 20px;
+                border-radius: 12px;
+                margin-bottom: 14px;
+            }
+
+            .feature-card h3 {
+                font-size: 16px;
+            }
+
+            .section-head {
+                margin-bottom: 40px;
+            }
+
+            .section-title {
+                font-size: 26px;
+            }
+
+            .section-desc {
+                font-size: 15px;
+            }
+
+            .section-label {
+                font-size: 11px;
+            }
+
+            .trust-items {
+                gap: 20px;
+                justify-content: flex-start;
+                overflow-x: auto;
+                flex-wrap: nowrap;
+                padding-bottom: 8px;
+                -webkit-overflow-scrolling: touch;
+                scrollbar-width: none;
+            }
+
+            .trust-items::-webkit-scrollbar {
+                display: none;
+            }
+
+            .trust-item {
+                flex-shrink: 0;
+                font-size: 13px;
+                white-space: nowrap;
+            }
+
+            .trust-bar {
+                padding: 28px 0;
+            }
+
+            .products-grid {
+                gap: 16px;
+            }
+
+            .product-card {
+                padding: 24px;
+                min-height: 180px;
+                border-radius: 20px;
+            }
+
+            .pc-title {
+                font-size: 19px;
+            }
+
+            .pc-rate {
+                font-size: 24px;
+            }
+
+            .steps-grid {
+                grid-template-columns: 1fr 1fr;
+                gap: 24px;
+            }
+
+            .step-num {
+                width: 56px;
+                height: 56px;
+                font-size: 20px;
+                margin-bottom: 14px;
+            }
+
+            .step-card h3 {
+                font-size: 15px;
+            }
+
+            .step-card p {
+                font-size: 12px;
+            }
+
+            .testi-card {
+                padding: 22px;
+            }
+
+            .testi-text {
+                font-size: 13px;
+            }
+
+            .faq-q {
+                padding: 16px 20px;
+                font-size: 15px;
+            }
+
+            .faq-a {
+                padding: 0 20px;
+                font-size: 13px;
+            }
+
+            .faq-item.open .faq-a {
+                padding: 0 20px 16px;
+            }
+
+            .cta-box {
+                padding: 40px 24px;
+                border-radius: 20px;
+            }
+
+            .cta-box h2 {
+                font-size: 24px;
+            }
+
+            .cta-box p {
+                font-size: 15px;
+            }
+
+            .cta-actions {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .cta-actions .btn {
+                width: 100%;
+                max-width: 280px;
+            }
+
+            .footer-grid {
+                grid-template-columns: 1fr;
+                gap: 32px;
+            }
+
+            footer {
+                padding: 40px 0 0;
+            }
+
+            .footer-bottom {
+                flex-direction: column;
+                text-align: center;
+                padding: 20px 0;
+            }
+
+            /* Blobs smaller on mobile for perf */
+            .blob-1 {
+                width: 300px;
+                height: 300px;
+                filter: blur(80px);
+            }
+
+            .blob-2 {
+                width: 250px;
+                height: 250px;
+                filter: blur(80px);
+            }
+
+            .blob-3 {
+                width: 180px;
+                height: 180px;
+                filter: blur(60px);
+            }
+        }
+
+        /* ── Responsive: Small phones ── */
+        @media (max-width: 480px) {
+            .container {
+                padding: 0 16px;
+            }
+
+            section {
+                padding: 50px 0;
+            }
+
+            .hero {
+                padding-top: 70px;
+                padding-bottom: 30px;
+            }
+
+            .hero h1 {
+                font-size: 28px;
+                line-height: 1.15;
+            }
+
+            .hero-desc {
+                font-size: 15px;
+                line-height: 1.6;
+                margin-bottom: 28px;
+            }
+
+            .hero-badge {
+                font-size: 11px;
+                padding: 4px 12px;
+                margin-bottom: 18px;
+            }
+
+            .hero-visual {
+                height: 300px;
+                max-width: 340px;
             }
 
             .hero-card-main {
+                width: 230px;
+                height: 142px;
+                padding: 16px;
+                border-radius: 16px;
+            }
+
+            .card-number-hero {
+                font-size: 12px;
+                letter-spacing: 1.5px;
+                margin-bottom: 10px;
+            }
+
+            .card-holder {
+                font-size: 11px;
+            }
+
+            .card-expiry {
+                font-size: 10px;
+            }
+
+            .ring-outer {
                 width: 260px;
-                height: 160px;
+                height: 260px;
+            }
+
+            .ring-inner {
+                width: 190px;
+                height: 190px;
+            }
+
+            .float-widget {
+                padding: 8px 12px;
+                border-radius: 10px;
+            }
+
+            .float-widget.w1 {
+                top: 10px;
+                right: 0;
+            }
+
+            .float-widget.w2 {
+                bottom: 30px;
+                left: 0;
+            }
+
+            .float-widget.w3 {
+                top: 70px;
+                left: 5px;
+            }
+
+            .w-value {
+                font-size: 14px;
+            }
+
+            .w-label {
+                font-size: 8px;
+            }
+
+            .w-sub {
+                font-size: 9px;
             }
 
             .hero-stats {
                 flex-direction: column;
-                gap: 16px;
+                gap: 12px;
                 align-items: center;
             }
 
             .stat {
                 border-right: none;
                 padding: 0;
+                text-align: center;
             }
 
-            .trust-items {
-                gap: 30px;
+            .stat-val {
+                font-size: 20px;
+            }
+
+            .stat-label {
+                font-size: 10px;
+            }
+
+            .hero-cta .btn {
+                max-width: 100%;
+                padding: 12px 24px;
+                font-size: 15px;
+            }
+
+            .section-title {
+                font-size: 22px;
+            }
+
+            .section-desc {
+                font-size: 14px;
+            }
+
+            .section-head {
+                margin-bottom: 32px;
+            }
+
+            .steps-grid {
+                grid-template-columns: 1fr;
+                gap: 28px;
+            }
+
+            .step-num {
+                width: 50px;
+                height: 50px;
+                font-size: 18px;
+            }
+
+            .feature-card {
+                padding: 20px;
+                border-radius: 16px;
+            }
+
+            .product-card {
+                padding: 20px;
+                border-radius: 16px;
+            }
+
+            .pc-title {
+                font-size: 17px;
+            }
+
+            .pc-desc {
+                font-size: 12px;
+            }
+
+            .pc-rate {
+                font-size: 22px;
+            }
+
+            .pc-rate-label {
+                font-size: 11px;
+            }
+
+            .pc-tag {
+                font-size: 11px;
+                padding: 3px 12px;
+            }
+
+            .testi-card {
+                padding: 18px;
+                border-radius: 16px;
+            }
+
+            .testi-text {
+                font-size: 13px;
+                margin-bottom: 16px;
+            }
+
+            .testi-avatar {
+                width: 36px;
+                height: 36px;
+                font-size: 18px;
+            }
+
+            .testi-name {
+                font-size: 13px;
+            }
+
+            .testi-role {
+                font-size: 11px;
+            }
+
+            .faq-q {
+                padding: 14px 16px;
+                font-size: 14px;
+            }
+
+            .faq-a {
+                padding: 0 16px;
+                font-size: 12px;
+            }
+
+            .faq-item.open .faq-a {
+                padding: 0 16px 14px;
             }
 
             .cta-box {
-                padding: 40px 24px;
+                padding: 32px 18px;
+                border-radius: 16px;
             }
 
-            .footer-grid {
-                grid-template-columns: 1fr;
+            .cta-box h2 {
+                font-size: 22px;
+            }
+
+            .cta-box p {
+                font-size: 14px;
+                margin-bottom: 24px;
+            }
+
+            .cta-section {
+                padding: 0 16px 60px;
+            }
+
+            .btn {
+                padding: 12px 20px;
+                font-size: 14px;
+                border-radius: 12px;
+            }
+
+            .btn-lg {
+                padding: 13px 24px;
+                font-size: 15px;
+            }
+
+            .footer-col h4 {
+                font-size: 12px;
+            }
+
+            .footer-col a {
+                font-size: 13px;
+            }
+
+            .footer-brand p {
+                font-size: 13px;
+            }
+
+            .socials a {
+                width: 40px;
+                height: 40px;
+            }
+
+            .navbar {
+                padding: 10px 0;
+            }
+
+            .navbar.scrolled {
+                padding: 8px 0;
+            }
+
+            .logo-img {
+                width: 36px;
+                height: 36px;
+                border-radius: 10px;
+            }
+
+            .logo-text {
+                font-size: 16px;
+            }
+        }
+
+        /* ── Responsive: Very small phones ── */
+        @media (max-width: 360px) {
+            .hero h1 {
+                font-size: 24px;
+            }
+
+            .hero-desc {
+                font-size: 14px;
+            }
+
+            .hero-visual {
+                height: 260px;
+                max-width: 290px;
+            }
+
+            .hero-card-main {
+                width: 200px;
+                height: 125px;
+                padding: 14px;
+            }
+
+            .card-number-hero {
+                font-size: 11px;
+            }
+
+            .ring-outer {
+                width: 220px;
+                height: 220px;
+            }
+
+            .ring-inner {
+                width: 160px;
+                height: 160px;
+            }
+
+            .float-widget.w3 {
+                display: none;
+            }
+
+            .section-title {
+                font-size: 20px;
+            }
+
+            .section-desc {
+                font-size: 13px;
+            }
+
+            .cta-box h2 {
+                font-size: 20px;
+            }
+        }
+
+        /* ── Landscape phone fix ── */
+        @media (max-height: 500px) and (orientation: landscape) {
+            .hero {
+                min-height: auto;
+                padding-top: 70px;
+                padding-bottom: 20px;
+            }
+
+            .hero-visual {
+                height: 250px;
+            }
+
+            .mobile-menu {
+                justify-content: flex-start;
+                padding-top: 60px;
+                gap: 4px;
+                overflow-y: auto;
+            }
+
+            .mobile-menu a {
+                font-size: 16px;
+                padding: 10px 24px;
+            }
+        }
+
+        /* ── Print: clean output ── */
+        @media print {
+            .blob, .bg-grid, .navbar, .hamburger, .mobile-menu, .cta-section {
+                display: none !important;
+            }
+
+            body {
+                background: white;
+                color: black;
             }
         }
     </style>
@@ -1472,25 +2292,30 @@
         </div>
     </header>
 
-    <!-- Mobile menu -->
-    <div id="mobileMenu"
-        style="display:none;position:fixed;inset:0;background:rgba(7,7,26,0.98);z-index:999;flex-direction:column;align-items:center;justify-content:center;gap:28px;">
-        <a href="#" onclick="toggleMenu()"
-            style="color:white;text-decoration:none;font-size:22px;font-weight:700;">Home</a>
-        <a href="#features" onclick="toggleMenu()"
-            style="color:rgba(255,255,255,0.7);text-decoration:none;font-size:22px;font-weight:700;">Features</a>
-        <a href="#products" onclick="toggleMenu()"
-            style="color:rgba(255,255,255,0.7);text-decoration:none;font-size:22px;font-weight:700;">Products</a>
-        <a href="#how" onclick="toggleMenu()"
-            style="color:rgba(255,255,255,0.7);text-decoration:none;font-size:22px;font-weight:700;">How It Works</a>
-        <a href="#faq" onclick="toggleMenu()"
-            style="color:rgba(255,255,255,0.7);text-decoration:none;font-size:22px;font-weight:700;">FAQ</a>
-        <div style="display:flex;gap:14px;margin-top:12px;">
+    <!-- Mobile menu overlay -->
+    <div class="mobile-menu" id="mobileMenu">
+        
+        <!-- Menu Header (Covers Navbar) -->
+        <div class="mobile-menu-header">
+            <div style="display:flex;align-items:center;gap:10px;">
+                <img src="/logo.png" alt="Money Mitra" style="width:36px;height:36px;border-radius:10px;object-fit:cover;" onerror="this.src='logo.png'" />
+                <span style="font-size:18px;font-weight:800;color:white;letter-spacing:-0.5px;">Money <span style="color:var(--accent);">Mitra</span></span>
+            </div>
+            <button class="mob-close-btn" onclick="toggleMenu()" aria-label="Close menu">&#10005;</button>
+        </div>
+
+        <!-- Nav links -->
+        <a href="#" class="mob-active" onclick="toggleMenu()">Home</a>
+        <a href="#features" onclick="toggleMenu()">Features</a>
+        <a href="#products" onclick="toggleMenu()">Products</a>
+        <a href="#how" onclick="toggleMenu()">How It Works</a>
+        <a href="#faq" onclick="toggleMenu()">FAQ</a>
+
+        <!-- Action buttons -->
+        <div class="mobile-menu-actions">
             <button onclick="goToLogin();toggleMenu()" class="btn btn-outline">Login</button>
             <button onclick="goToRegister();toggleMenu()" class="btn btn-primary">Open Account</button>
         </div>
-        <button onclick="toggleMenu()"
-            style="position:absolute;top:24px;right:24px;background:none;border:none;color:white;font-size:28px;cursor:pointer;">✕</button>
     </div>
 
     <!-- ═══════════════════════════════════════
@@ -2024,8 +2849,25 @@
         // ── Mobile menu ───────────────────────────────────────────
         function toggleMenu() {
             const m = document.getElementById('mobileMenu');
-            m.style.display = m.style.display === 'flex' ? 'none' : 'flex';
+            const h = document.getElementById('hamburger');
+            const isOpen = m.classList.contains('open');
+            m.classList.toggle('open');
+            h.classList.toggle('active');
+            document.body.style.overflow = isOpen ? '' : 'hidden';
         }
+
+        // Close mobile menu on resize to desktop
+        window.addEventListener('resize', () => {
+            if (window.innerWidth > 768) {
+                const m = document.getElementById('mobileMenu');
+                const h = document.getElementById('hamburger');
+                if (m.classList.contains('open')) {
+                    m.classList.remove('open');
+                    h.classList.remove('active');
+                    document.body.style.overflow = '';
+                }
+            }
+        });
 
         // ── Scroll reveal ─────────────────────────────────────────
         const revealEls = document.querySelectorAll('.reveal, .reveal-left, .reveal-right');

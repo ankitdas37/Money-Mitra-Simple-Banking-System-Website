@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { accountAPI, transactionAPI } from '../services/api';
 import { useAuthStore } from '../store';
-import { formatINR, formatDateTime, TXN_STYLES, AVATARS } from '../utils/helpers';
+import { formatINR, formatDateTime, TXN_STYLES, AVATARS, copyToClipboard } from '../utils/helpers';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
 import toast from 'react-hot-toast';
 
@@ -16,6 +16,7 @@ export default function Dashboard() {
   const [recentTxns, setRecentTxns] = useState([]);
   const [analytics, setAnalytics] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [greeting, setGreeting] = useState('');
 
   useEffect(() => {
     const fetchData = async () => {
@@ -37,11 +38,13 @@ export default function Dashboard() {
       }
     };
     fetchData();
+    const h = new Date().getHours();
+    if (h < 12) setGreeting('Good Morning');
+    else if (h < 17) setGreeting('Good Afternoon');
+    else setGreeting('Good Evening');
   }, []);
 
-  const avatar = AVATARS[(user?.avatar_id || 1) - 1];
-  const hour = new Date().getHours();
-  const greeting = hour < 12 ? 'Good Morning' : hour < 17 ? 'Good Afternoon' : 'Good Evening';
+  const avatar = AVATARS[(user?.avatar_id || 1) - 1] || '🦊';
 
   if (loading) return (
     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '60vh', flexDirection: 'column', gap: 16 }}>
@@ -59,9 +62,9 @@ export default function Dashboard() {
   const categoryData = analytics?.categories?.slice(0, 5) || [];
 
   return (
-    <div>
+    <div style={{ maxWidth: 800, margin: '0 auto', width: '100%' }}>
       {/* Header */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 32 }}>
+      <div className="dashboard-header-flex">
         <div>
           <div style={{ fontSize: 14, color: 'var(--text-muted)', marginBottom: 4 }}>{greeting} 👋</div>
           <h1 style={{ fontSize: 28, fontWeight: 800 }}>
@@ -72,7 +75,7 @@ export default function Dashboard() {
             {user?.kyc_status === 'verified' ? '✅ KYC Verified' : '⏳ KYC Pending'} · {accounts.length} Account{accounts.length !== 1 ? 's' : ''}
           </p>
         </div>
-        <button className="btn-primary" onClick={() => navigate('/transfer')} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+        <button className="btn-primary hide-on-mobile" onClick={() => navigate('/transfer')} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
           💸 Send Money
         </button>
       </div>
@@ -87,7 +90,7 @@ export default function Dashboard() {
           <div style={{ fontSize: 13, opacity: 0.75 }}>
             Across {summary?.account_count || 0} account{summary?.account_count !== 1 ? 's' : ''}
           </div>
-          <div style={{ display: 'flex', gap: 24, marginTop: 20 }}>
+          <div className="balance-stats-flex">
             <div>
               <div style={{ fontSize: 12, opacity: 0.7, marginBottom: 2 }}>↑ This Month Credited</div>
               <div style={{ fontSize: 18, fontWeight: 700 }}>
@@ -105,7 +108,7 @@ export default function Dashboard() {
       </div>
 
       {/* Quick Actions */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: 12, marginBottom: 24 }}>
+      <div className="dashboard-actions-grid hide-on-mobile">
         {[
           { icon: '💸', label: 'Transfer', path: '/transfer' },
           { icon: '⚡', label: 'UPI Pay', path: '/upi' },
@@ -129,7 +132,7 @@ export default function Dashboard() {
       </div>
 
       {/* Charts + Accounts row */}
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 320px', gap: 20, marginBottom: 24 }}>
+      <div className="dashboard-main-grid">
         {/* Area Chart */}
         <div className="glass-card" style={{ padding: 24 }}>
           <div style={{ marginBottom: 20 }}>
@@ -178,7 +181,7 @@ export default function Dashboard() {
               }}>
                 {/* Account type + status */}
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
-                  <span style={{ fontSize: 11, fontWeight: 700, color: 'var(--primary-light)', textTransform: 'uppercase', letterSpacing: 1 }}>
+                  <span style={{ fontSize: 12, fontWeight: 700, color: 'var(--primary-light)', textTransform: 'uppercase', letterSpacing: 1 }}>
                     🏦 {acc.account_type} Account
                   </span>
                   <span className={`badge ${acc.status === 'active' ? 'badge-success' : 'badge-error'}`}>{acc.status}</span>
@@ -191,7 +194,7 @@ export default function Dashboard() {
 
                 {/* Account Number with copy */}
                 <div style={{ marginBottom: 8 }}>
-                  <div style={{ fontSize: 10, color: 'var(--text-muted)', fontWeight: 600, marginBottom: 3, textTransform: 'uppercase', letterSpacing: 0.8 }}>
+                  <div style={{ fontSize: 11, color: 'var(--text-muted)', fontWeight: 600, marginBottom: 3, textTransform: 'uppercase', letterSpacing: 0.8 }}>
                     Account Number
                   </div>
                   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 8 }}>
@@ -199,11 +202,11 @@ export default function Dashboard() {
                       {acc.account_number.replace(/(\d{4})/g, '$1 ').trim()}
                     </span>
                     <button
-                      onClick={() => { navigator.clipboard.writeText(acc.account_number); toast.success('Account number copied!'); }}
+                      onClick={() => copyToClipboard(acc.account_number).then(() => toast.success('Account number copied!'))}
                       title="Copy account number"
                       style={{
                         background: 'rgba(108,99,255,0.12)', border: '1px solid rgba(108,99,255,0.25)',
-                        borderRadius: 6, padding: '3px 8px', cursor: 'pointer', fontSize: 11,
+                        borderRadius: 6, padding: '4px 10px', cursor: 'pointer', fontSize: 12,
                         color: 'var(--primary-light)', fontFamily: 'Outfit, sans-serif', fontWeight: 600,
                         transition: 'all 0.18s', whiteSpace: 'nowrap'
                       }}
@@ -218,19 +221,19 @@ export default function Dashboard() {
                 {/* IFSC Code with copy */}
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 8 }}>
                   <div>
-                    <div style={{ fontSize: 10, color: 'var(--text-muted)', fontWeight: 600, marginBottom: 2, textTransform: 'uppercase', letterSpacing: 0.8 }}>
+                    <div style={{ fontSize: 11, color: 'var(--text-muted)', fontWeight: 600, marginBottom: 2, textTransform: 'uppercase', letterSpacing: 0.8 }}>
                       IFSC Code
                     </div>
-                    <span style={{ fontSize: 13, fontFamily: 'monospace', fontWeight: 700, color: 'var(--success)', letterSpacing: 1 }}>
+                    <span style={{ fontSize: 14, fontFamily: 'monospace', fontWeight: 700, color: 'var(--success)', letterSpacing: 1 }}>
                       {acc.ifsc_code}
                     </span>
                   </div>
                   <button
-                    onClick={() => { navigator.clipboard.writeText(acc.ifsc_code); toast.success('IFSC code copied!'); }}
+                    onClick={() => copyToClipboard(acc.ifsc_code).then(() => toast.success('IFSC code copied!'))}
                     title="Copy IFSC code"
                     style={{
                       background: 'rgba(0,229,160,0.08)', border: '1px solid rgba(0,229,160,0.2)',
-                      borderRadius: 6, padding: '3px 8px', cursor: 'pointer', fontSize: 11,
+                      borderRadius: 6, padding: '4px 10px', cursor: 'pointer', fontSize: 12,
                       color: 'var(--success)', fontFamily: 'Outfit, sans-serif', fontWeight: 600,
                       transition: 'all 0.18s', whiteSpace: 'nowrap'
                     }}
@@ -242,7 +245,7 @@ export default function Dashboard() {
                 </div>
 
                 {acc.primary_upi && (
-                  <div style={{ fontSize: 11, color: 'var(--primary-light)', marginTop: 10, paddingTop: 10, borderTop: '1px solid rgba(255,255,255,0.06)' }}>
+                  <div style={{ fontSize: 12, color: 'var(--primary-light)', marginTop: 10, paddingTop: 10, borderTop: '1px solid rgba(255,255,255,0.06)' }}>
                     ⚡ UPI: {acc.primary_upi}
                   </div>
                 )}
@@ -254,9 +257,9 @@ export default function Dashboard() {
       </div>
 
       {/* Recent Transactions + Category Pie */}
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 280px', gap: 20 }}>
+      <div className="dashboard-main-grid">
         {/* Recent Txns */}
-        <div className="glass-card" style={{ padding: 24 }}>
+        <div className="glass-card hide-on-mobile" style={{ padding: 24 }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
             <div>
               <div style={{ fontWeight: 700, fontSize: 16 }}>Recent Transactions</div>

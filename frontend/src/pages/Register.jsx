@@ -200,10 +200,10 @@ export default function Register() {
   };
 
   return (
-    <div style={{ minHeight: '100vh', display: 'flex', fontFamily: 'Outfit, sans-serif', background: 'var(--bg-base)', overflow: 'hidden' }}>
+    <div style={{ minHeight: '100vh', display: 'flex', fontFamily: 'Outfit, sans-serif', background: 'var(--bg-base)', overflowX: 'hidden' }}>
 
       {/* Left Panel */}
-      <div style={{ flex: '0 0 40%', position: 'relative', overflow: 'hidden', display: 'flex', flexDirection: 'column', justifyContent: 'flex-end' }}>
+      <div className="register-left-panel">
         <img src="/anime-register-bg.png" alt="Create Account" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center top' }} />
         <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to bottom, rgba(10,8,30,0.1) 0%, rgba(10,8,30,0.3) 55%, rgba(10,8,30,0.92) 100%)' }} />
         <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to right, transparent 60%, var(--bg-base) 100%)' }} />
@@ -232,15 +232,57 @@ export default function Register() {
             ))}
           </div>
         </div>
-        <style>{`@keyframes floatBadge { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-6px)} }`}</style>
+        <style>{`@keyframes floatBadge { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-6px)} }
+          .register-left-panel { flex: 0 0 40%; position: relative; overflow: hidden; display: flex; flex-direction: column; justify-content: flex-end; }
+          .register-right-panel { flex: 1; overflow-y: auto; display: flex; align-items: flex-start; justify-content: center; padding: 36px 44px; }
+          .register-form-inner { width: 100%; max-width: 500px; }
+          .register-mobile-header { display: none; }
+          .register-mobile-steps { display: none; }
+          @media (max-width: 768px) {
+            .register-left-panel { display: none !important; }
+            .register-right-panel { padding: 0; }
+            .register-form-inner { max-width: 100%; padding: 20px 20px 40px; }
+            .register-mobile-header { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
+            .register-mobile-steps { display: flex; gap: 6px; margin-bottom: 16px; overflow-x: auto; padding-bottom: 4px; }
+          }
+          @media (max-width: 480px) {
+            .register-form-inner { padding: 16px 16px 40px; }
+          }
+          @media (hover: none) and (pointer: coarse) {
+            .input-field, input, select, textarea { font-size: 16px !important; }
+            button { min-height: 44px; }
+          }
+        `}</style>
       </div>
 
       {/* Right: Form Panel */}
-      <div style={{ flex: 1, overflowY: 'auto', display: 'flex', alignItems: 'flex-start', justifyContent: 'center', padding: '36px 44px' }}>
-        <div style={{ width: '100%', maxWidth: 500 }}>
+      <div className="register-right-panel">
+        <div className="register-form-inner">
+
+          {/* Mobile branding header */}
+          <div className="register-mobile-header">
+            <img src="/logo.png" alt="Money Mitra" style={{ width: 36, height: 36, borderRadius: 10, objectFit: 'cover', border: '2px solid rgba(108,99,255,0.4)' }} />
+            <div>
+              <div style={{ fontSize: 16, fontWeight: 800 }}><span className="text-gradient">Money Mitra</span></div>
+              <div style={{ fontSize: 11, color: 'var(--text-muted)' }}>Step {step + 1} of {STEPS.length} — {STEPS[step]}</div>
+            </div>
+          </div>
+
+          {/* Mobile step indicators (horizontal scrollable) */}
+          <div className="register-mobile-steps">
+            {STEPS.map((s, i) => (
+              <div key={s} style={{ display: 'flex', alignItems: 'center', gap: 5, flexShrink: 0 }}>
+                <div style={{ width: 24, height: 24, borderRadius: '50%', background: i <= step ? 'var(--gradient-primary)' : 'rgba(255,255,255,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 11, fontWeight: 800, flexShrink: 0, boxShadow: i === step ? '0 0 10px rgba(108,99,255,0.7)' : 'none' }}>
+                  {i < step ? '✓' : i + 1}
+                </div>
+                <span style={{ fontSize: 12, fontWeight: i === step ? 700 : 500, color: i === step ? 'white' : 'rgba(255,255,255,0.4)', whiteSpace: 'nowrap' }}>{s}</span>
+                {i < STEPS.length - 1 && <div style={{ width: 20, height: 1, background: 'rgba(255,255,255,0.15)', flexShrink: 0, marginLeft: 2 }} />}
+              </div>
+            ))}
+          </div>
 
           {/* Demo Banner */}
-          <div style={{ background:'#fff3cd', border:'2px solid #ffc107', padding:'14px', textAlign:'center', fontWeight:'bold', color:'#856404', marginBottom:'20px', borderRadius:'8px', fontSize:'15px' }}>
+          <div style={{ background: '#fff3cd', border: '2px solid #ffc107', padding: '14px', textAlign: 'center', fontWeight: 'bold', color: '#856404', marginBottom: '20px', borderRadius: '8px', fontSize: '15px' }}>
             ⚠️ Demo Project — Not a Real Bank. This is a student/portfolio coding project for practicing full-stack development. Do not enter real card numbers, passwords, or personal information.
           </div>
 
@@ -283,7 +325,7 @@ export default function Register() {
                     </div>
                   </div>
                 ) : (
-                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(9,1fr)', gap: 7 }}>
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(44px, 1fr))', gap: 10 }}>
                     {AVATARS.map((av, i) => (
                       <button key={i} type="button" onClick={() => set('avatar_id', i + 1)} style={{ width: '100%', aspectRatio: '1', borderRadius: 10, border: form.avatar_id === i + 1 ? '2px solid var(--primary)' : '2px solid rgba(255,255,255,0.06)', background: form.avatar_id === i + 1 ? 'rgba(108,99,255,0.2)' : 'rgba(255,255,255,0.03)', cursor: 'pointer', fontSize: 20, display: 'flex', alignItems: 'center', justifyContent: 'center', transform: form.avatar_id === i + 1 ? 'scale(1.12)' : 'scale(1)', transition: 'all 0.18s', boxShadow: form.avatar_id === i + 1 ? '0 0 12px rgba(108,99,255,0.4)' : 'none' }}>{av}</button>
                     ))}

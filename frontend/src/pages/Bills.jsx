@@ -275,7 +275,7 @@ export default function Bills() {
       </div>
 
       {/* ── Main two-column layout ── */}
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 380px', gap: 24, alignItems: 'start' }}>
+      <div className="grid-main-sidebar" style={{ alignItems: 'start' }}>
 
         {/* ── LEFT: Category Grid ── */}
         <div>
@@ -299,7 +299,7 @@ export default function Bills() {
           </div>
 
           {/* Category grid — matches the screenshot */}
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 14 }}>
+          <div className="grid-responsive-4" style={{ gap: 14 }}>
             {CATEGORIES.map(cat => (
               <button key={cat.key} onClick={() => openAddForCategory(cat)} style={{
                 background: cat.grad,
@@ -340,7 +340,7 @@ export default function Bills() {
                 <button onClick={() => setShowAdd(false)} style={{ marginLeft: 'auto', background: 'none', border: 'none', color: 'var(--text-muted)', fontSize: 20, cursor: 'pointer' }}>✕</button>
               </div>
 
-              <form onSubmit={handleAdd} style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14 }}>
+              <form onSubmit={handleAdd} className="grid-responsive-2" style={{ gap: 14 }}>
 
                 {/* Step 1: State selector (only for state-specific categories) */}
                 {!PROVIDERS[selectedCategory.key]?.[''] && (

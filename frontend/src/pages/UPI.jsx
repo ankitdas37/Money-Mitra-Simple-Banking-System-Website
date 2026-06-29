@@ -532,7 +532,7 @@ export default function UPI() {
           {result && (
             <div style={{ marginTop: 24, background: 'rgba(0,229,160,0.05)', border: '1px solid rgba(0,229,160,0.2)', borderRadius: 14, padding: 20 }}>
               <div style={{ fontWeight: 700, color: 'var(--success)', marginBottom: 12, fontSize: 16 }}>⚡ Payment Successful!</div>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
+                <div className="grid-responsive-2" style={{ gap: 10 }}>
                 {[['Amount', formatINR(result.amount)], ['To UPI', result.to_upi], ['Ref No.', result.reference_number], ['New Balance', formatINR(result.new_balance)]].map(([l, v]) => (
                   <div key={l} style={{ background: 'rgba(0,0,0,0.2)', borderRadius: 8, padding: '8px 12px' }}>
                     <div style={{ fontSize: 11, color: 'var(--text-muted)' }}>{l}</div>
