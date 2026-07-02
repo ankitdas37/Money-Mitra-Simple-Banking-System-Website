@@ -387,7 +387,7 @@ After seeding the database, you can log in with:
 
 | Role    | Email / Username                 | Password    |
 |---------|----------------------------------|-------------|
-| Admin   | `admin` or `admin@moneymitra.in` | `AKKU@2006` |
+| Admin   | `admin` or `admin@moneymitra.in` |             |
 | User 1  | `rahul@moneymitra.in`            | `User@1234` |
 | User 2  | `priya@moneymitra.in`            | `User@1234` |
 
