@@ -6,6 +6,10 @@
   <img src="frontend/public/logo.png" alt="Money Mitra Logo" width="200" height="200" style="border-radius: 20px; box-shadow: 0 4px 20px rgba(108, 99, 255, 0.4);">
 </div>
 
+<div align="center">
+  <h3><a href="https://money-mitra-simple-banking-system-w.vercel.app" target="_blank">🌐 Live Demo: Money Mitra</a></h3>
+</div>
+
 ⚡ **Minor Project Report · 4th Semester · CST**
 
 ---
@@ -83,6 +87,7 @@
 This project is for educational purposes only.
 ## 📋 Table of Contents
 
+- [Live Demo & Deployment](#-live-demo--deployment)
 - [Tech Stack](#-tech-stack)
 - [Required Software](#-required-software-to-install)
 - [Step-by-Step Setup](#-step-by-step-setup-after-git-clone)
@@ -91,6 +96,20 @@ This project is for educational purposes only.
 - [Available Scripts](#-available-scripts)
 - [Default Admin Credentials](#-default-admin-credentials)
 - [Troubleshooting](#-troubleshooting)
+
+---
+
+## 🌍 Live Demo & Deployment
+
+**🌐 Website Link:** [https://money-mitra-simple-banking-system-w.vercel.app](https://money-mitra-simple-banking-system-w.vercel.app)
+
+The application is fully deployed and accessible online. Below is the deployment architecture:
+
+| Component | Platform / Provider | Description |
+|-----------|---------------------|-------------|
+| **Frontend** | [Vercel](https://vercel.com/) | The React website people see |
+| **Backend**  | [Render](https://render.com/) | The Node/Express API |
+| **Database** | [Aiven](https://aiven.io/)  | Your MySQL data |
 
 ---
 
