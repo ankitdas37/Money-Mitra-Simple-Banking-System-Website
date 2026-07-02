@@ -74,12 +74,12 @@
 ---
 
 ## 👥 Team Members
-- Roll No: 34  
-- Roll No: 36  
-- Roll No: 37  
-- Roll No: 38  
-- Roll No: 39  
-- Roll No: 40  
+- Roll No: 34 [Md Karimulla] 
+- Roll No: 36 [Shreya Debnath]
+- Roll No: 37 [Ankit Das]
+- Roll No: 38 [Anish Meddya]
+- Roll No: 39 [Anisha Roy]
+- Roll No: 40 [Sayak Roy]
 
 ---
 
