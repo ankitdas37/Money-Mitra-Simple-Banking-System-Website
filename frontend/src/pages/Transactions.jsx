@@ -6,10 +6,7 @@ import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 
 // ── Helpers ─────────────────────────────────────────────────────────────────
-// toINR — used in the UI (supports ₹)
-function toINR(v) {
-  return '₹' + parseFloat(v || 0).toLocaleString('en-IN', { minimumFractionDigits: 2 });
-}
+
 
 // fmtPDF — jsPDF built-in fonts DO NOT support ₹ symbol, use Rs. instead
 function fmtPDF(v) {
@@ -41,23 +38,22 @@ async function generatePDF({ user, accounts, transactions, filters }) {
   const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
   const W = doc.internal.pageSize.getWidth();
   const H = doc.internal.pageSize.getHeight();
-  const navy   = [13, 20, 60];
+  const navy = [13, 20, 60];
   const purple = [108, 99, 255];
-  const green  = [0, 180, 120];
-  const teal   = [0, 180, 200];
-  const gray   = [120, 130, 160];
-  const light  = [235, 237, 252];
-  const white  = [255, 255, 255];
-  const gold   = [200, 150, 0];
-  const red    = [220, 50, 50];
+  const green = [0, 180, 120];
+  const teal = [0, 180, 200];
+  const gray = [120, 130, 160];
+  const light = [235, 237, 252];
+  const white = [255, 255, 255];
+  const gold = [200, 150, 0];
+  const red = [220, 50, 50];
 
   const stmtRef = 'MM-STMT-' + Date.now().toString().slice(-8);
   const genDate = new Date().toLocaleString('en-IN');
 
-  // Load logo & profile photo
-  const logoBase64  = await loadImageAsBase64('/logo.png');
+  // Load logo
+  const logoBase64 = await loadImageAsBase64('/logo.png');
   const photoBase64 = user.profile_photo || null;
-
   // ─── HELPERS ──────────────────────────────────────────────────────────────────
   function drawPageHeader(pageTitle, pageSubtitle, bgH = 52) {
     doc.setFillColor(...navy);
@@ -127,7 +123,8 @@ async function generatePDF({ user, accounts, transactions, filters }) {
       doc.setFillColor(...white);
       doc.circle(photoX + photoSize / 2, photoY + photoSize / 2, photoSize / 2 + 1, 'F');
       const fmt = photoBase64.includes('image/png') ? 'PNG' : 'JPEG';
-      doc.addImage(photoBase64, fmt, photoX, photoY, photoSize, photoSize);
+      const cleanBase64 = photoBase64.includes('base64,') ? photoBase64.split('base64,')[1] : photoBase64;
+      doc.addImage(cleanBase64, fmt, photoX, photoY, photoSize, photoSize);
     } catch {
       doc.setFillColor(...purple);
       doc.circle(photoX + photoSize / 2, photoY + photoSize / 2, photoSize / 2, 'F');
@@ -163,17 +160,17 @@ async function generatePDF({ user, accounts, transactions, filters }) {
   drawSectionHeader('PERSONAL INFORMATION', [...purple], y + 6);
   y += 10;
   y = drawInfoGrid([
-    ['Full Name',           user.full_name || '-'],
-    ['Email Address',       user.email || '-'],
-    ['Phone Number',        user.phone || '-'],
-    ['Date of Birth',       user.date_of_birth ? new Date(user.date_of_birth).toLocaleDateString('en-IN') : '-'],
-    ['Gender',             (user.gender || '-').replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase())],
-    ['Nationality',         user.nationality || 'Indian'],
-    ['Occupation',          user.occupation || '-'],
-    ['Annual Income',       user.annual_income || '-'],
+    ['Full Name', user.full_name || '-'],
+    ['Email Address', user.email || '-'],
+    ['Phone Number', user.phone || '-'],
+    ['Date of Birth', user.date_of_birth ? new Date(user.date_of_birth).toLocaleDateString('en-IN') : '-'],
+    ['Gender', (user.gender || '-').replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase())],
+    ['Nationality', user.nationality || 'Indian'],
+    ['Occupation', user.occupation || '-'],
+    ['Annual Income', 'Not Disclosed'],
     ['Residential Address', user.residential_address || '-'],
-    ['Account Opened On',   user.created_at ? new Date(user.created_at).toLocaleDateString('en-IN', { day: '2-digit', month: 'long', year: 'numeric' }) : '-'],
-    ['Last Login',          user.last_login ? new Date(user.last_login).toLocaleString('en-IN') : '-'],
+    ['Account Opened On', user.created_at ? new Date(user.created_at).toLocaleDateString('en-IN', { day: '2-digit', month: 'long', year: 'numeric' }) : '-'],
+    ['Last Login', user.last_login ? new Date(user.last_login).toLocaleString('en-IN') : '-'],
   ], y);
 
   y += 3;
@@ -184,11 +181,11 @@ async function generatePDF({ user, accounts, transactions, filters }) {
   const rawAadhaar = user.aadhaar_number || '';
   const maskedAadhaar = rawAadhaar.length >= 4 ? 'XXXX XXXX ' + rawAadhaar.slice(-4) : (rawAadhaar || 'Not Submitted');
   y = drawInfoGrid([
-    ['PAN Number',       user.pan_number || 'Not Submitted'],
-    ['Aadhaar Number',   maskedAadhaar],
-    ['CKYC Number',      user.ckyc_number || '-'],
-    ['Risk Category',    user.risk_category ? user.risk_category.toUpperCase() : '-'],
-    ['KYC Status',       (user.kyc_status || 'PENDING').toUpperCase(),
+    ['PAN Number', user.pan_number || 'Not Submitted'],
+    ['Aadhaar Number', maskedAadhaar],
+    ['CKYC Number', user.ckyc_number || '-'],
+    ['Risk Category', user.risk_category ? user.risk_category.toUpperCase() : '-'],
+    ['KYC Status', (user.kyc_status || 'PENDING').toUpperCase(),
       user.kyc_status === 'verified' ? [...green] : user.kyc_status === 'rejected' ? [...red] : [...gold]],
     ['KYC Submitted On', user.kyc_submitted_at
       ? new Date(user.kyc_submitted_at).toLocaleDateString('en-IN', { day: '2-digit', month: 'long', year: 'numeric' })
@@ -266,10 +263,10 @@ async function generatePDF({ user, accounts, transactions, filters }) {
     y += 10;
     y = drawInfoGrid([
       ['Primary Account No.', pa.account_number || '-'],
-      ['Primary UPI Handle',  pa.primary_upi || ((user.email?.split('@')[0] || '') + '@moneymitra')],
-      ['Current Balance',     fmtPDF(pa.balance), [...green]],
-      ['Account Status',      (pa.status || 'active').toUpperCase(), pa.status === 'active' ? [...green] : [...red]],
-      ['Total Accounts',      String(accounts.length)],
+      ['Primary UPI Handle', pa.primary_upi || ((user.email?.split('@')[0] || '') + '@moneymitra')],
+      ['Current Balance', fmtPDF(pa.balance), [...green]],
+      ['Account Status', (pa.status || 'active').toUpperCase(), pa.status === 'active' ? [...green] : [...red]],
+      ['Total Accounts', String(accounts.length)],
     ], y);
   }
 
@@ -282,12 +279,12 @@ async function generatePDF({ user, accounts, transactions, filters }) {
 
   const creditTypes = ['credit', 'upi_receive', 'loan_credit', 'refund'];
   const totalCredit = transactions.filter(t => creditTypes.includes(t.type)).reduce((s, t) => s + parseFloat(t.amount || 0), 0);
-  const totalDebit  = transactions.filter(t => !creditTypes.includes(t.type)).reduce((s, t) => s + parseFloat(t.amount || 0), 0);
+  const totalDebit = transactions.filter(t => !creditTypes.includes(t.type)).reduce((s, t) => s + parseFloat(t.amount || 0), 0);
   const netFlow = totalCredit - totalDebit;
 
   const statBoxes = [
     { label: 'Total Credits', value: fmtPDF(totalCredit), color: green },
-    { label: 'Total Debits',  value: fmtPDF(totalDebit),  color: [...red] },
+    { label: 'Total Debits', value: fmtPDF(totalDebit), color: [...red] },
     { label: 'Net Flow', value: (netFlow >= 0 ? '+ ' : '- ') + 'Rs. ' + Math.abs(netFlow).toLocaleString('en-IN', { minimumFractionDigits: 2 }), color: netFlow >= 0 ? green : [...red] },
     { label: 'Transactions', value: String(transactions.length) + ' records', color: [...purple] },
   ];
@@ -375,12 +372,12 @@ async function generatePDF({ user, accounts, transactions, filters }) {
     doc.text(`Page ${i} of ${pageCount}`, W - 26, H - 11);
     doc.setFont('helvetica', 'normal'); doc.setFontSize(6); doc.setTextColor(130, 140, 190);
     doc.text('CONFIDENTIAL — For authorized use only', 14, H - 21);
-    // Purple college footer strip
+    // Purple footer strip
     doc.setFillColor(...purple);
     doc.rect(0, H - 8, W, 8, 'F');
     doc.setTextColor(230, 228, 255); doc.setFont('helvetica', 'bold'); doc.setFontSize(7);
     doc.text(
-      'College Minor Project  \u00B7  4th Sem  \u00B7  CST  \u00B7  Roll No: 34, 36, 37, 38, 39, 40',
+      'College Minor Project  ·  4th Sem  ·  CST  ·  Roll No: 34, 36, 37, 38, 39, 40 ',
       W / 2, H - 3.2, { align: 'center' }
     );
   }
@@ -398,7 +395,7 @@ export default function Transactions() {
   const [showPdfModal, setShowPdfModal] = useState(false);
   const [isLive, setIsLive] = useState(true);
   const [newTxnFlash, setNewTxnFlash] = useState(false);
-  const [lastCount, setLastCount] = useState(0);
+  const [, setLastCount] = useState(0);
   const currentPageRef = useRef(1);
   const pollingRef = useRef(null);
 
@@ -437,8 +434,7 @@ export default function Transactions() {
     finally { setLoading(false); }
   }, [filters]);
 
-  // Initial load
-  useEffect(() => { fetchTxns(1); }, []);
+  useEffect(() => { fetchTxns(1); }, [fetchTxns]);
 
   // Live polling every 10 seconds
   useEffect(() => {
@@ -535,7 +531,7 @@ export default function Transactions() {
                 color: isLive ? '#00e5a0' : 'var(--text-muted)', transition: 'all 0.2s'
               }}
             >
-              {isLive ? <span className="live-dot" /> : <span style={{ width:8,height:8,borderRadius:'50%',background:'var(--text-muted)',display:'inline-block' }} />}
+              {isLive ? <span className="live-dot" /> : <span style={{ width: 8, height: 8, borderRadius: '50%', background: 'var(--text-muted)', display: 'inline-block' }} />}
               {isLive ? 'LIVE' : 'PAUSED'}
             </button>
           </div>
@@ -584,7 +580,7 @@ export default function Transactions() {
               <input type="date" className="input-field" value={filters.end_date} onChange={e => setFilters(f => ({ ...f, end_date: e.target.value }))} />
             </div>
           </div>
-          
+
           {/* Amount Filters */}
           <div className="grid-responsive-2" style={{ gap: 16, marginBottom: 16 }}>
             <div>
@@ -641,12 +637,12 @@ export default function Transactions() {
                 const isCredit = CREDIT_TYPES.includes(txn.type);
 
                 // Direction label + colors
-                const dirLabel  = isCredit ? 'Credit' : 'Debit';
-                const dirColor  = isCredit ? 'var(--success)' : 'var(--error)';
-                const dirBg     = isCredit ? 'rgba(0,229,160,0.10)' : 'rgba(255,87,87,0.10)';
+                const dirLabel = isCredit ? 'Credit' : 'Debit';
+                const dirColor = isCredit ? 'var(--success)' : 'var(--error)';
+                const dirBg = isCredit ? 'rgba(0,229,160,0.10)' : 'rgba(255,87,87,0.10)';
                 const dirBorder = isCredit ? 'rgba(0,229,160,0.25)' : 'rgba(255,87,87,0.25)';
-                const dirArrow  = isCredit ? '↓' : '↑';
-                const dirSign   = isCredit ? '+' : '−';   // minus sign, not hyphen
+                const dirArrow = isCredit ? '↓' : '↑';
+                const dirSign = isCredit ? '+' : '−';   // minus sign, not hyphen
 
                 return (
                   <tr key={txn.id}>
@@ -722,7 +718,7 @@ export default function Transactions() {
           <div style={{ display: 'flex', justifyContent: 'center', gap: 8, padding: '16px 24px', borderTop: '1px solid var(--border)' }}>
             {Array.from({ length: Math.min(pagination.pages, 7) }, (_, i) => i + 1).map(p => (
               <button key={p} onClick={() => fetchTxns(p)} style={{
-                width: 36, height: 36, borderRadius: 8, border: 'none', cursor: 'pointer',
+                width: 36, height: 36, borderRadius: 8, cursor: 'pointer',
                 background: pagination.page === p ? 'var(--gradient-primary)' : 'var(--bg-card)',
                 color: pagination.page === p ? 'white' : 'var(--text-secondary)',
                 fontWeight: 600, fontSize: 13, fontFamily: 'Outfit, sans-serif',

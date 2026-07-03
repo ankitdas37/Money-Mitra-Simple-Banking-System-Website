@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useSearchParams } from 'react-router-dom';
 import { adminAPI, userAPI, supportAPI, authAPI } from '../services/api';
 import { formatINR, formatDate, formatDateTime } from '../utils/helpers';
 import toast from 'react-hot-toast';
@@ -340,7 +340,7 @@ function calcEMI(principal, annualRate, tenureMonths) {
 }
 
 /* ═══ LoansTab (inside user detail) ════════════════════════ */
-function LoansTab({ userId, initialLoans, setLoanModal, setLoanForm, openGiveLoanModal }) {
+function LoansTab({ initialLoans, setLoanModal, setLoanForm, openGiveLoanModal }) {
   const [loans, setLoans]           = React.useState(initialLoans || []);
   const [emiProcessing, setEmiPro]  = React.useState(null); // loanId being processed
 
@@ -575,7 +575,7 @@ function BeneficiariesTab({ userId, initialBens }) {
 
 /* ═══════════════════════════════════════════════════════════ */
 export default function AdminPanel() {
-  const navigate = useNavigate();
+
   const [searchParams] = useSearchParams();
   const { user } = useAuthStore();
 
@@ -600,7 +600,7 @@ export default function AdminPanel() {
 
   /* ── tab is driven by the URL ?tab= param ── */
   const tab = searchParams.get('tab') || 'overview';
-  const setTab = (t) => navigate(`/admin?tab=${t}`, { replace: true });
+
 
   /* ── top-level state ── */
   const [stats, setStats] = useState(null);
@@ -707,25 +707,26 @@ export default function AdminPanel() {
     if (tab === 'loans') fetchAllLoans();
     if (tab === 'broadcast') adminAPI.getUsers({ limit: 200 }).then(r => setBroadcastUsers(r.data.data || [])).catch(() => {});
     if (tab === 'database') fetchDbStats();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [tab]);
 
   const fetchUsers = async () => {
-    try { const r = await adminAPI.getUsers({ search }); setUsers(r.data.data); } catch {}
+    try { const r = await adminAPI.getUsers({ search }); setUsers(r.data.data); } catch { /* empty */ }
   };
   const fetchTransactions = async () => {
-    try { const r = await adminAPI.getTransactions({ fraud_only: fraudOnly }); setTransactions(r.data.data); } catch {}
+    try { const r = await adminAPI.getTransactions({ fraud_only: fraudOnly }); setTransactions(r.data.data); } catch { /* empty */ }
   };
   const fetchPending = async () => {
-    try { const r = await userAPI.getPendingChanges(); setPendingChanges(r.data.data || []); } catch {}
+    try { const r = await userAPI.getPendingChanges(); setPendingChanges(r.data.data || []); } catch { /* empty */ }
   };
   const fetchSupportTickets = async () => {
-    try { const r = await supportAPI.adminGetAllTickets(supportFilter); setSupportTickets(r.data.data || []); } catch {}
+    try { const r = await supportAPI.adminGetAllTickets(supportFilter); setSupportTickets(r.data.data || []); } catch { /* empty */ }
   };
   const fetchSupportStats = async () => {
-    try { const r = await supportAPI.adminGetStats(); setSupportStats(r.data.data); } catch {}
+    try { const r = await supportAPI.adminGetStats(); setSupportStats(r.data.data); } catch { /* empty */ }
   };
   const fetchFAQs = async () => {
-    try { const r = await adminAPI.getFAQs(); setFaqs(r.data.data || []); } catch {}
+    try { const r = await adminAPI.getFAQs(); setFaqs(r.data.data || []); } catch { /* empty */ }
   };
   const fetchDbStats = async () => {
     setDbLoading(true);
@@ -787,6 +788,7 @@ export default function AdminPanel() {
       const interval = setInterval(() => loadUserTxns(detailUser.user.id, true), 10000);
       return () => clearInterval(interval);
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [detailTab, detailUser?.user?.id]);
 
   const saveProfile = async () => {
@@ -1732,7 +1734,7 @@ export default function AdminPanel() {
             <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
               {[['', 'All'], ['applied', '⏳ Pending'], ['under_review', '🔍 Under Review'], ['approved', '✅ Approved'], ['rejected', '❌ Rejected'], ['disbursed', '💰 Disbursed']].map(([v, l]) => (
                 <button key={v} onClick={() => { setLoanFilter(v); fetchAllLoans({ status: v || undefined, search: loanSearch || undefined }); }} style={{
-                  padding: '7px 14px', borderRadius: 20, border: 'none', cursor: 'pointer',
+                  padding: '7px 14px', borderRadius: 20, cursor: 'pointer',
                   fontFamily: 'Outfit,sans-serif', fontWeight: 700, fontSize: 12, transition: 'all 0.2s',
                   background: loanFilter === v ? 'var(--gradient-primary)' : 'var(--bg-card)',
                   color: loanFilter === v ? 'white' : 'var(--text-secondary)',

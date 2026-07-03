@@ -113,6 +113,10 @@ app.get('*', (req, res) => {
 // ── Global Error Handler ─────────────────────────────────────────
 app.use(errorHandler);
 
+// ── Background Jobs ──────────────────────────────────────────────
+const { startEmiJob } = require('./jobs/emiJob');
+startEmiJob();
+
 // ── Start Server ─────────────────────────────────────────────────
 const PORT = process.env.PORT || 5000;
 const HOST = process.env.HOST || '0.0.0.0';

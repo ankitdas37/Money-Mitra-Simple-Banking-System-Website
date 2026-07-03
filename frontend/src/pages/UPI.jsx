@@ -22,14 +22,13 @@ function QrScannerModal({ onResult, onClose }) {
 
   const hasBarcodeDetector = typeof window !== 'undefined' && 'BarcodeDetector' in window;
 
-  // Start camera when mode = camera
-  useEffect(() => {
-    if (mode !== 'camera') { stopStream(); return; }
-    startCamera();
-    return () => { stopStream(); };
-  }, [mode]);
+  const stopStream = useCallback(() => {
+    clearInterval(intervalRef.current);
+    if (streamRef.current) streamRef.current.getTracks().forEach(t => t.stop());
+    streamRef.current = null;
+  }, []);
 
-  const startCamera = () => {
+  const startCamera = useCallback(() => {
     setCamError('');
     if (!hasBarcodeDetector && !navigator.mediaDevices) { setCamError('Camera not supported on this browser.'); return; }
     navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment', width: { ideal: 1280 }, height: { ideal: 720 } } })
@@ -47,7 +46,7 @@ function QrScannerModal({ onResult, onClose }) {
                 stopStream();
                 onResult(barcodes[0].rawValue);
               }
-            } catch { }
+            } catch { /* empty */ }
           }, 400);
         } else {
           // jsQR fallback via canvas
@@ -70,13 +69,15 @@ function QrScannerModal({ onResult, onClose }) {
         }
       })
       .catch(() => setCamError('Camera permission denied or not available on this device.'));
-  };
+  }, [hasBarcodeDetector, onResult, stopStream]);
 
-  const stopStream = () => {
-    clearInterval(intervalRef.current);
-    if (streamRef.current) streamRef.current.getTracks().forEach(t => t.stop());
-    streamRef.current = null;
-  };
+  // Start camera when mode = camera
+  useEffect(() => {
+    if (mode !== 'camera') { stopStream(); return; }
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    startCamera();
+    return () => { stopStream(); };
+  }, [mode, startCamera, stopStream]);
 
   const handleClose = () => { stopStream(); onClose(); };
 

@@ -31,7 +31,7 @@ export default function Dashboard() {
         setAccounts(accRes.data.data);
         setRecentTxns(txnRes.data.data || []);
         setAnalytics(anaRes.data.data);
-      } catch (err) {
+      } catch {
         toast.error('Failed to load dashboard data');
       } finally {
         setLoading(false);

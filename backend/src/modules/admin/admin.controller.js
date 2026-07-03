@@ -117,16 +117,23 @@ const approveLoan = async (req, res, next) => {
 
     const loan      = rows[0];
     const approved  = parseFloat(amount_approved || loan.amount_requested);
-    const newStatus = action === 'approve' ? 'approved' : 'rejected';
+    const newStatus = action === 'approve' ? 'disbursed' : 'rejected';
 
     const conn = await require('../../config/db').getConnection();
     await conn.beginTransaction();
     try {
       // Update loan record
-      await conn.query(
-        'UPDATE loans SET status=?, amount_approved=?, admin_remarks=?, approved_at=NOW() WHERE id=?',
-        [newStatus, approved, admin_remarks, req.params.id]
-      );
+      if (action === 'approve') {
+        await conn.query(
+          'UPDATE loans SET status=?, amount_approved=?, admin_remarks=?, disbursed_at=NOW(), next_emi_date=DATE_ADD(CURDATE(), INTERVAL 1 MONTH) WHERE id=?',
+          [newStatus, approved, admin_remarks, req.params.id]
+        );
+      } else {
+        await conn.query(
+          'UPDATE loans SET status=?, amount_approved=?, admin_remarks=? WHERE id=?',
+          [newStatus, approved, admin_remarks, req.params.id]
+        );
+      }
 
       if (action === 'approve') {
         // Find user's primary account

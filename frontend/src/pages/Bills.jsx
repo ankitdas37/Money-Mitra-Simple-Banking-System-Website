@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { billAPI, accountAPI } from '../services/api';
-import { formatINR, formatDate } from '../utils/helpers';
+import { formatINR } from '../utils/helpers';
 import toast from 'react-hot-toast';
 
 // ── All 28 States + 8 UTs ─────────────────────────────────────────────
@@ -55,7 +55,7 @@ const PROVIDERS = {
     'Andaman & Nicobar Islands':['ANIIDCO'],
     'Lakshadweep':          ['Lakshadweep Electricity Dept'],
     'Dadra & Nagar Haveli and Daman & Diu': ['DDDPDCL'],
-    'Goa':                  ['Goa Electricity Dept'],
+
   },
   water: {
     'Maharashtra':  ['MCGM (Mumbai)','PMC (Pune)','NMC (Nagpur)'],
@@ -206,7 +206,6 @@ export default function Bills() {
   // NEW: state and provider selectors
   const [selectedState, setSelectedState] = useState('');
   const [selectedProvider, setSelectedProvider] = useState('');
-  const [filterStatus, setFilterStatus] = useState('pending');
 
   useEffect(() => {
     Promise.all([billAPI.getAll({ status: 'pending' }), billAPI.getAll({ status: 'overdue' }), accountAPI.getAll()])
@@ -224,7 +223,7 @@ export default function Bills() {
     try {
       const [pend, over] = await Promise.all([billAPI.getAll({ status: 'pending' }), billAPI.getAll({ status: 'overdue' })]);
       setBills([...(pend.data.data || []), ...(over.data.data || [])]);
-    } catch {}
+    } catch { /* empty */ }
   };
 
   const handleAdd = async (e) => {

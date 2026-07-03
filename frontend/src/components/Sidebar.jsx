@@ -41,6 +41,7 @@ export default function Sidebar() {
 
   // Close mobile menu on route change
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setIsMobileOpen(false);
   }, [location.pathname, location.search]);
 
@@ -52,7 +53,7 @@ export default function Sidebar() {
         const { notifications: notifs, unread_count } = res.data.data;
         setLocalNotifications(notifs || []);
         setNotifications(notifs || [], unread_count);
-      } catch {}
+      } catch { /* empty */ }
     };
     fetchNotifications();
     const interval = setInterval(fetchNotifications, 30000);
@@ -60,7 +61,7 @@ export default function Sidebar() {
   }, []);
 
   const handleLogout = async () => {
-    try { await notificationAPI.getAll(); } catch {}
+    try { await notificationAPI.getAll(); } catch { /* empty */ }
     logout();
     navigate('/login');
   };
@@ -70,7 +71,7 @@ export default function Sidebar() {
       await notificationAPI.markAllRead();
       setLocalNotifications(prev => prev.map(n => ({ ...n, is_read: true })));
       setNotifications(notifications.map(n => ({ ...n, is_read: true })), 0);
-    } catch {}
+    } catch { /* empty */ }
   };
 
   const handleClearAll = async () => {
@@ -78,7 +79,7 @@ export default function Sidebar() {
       await notificationAPI.clearAll();
       setLocalNotifications([]);
       setNotifications([], 0);
-    } catch {}
+    } catch { /* empty */ }
   };
 
   const isAdmin = user?.role === 'admin';

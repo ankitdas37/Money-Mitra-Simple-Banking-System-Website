@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { accountAPI, transactionAPI, beneficiaryAPI } from '../services/api';
-import { formatINR, formatDateTime } from '../utils/helpers';
+import { formatINR } from '../utils/helpers';
 import toast from 'react-hot-toast';
 
 const TABS = ['transfer', 'beneficiaries'];

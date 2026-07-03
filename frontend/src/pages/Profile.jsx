@@ -79,7 +79,7 @@ function TabBtn({ id, icon, label, active, onClick }) {
 
 // ── Main Profile Page ──────────────────────────────────────────────────────────
 export default function Profile() {
-  const { user: authUser, updateUser } = useAuthStore();
+  const { updateUser, logout } = useAuthStore();
   const [profile, setProfile] = useState(null);
   const [accounts, setAccounts] = useState([]);
   const [tab, setTab] = useState('personal');
@@ -484,7 +484,7 @@ export default function Profile() {
 
           {accounts.length === 0 ? (
             <div className="empty-state"><div className="empty-state-icon">🏦</div><p>No accounts found</p></div>
-          ) : accounts.map((acc, i) => (
+          ) : accounts.map((acc) => (
             <div key={acc.id} style={{ marginBottom: 24 }}>
 
               {/* ── Premium Card Visual ── */}

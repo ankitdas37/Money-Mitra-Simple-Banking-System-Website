@@ -56,7 +56,7 @@ function showLoginError(code, message) {
       </div>
     ), { duration: 5000, position: 'top-center' });
   } else if (code === 403) {
-    toast.custom((t) => (
+    toast.custom(() => (
       <div style={{
         display: 'flex', alignItems: 'flex-start', gap: 12,
         background: 'rgba(20,10,40,0.97)', border: '1px solid rgba(255,87,87,0.5)',
@@ -148,21 +148,6 @@ export default function Login() {
     }
   };
 
-  const demoLogin = async (email, password) => {
-    setForm({ email, password });
-    setLoading(true);
-    try {
-      const res = await authAPI.login({ email, password });
-      const { user, accessToken, refreshToken } = res.data.data;
-      setAuth(user, accessToken, refreshToken);
-      toast.success(`Welcome, ${user.full_name}!`);
-      navigate('/dashboard');
-    } catch (err) {
-      toast.error(err.response?.data?.message || 'Demo login failed');
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const handleForgotPassword = async (e) => {
     e.preventDefault();

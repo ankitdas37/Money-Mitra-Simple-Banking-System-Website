@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { supportAPI } from '../services/api';
-import { useAuthStore } from '../store';
+
 import toast from 'react-hot-toast';
 
 // ── Tiny helpers ────────────────────────────────────────────────────────────────
@@ -100,7 +100,6 @@ function MsgBubble({ msg }) {
 
 // ══ Main Page ════════════════════════════════════════════════════════════════════
 export default function HelpSupport() {
-  const { user } = useAuthStore();
   const [tickets, setTickets] = useState([]);
   const [activeTicket, setActiveTicket] = useState(null); // full ticket with messages
   const [view, setView] = useState('home'); // 'home' | 'tickets' | 'new' | 'thread'

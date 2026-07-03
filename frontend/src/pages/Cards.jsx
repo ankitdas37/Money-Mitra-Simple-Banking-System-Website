@@ -113,7 +113,6 @@ export default function Cards() {
   const [revealedCards, setRevealedCards] = useState({}); // id -> revealed data
   const [blockConfirm, setBlockConfirm] = useState(null); // card object
   const [deleteConfirm, setDeleteConfirm] = useState(null); // card object
-  const [settingsLoading, setSettingsLoading] = useState({});
 
   useEffect(() => {
     loadData();
@@ -163,15 +162,14 @@ export default function Cards() {
   };
 
   const handleToggleSetting = async (card, setting, value) => {
-    const key = card.id + setting;
-    setSettingsLoading(p => ({ ...p, [key]: true }));
+
+
     try {
       await cardAPI.updateSettings(card.id, { [setting]: value });
       setCards(prev => prev.map(c => c.id === card.id ? { ...c, [setting]: value } : c));
       const names = { online_enabled: 'Online payments', international_enabled: 'International transfers', nfc_enabled: 'NFC / Tap & Pay' };
       toast.success(`${names[setting]} ${value ? 'enabled' : 'disabled'}`);
     } catch { toast.error('Failed to update setting'); }
-    finally { setSettingsLoading(p => { const n = { ...p }; delete n[key]; return n; }); }
   };
 
   const handleUpdateLimit = async (id, limit) => {
