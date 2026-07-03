@@ -1315,7 +1315,8 @@
             border-radius: 10px;
             transition: background 0.2s;
             -webkit-tap-highlight-color: transparent;
-            margin-left: auto;  /* ← always push to right edge */
+            margin-left: auto;
+            /* ← always push to right edge */
         }
 
         .hamburger:active {
@@ -1351,7 +1352,8 @@
             background: rgba(7, 7, 26, 0.98);
             backdrop-filter: blur(24px);
             -webkit-backdrop-filter: blur(24px);
-            z-index: 1001; /* Above navbar (1000) so it covers completely */
+            z-index: 1001;
+            /* Above navbar (1000) so it covers completely */
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -1360,7 +1362,8 @@
             opacity: 0;
             visibility: hidden;
             transition: opacity 0.35s ease, visibility 0.35s ease;
-            padding: 80px 24px 60px; /* room for navbar top + bottom CTA */
+            padding: 80px 24px 60px;
+            /* room for navbar top + bottom CTA */
         }
 
         .mobile-menu.open {
@@ -1391,11 +1394,25 @@
         }
 
         /* stagger delays (header is child 1, links are 2-6) */
-        .mobile-menu.open a:nth-child(2) { transition-delay: 0.08s; }
-        .mobile-menu.open a:nth-child(3) { transition-delay: 0.14s; }
-        .mobile-menu.open a:nth-child(4) { transition-delay: 0.20s; }
-        .mobile-menu.open a:nth-child(5) { transition-delay: 0.26s; }
-        .mobile-menu.open a:nth-child(6) { transition-delay: 0.32s; }
+        .mobile-menu.open a:nth-child(2) {
+            transition-delay: 0.08s;
+        }
+
+        .mobile-menu.open a:nth-child(3) {
+            transition-delay: 0.14s;
+        }
+
+        .mobile-menu.open a:nth-child(4) {
+            transition-delay: 0.20s;
+        }
+
+        .mobile-menu.open a:nth-child(5) {
+            transition-delay: 0.26s;
+        }
+
+        .mobile-menu.open a:nth-child(6) {
+            transition-delay: 0.32s;
+        }
 
         .mobile-menu a:active {
             color: white;
@@ -1478,7 +1495,12 @@
 
         /* ── Touch-friendly global ── */
         @media (hover: none) and (pointer: coarse) {
-            .btn, .faq-q, .nav-links a, .socials a, .trust-item {
+
+            .btn,
+            .faq-q,
+            .nav-links a,
+            .socials a,
+            .trust-item {
                 -webkit-tap-highlight-color: transparent;
             }
 
@@ -1548,6 +1570,7 @@
 
         /* ── Responsive: Tablet portrait / large phones ── */
         @media (max-width: 768px) {
+
             .nav-links,
             .nav-actions.desktop {
                 display: none;
@@ -2226,7 +2249,13 @@
 
         /* ── Print: clean output ── */
         @media print {
-            .blob, .bg-grid, .navbar, .hamburger, .mobile-menu, .cta-section {
+
+            .blob,
+            .bg-grid,
+            .navbar,
+            .hamburger,
+            .mobile-menu,
+            .cta-section {
                 display: none !important;
             }
 
@@ -2294,12 +2323,14 @@
 
     <!-- Mobile menu overlay -->
     <div class="mobile-menu" id="mobileMenu">
-        
+
         <!-- Menu Header (Covers Navbar) -->
         <div class="mobile-menu-header">
             <div style="display:flex;align-items:center;gap:10px;">
-                <img src="/logo.png" alt="Money Mitra" style="width:36px;height:36px;border-radius:10px;object-fit:cover;" onerror="this.src='logo.png'" />
-                <span style="font-size:18px;font-weight:800;color:white;letter-spacing:-0.5px;">Money <span style="color:var(--accent);">Mitra</span></span>
+                <img src="/logo.png" alt="Money Mitra"
+                    style="width:36px;height:36px;border-radius:10px;object-fit:cover;" onerror="this.src='logo.png'" />
+                <span style="font-size:18px;font-weight:800;color:white;letter-spacing:-0.5px;">Money <span
+                        style="color:var(--accent);">Mitra</span></span>
             </div>
             <button class="mob-close-btn" onclick="toggleMenu()" aria-label="Close menu">&#10005;</button>
         </div>
@@ -2781,32 +2812,31 @@
                         <a href="#"><i class="fa-brands fa-instagram"></i></a>
                         <a href="#"><i class="fa-brands fa-linkedin"></i></a>
                         <a href="#"><i class="fa-brands fa-youtube"></i></a>
-                        <a href="https://github.com/ankitdas37/Money-Mitra-Simple-Banking-System-Website" target="_blank" rel="noopener noreferrer"><i class="fa-brands fa-github"></i></a>
+                        <a href="https://github.com/ankitdas37/Money-Mitra-Simple-Banking-System-Website"
+                            target="_blank" rel="noopener noreferrer"><i class="fa-brands fa-github"></i></a>
 
                     </div>
                 </div>
                 <div class="footer-col">
                     <h4>Company</h4>
-                    <a href="#">About Us</a>
-                    <a href="#">Careers</a>
-                    <a href="#">Press</a>
-                    <a href="#">Blog</a>
+                    <a href="/about">About Us</a>
+                    <a href="/press">Press</a>
+                    <a href="/blog">Blog</a>
                 </div>
                 <div class="footer-col">
                     <h4>Products</h4>
-                    <a href="#">Savings Account</a>
-                    <a href="#">Current Account</a>
-                    <a href="#">Credit Cards</a>
-                    <a href="#">Personal Loans</a>
-                    <a href="#">UPI Transfers</a>
+                    <a href="/savings">Savings Account</a>
+                    <a href="/current">Current Account</a>
+                    <a href="/cards">Credit Cards</a>
+                    <a href="/loans">Personal Loans</a>
+                    <a href="/upi">UPI Transfers</a>
                 </div>
                 <div class="footer-col">
                     <h4>Legal</h4>
-                    <a href="#">Privacy Policy</a>
-                    <a href="#">Terms of Service</a>
-                    <a href="#">Cookie Policy</a>
-                    <a href="#">Security</a>
-                    <a href="#">DICGC Disclosure</a>
+                    <a href="/privacy">Privacy Policy</a>
+                    <a href="/terms">Terms of Service</a>
+                    <a href="/cookies">Cookie Policy</a>
+                    <a href="/security">Security</a>
                 </div>
             </div>
             <div class="footer-bottom">

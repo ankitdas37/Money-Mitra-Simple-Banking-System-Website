@@ -3,8 +3,8 @@ const db = require('../config/db');
 const { v4: uuidv4 } = require('uuid');
 
 const startEmiJob = () => {
-  // Run every 1 minute for testing (can be changed to '0 0 * * *' for daily midnight)
-  cron.schedule('* * * * *', async () => {
+  // Run daily at midnight to process EMI deductions
+  cron.schedule('0 0 * * *', async () => {
     // console.log('Checking for due EMIs...');
     
     try {

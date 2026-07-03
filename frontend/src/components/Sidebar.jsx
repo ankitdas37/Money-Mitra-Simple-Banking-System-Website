@@ -16,6 +16,7 @@ const userNavItems = [
   { path: '/loans',        icon: '🏦', label: 'Loans' },
   { path: '/transactions', icon: '📊', label: 'Transactions' },
   { path: '/support',      icon: '🎧', label: 'Help & Support' },
+  { path: '/about',        icon: '👨‍💻', label: 'About Us' },
 ];
 
 const adminNavItems = [

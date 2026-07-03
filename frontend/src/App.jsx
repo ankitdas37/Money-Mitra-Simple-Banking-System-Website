@@ -17,6 +17,9 @@ import Profile from './pages/Profile';
 import AdminPanel from './pages/AdminPanel';
 import HelpSupport from './pages/HelpSupport';
 
+import AboutUs from './pages/AboutUs';
+import PublicInfoPage from './pages/PublicInfoPage';
+
 // Components
 import Sidebar from './components/Sidebar';
 
@@ -113,6 +116,22 @@ export default function App() {
         {/* Public routes */}
         <Route path="/login"    element={<AuthRoute><Login /></AuthRoute>} />
         <Route path="/register" element={<AuthRoute><Register /></AuthRoute>} />
+        
+        {/* About Us (Public standalone page) */}
+        <Route path="/about" element={<AboutUs />} />
+
+        {/* Public Information Pages */}
+        <Route path="/savings" element={<PublicInfoPage />} />
+        <Route path="/current" element={<PublicInfoPage />} />
+        <Route path="/upi" element={<PublicInfoPage />} />
+        <Route path="/loans" element={<PublicInfoPage />} />
+        <Route path="/cards" element={<PublicInfoPage />} />
+        <Route path="/privacy" element={<PublicInfoPage />} />
+        <Route path="/terms" element={<PublicInfoPage />} />
+        <Route path="/cookies" element={<PublicInfoPage />} />
+        <Route path="/security" element={<PublicInfoPage />} />
+        <Route path="/blog" element={<PublicInfoPage />} />
+        <Route path="/press" element={<PublicInfoPage />} />
 
         {/* User-only routes (admins are redirected to /admin) */}
         <Route path="/dashboard"    element={<UserRoute><AppLayout><Dashboard /></AppLayout></UserRoute>} />
