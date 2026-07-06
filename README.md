@@ -122,7 +122,7 @@
 
 ---
 
-### 🧑‍💻 Ankit Das — *Project Lead & Full-Stack Developer*
+### 🧑‍💻 Ankit Das — *Project Lead & Developer*
 
 <div>
   <img src="frontend/public/dev_im/ankit.jpg" alt="Ankit Das" width="120" style="border-radius: 50%;">
@@ -144,7 +144,7 @@
 
 ---
 
-### 🧑‍💻 Anish Meddya — *Frontend Developer*
+### 🧑‍💻 Anish Meddya — *Developer*
 
 <div>
   <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Dev2&backgroundColor=00E5A0" alt="Anish Meddya" width="120" style="border-radius: 50%;">
@@ -161,7 +161,7 @@
 
 ---
 
-### 👩‍💻 Shreya Debnath — *UI/UX Designer*
+### 👩‍💻 Shreya Debnath — *Designer & Developer*
 
 <div>
   <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Dev3&backgroundColor=FF5757" alt="Shreya Debnath" width="120" style="border-radius: 50%;">
@@ -178,7 +178,7 @@
 
 ---
 
-### 👩‍💻 Anisha Roy — *Backend Developer*
+### 👩‍💻 Anisha Roy — *Developer*
 
 <div>
   <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Dev4&backgroundColor=F4D03F" alt="Anisha Roy" width="120" style="border-radius: 50%;">
@@ -201,7 +201,6 @@
   <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Dev5&backgroundColor=9B59B6" alt="Md Karimulla" width="120" style="border-radius: 50%;">
 </div>
 
-> *"Optimizing queries and squashing bugs before they escape to production."*
 
 | Field | Details |
 |-------|---------|
@@ -212,13 +211,12 @@
 
 ---
 
-### 🧑‍💻 Sayak Roy — *Documentation & QA*
+### 🧑‍💻 Sayak Roy — *Developer*
 
 <div>
   <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Dev6&backgroundColor=E67E22" alt="Sayak Roy" width="120" style="border-radius: 50%;">
 </div>
 
-> *"Ensuring every feature works flawlessly and is properly documented."*
 
 | Field | Details |
 |-------|---------|

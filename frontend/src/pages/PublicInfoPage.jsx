@@ -129,8 +129,9 @@ export default function PublicInfoPage() {
   const location = useLocation();
   const navigate = useNavigate();
   
-  // Extract the path name without the slash
-  const pageId = location.pathname.replace('/', '');
+  // Extract the last segment — works for both /upi and /info/upi
+  const segments = location.pathname.split('/').filter(Boolean);
+  const pageId = segments[segments.length - 1];
   const data = contentData[pageId];
 
   // Scroll to top on mount

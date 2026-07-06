@@ -91,13 +91,10 @@ export default function Login() {
   
   const passwordInputRef = useRef(null);
 
-  const handleDemoClick = (email) => {
-    setForm({ email, password: '' });
+  const handleDemoClick = (email, password) => {
+    setForm({ email, password });
     setErrorField(null);
-    toast.success('Demo account filled! Please enter the password.');
-    setTimeout(() => {
-      passwordInputRef.current?.focus();
-    }, 50);
+    toast.success('Demo credentials filled! Click Sign In to continue.');
   };
 
   // Load remembered email on mount
@@ -306,7 +303,7 @@ export default function Login() {
                 <input
                   type="text"
                   className={`input-field ${errorField === 'email' ? 'err-field shake' : ''}`}
-                  placeholder="rahul@moneymitra.in or admin"
+                  placeholder="rahul@moneymitra.in or admin@moneymitra.in"
                   value={form.email}
                   onChange={e => { setForm({ ...form, email: e.target.value }); setErrorField(null); }}
                   required
@@ -396,12 +393,16 @@ export default function Login() {
             </div>
 
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
-              <button type="button" className="btn-secondary" onClick={() => handleDemoClick('rahul@moneymitra.in')} disabled={loading} style={{ fontSize: 13, padding: '12px 8px', fontWeight: 700, minHeight: 46 }}>
+              <button type="button" className="btn-secondary" onClick={() => handleDemoClick('rahul@moneymitra.in', 'User@1234')} disabled={loading} style={{ fontSize: 13, padding: '12px 8px', fontWeight: 700, minHeight: 46 }}>
                 👤 Rahul (User)
               </button>
-              <button type="button" className="btn-secondary" onClick={() => handleDemoClick('admin')} disabled={loading} style={{ fontSize: 13, padding: '12px 8px', fontWeight: 700, minHeight: 46 }}>
+              <button type="button" className="btn-secondary" onClick={() => handleDemoClick('admin', 'AKKU@2006')} disabled={loading} style={{ fontSize: 13, padding: '12px 8px', fontWeight: 700, minHeight: 46 }}>
                 👑 Admin
               </button>
+            </div>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 6, marginTop: 4 }}>
+              <div style={{ fontSize: 10, color: 'var(--text-muted)', textAlign: 'center' }}>Pass: User@1234</div>
+              <div style={{ fontSize: 10, color: 'var(--text-muted)', textAlign: 'center' }}>Pass: AKKU@2006</div>
             </div>
 
             <p style={{ marginTop: 18, textAlign: 'center', fontSize: 13, color: 'var(--text-secondary)' }}>

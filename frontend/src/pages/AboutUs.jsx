@@ -7,9 +7,15 @@ const developers = [
     name: 'Ankit Das',
     college: 'Technique Polytechnic Institute (TPI)',
     regNo: 'D242525746',
-    semester: '3rd Semester',
+    semester: '4th Semester',
     project: 'Minor Project',
-    socials: { github: 'https://github.com/ankitdas37', linkedin: 'https://www.linkedin.com/in/ankit-das-434594340?utm_source=share_via&utm_content=profile&utm_medium=member_android', instagram: 'https://www.instagram.com/the.ankit.das?igsh=Z3l6MzRiZDR3czF1' },
+    socials: {
+      github: 'https://github.com/ankitdas37',
+      linkedin: 'https://www.linkedin.com/in/ankit-das-434594340?utm_source=share_via&utm_content=profile&utm_medium=member_android',
+      instagram: 'https://www.instagram.com/the.ankit.das?igsh=Z3l6MzRiZDR3czF1',
+      email: 'mailto:ankitdas082006@gmail.com',
+      whatsapp: 'https://wa.me/919339840967',
+    },
     image: '/dev_im/ankit.jpg'
   },
   {
@@ -17,9 +23,9 @@ const developers = [
     name: 'Anish Meddya',
     college: 'Technique Polytechnic Institute (TPI)',
     regNo: 'D242525845',
-    semester: '3rd Semester',
+    semester: '4th Semester',
     project: 'Minor Project',
-    socials: { github: '#', linkedin: '#', instagram: '#' },
+    socials: { github: '#', linkedin: '#', instagram: '#', email: '#', whatsapp: '#' },
     image: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Dev2&backgroundColor=00E5A0'
   },
   {
@@ -27,9 +33,9 @@ const developers = [
     name: 'Shreya Debnath',
     college: 'Technique Polytechnic Institute (TPI)',
     regNo: 'D242525785',
-    semester: '3rd Semester',
+    semester: '4th Semester',
     project: 'Minor Project',
-    socials: { github: '#', linkedin: '#', instagram: '#' },
+    socials: { github: '#', linkedin: '#', instagram: '#', email: '#', whatsapp: '#' },
     image: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Dev3&backgroundColor=FF5757'
   },
   {
@@ -37,9 +43,9 @@ const developers = [
     name: 'Anisha Roy',
     college: 'Technique Polytechnic Institute (TPI)',
     regNo: 'D242525758',
-    semester: '3rd Semester',
+    semester: '4th Semester',
     project: 'Minor Project',
-    socials: { github: '#', linkedin: '#', instagram: '#' },
+    socials: { github: '#', linkedin: '#', instagram: '#', email: '#', whatsapp: '#' },
     image: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Dev4&backgroundColor=F4D03F'
   },
   {
@@ -47,9 +53,9 @@ const developers = [
     name: 'Md Karimulla',
     college: 'Technique Polytechnic Institute (TPI)',
     regNo: 'D242525757',
-    semester: '3rd Semester',
+    semester: '4th Semester',
     project: 'Minor Project',
-    socials: { github: '#', linkedin: '#', instagram: '#' },
+    socials: { github: '#', linkedin: '#', instagram: '#', email: '#', whatsapp: '#' },
     image: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Dev5&backgroundColor=9B59B6'
   },
   {
@@ -57,11 +63,49 @@ const developers = [
     name: 'Sayak Roy',
     college: 'Technique Polytechnic Institute (TPI)',
     regNo: 'D242525893',
-    semester: '3rd Semester',
+    semester: '4th Semester',
     project: 'Minor Project',
-    socials: { github: '#', linkedin: '#', instagram: '#' },
+    socials: { github: '#', linkedin: '#', instagram: '#', email: '#', whatsapp: '#' },
     image: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Dev6&backgroundColor=E67E22'
   }
+];
+
+const SOCIAL_ICONS = [
+  {
+    key: 'github',
+    icon: 'fa-brands fa-github',
+    label: 'GitHub',
+    hoverColor: '#ffffff',
+    bg: 'rgba(255,255,255,0.1)',
+  },
+  {
+    key: 'linkedin',
+    icon: 'fa-brands fa-linkedin',
+    label: 'LinkedIn',
+    hoverColor: '#0a66c2',
+    bg: 'rgba(10,102,194,0.15)',
+  },
+  {
+    key: 'instagram',
+    icon: 'fa-brands fa-instagram',
+    label: 'Instagram',
+    hoverColor: '#E1306C',
+    bg: 'rgba(225,48,108,0.15)',
+  },
+  {
+    key: 'email',
+    icon: 'fa-solid fa-envelope',
+    label: 'Email',
+    hoverColor: '#00E5A0',
+    bg: 'rgba(0,229,160,0.12)',
+  },
+  {
+    key: 'whatsapp',
+    icon: 'fa-brands fa-whatsapp',
+    label: 'WhatsApp',
+    hoverColor: '#25D366',
+    bg: 'rgba(37,211,102,0.15)',
+  },
 ];
 
 export default function AboutUs() {
@@ -76,13 +120,9 @@ export default function AboutUs() {
 
         <button
           onClick={() => {
-            // Check if user is logged in to return to dashboard, otherwise go to home
             const hasToken = !!localStorage.getItem('accessToken');
-            if (hasToken) {
-              navigate('/dashboard');
-            } else {
-              window.location.replace('/home.html');
-            }
+            if (hasToken) { navigate('/dashboard'); }
+            else { window.location.replace('/home.html'); }
           }}
           className="btn btn-outline"
           style={{ marginBottom: '20px', display: 'inline-flex', alignItems: 'center', gap: '8px' }}
@@ -133,39 +173,25 @@ export default function AboutUs() {
               }}>
               {/* Anime style background accent */}
               <div style={{
-                position: 'absolute',
-                top: '-50px',
-                right: '-50px',
-                width: '100px',
-                height: '100px',
+                position: 'absolute', top: '-50px', right: '-50px',
+                width: '100px', height: '100px',
                 background: 'radial-gradient(circle, rgba(108,99,255,0.4) 0%, rgba(0,0,0,0) 70%)',
-                borderRadius: '50%',
-                zIndex: 0
+                borderRadius: '50%', zIndex: 0
               }} />
 
               <div style={{
-                width: '120px',
-                height: '120px',
-                borderRadius: '50%',
-                padding: '4px',
+                width: '120px', height: '120px', borderRadius: '50%', padding: '4px',
                 background: 'linear-gradient(45deg, var(--primary), var(--secondary))',
-                marginBottom: '20px',
-                zIndex: 1
+                marginBottom: '20px', zIndex: 1
               }}>
                 <img
                   src={dev.image}
                   alt={dev.name}
                   className="dev-image"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setSelectedImage(dev.image);
-                  }}
+                  onClick={(e) => { e.stopPropagation(); setSelectedImage(dev.image); }}
                   style={{
-                    width: '100%',
-                    height: '100%',
-                    borderRadius: '50%',
-                    objectFit: 'cover',
-                    backgroundColor: 'var(--bg-dark)',
+                    width: '100%', height: '100%', borderRadius: '50%',
+                    objectFit: 'cover', backgroundColor: 'var(--bg-dark)',
                     transition: 'transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275)'
                   }}
                 />
@@ -173,7 +199,7 @@ export default function AboutUs() {
 
               <h3 style={{ fontSize: '22px', fontWeight: 700, margin: '0 0 16px 0', zIndex: 1 }}>{dev.name}</h3>
 
-              <div style={{ width: '100%', textAlign: 'left', marginBottom: '16px', zIndex: 1, padding: '12px', background: 'rgba(0,0,0,0.2)', borderRadius: '12px' }}>
+              <div style={{ width: '100%', textAlign: 'left', marginBottom: '20px', zIndex: 1, padding: '12px', background: 'rgba(0,0,0,0.2)', borderRadius: '12px' }}>
                 <div style={{ fontSize: '13px', color: 'var(--text-muted)', marginBottom: '8px' }}>
                   <strong style={{ color: 'var(--text-primary)' }}>College:</strong> {dev.college}
                 </div>
@@ -188,17 +214,58 @@ export default function AboutUs() {
                 </div>
               </div>
 
-              {/* Social Media Links */}
-              <div style={{ display: 'flex', gap: '16px', justifyContent: 'center', zIndex: 1, marginTop: 'auto' }}>
-                <a href={dev.socials.github} target="_blank" rel="noopener noreferrer" style={{ color: 'var(--text-muted)', fontSize: '20px', transition: 'color 0.2s' }} onMouseEnter={e => e.currentTarget.style.color = 'white'} onMouseLeave={e => e.currentTarget.style.color = 'var(--text-muted)'}>
-                  <i className="fa-brands fa-github"></i>
-                </a>
-                <a href={dev.socials.linkedin} target="_blank" rel="noopener noreferrer" style={{ color: 'var(--text-muted)', fontSize: '20px', transition: 'color 0.2s' }} onMouseEnter={e => e.currentTarget.style.color = '#0077b5'} onMouseLeave={e => e.currentTarget.style.color = 'var(--text-muted)'}>
-                  <i className="fa-brands fa-linkedin"></i>
-                </a>
-                <a href={dev.socials.instagram} target="_blank" rel="noopener noreferrer" style={{ color: 'var(--text-muted)', fontSize: '20px', transition: 'color 0.2s' }} onMouseEnter={e => e.currentTarget.style.color = '#E1306C'} onMouseLeave={e => e.currentTarget.style.color = 'var(--text-muted)'}>
-                  <i className="fa-brands fa-instagram"></i>
-                </a>
+              {/* Social Media Links — GitHub, LinkedIn, Instagram, Email, WhatsApp */}
+              <div style={{ display: 'flex', gap: '10px', justifyContent: 'center', zIndex: 1, marginTop: 'auto', flexWrap: 'wrap' }}>
+                {SOCIAL_ICONS.map(({ key, icon, label, hoverColor, bg }) => (
+                  dev.socials[key] && dev.socials[key] !== '#' ? (
+                    <a
+                      key={key}
+                      href={dev.socials[key]}
+                      target={key === 'email' ? '_self' : '_blank'}
+                      rel="noopener noreferrer"
+                      title={label}
+                      style={{
+                        width: 38, height: 38, borderRadius: '50%',
+                        display: 'flex', alignItems: 'center', justifyContent: 'center',
+                        background: 'rgba(255,255,255,0.06)',
+                        border: '1px solid rgba(255,255,255,0.1)',
+                        color: 'var(--text-muted)', fontSize: '17px',
+                        transition: 'all 0.25s', textDecoration: 'none',
+                      }}
+                      onMouseEnter={e => {
+                        e.currentTarget.style.color = hoverColor;
+                        e.currentTarget.style.background = bg;
+                        e.currentTarget.style.borderColor = hoverColor;
+                        e.currentTarget.style.transform = 'translateY(-3px) scale(1.12)';
+                        e.currentTarget.style.boxShadow = `0 6px 16px ${hoverColor}44`;
+                      }}
+                      onMouseLeave={e => {
+                        e.currentTarget.style.color = 'var(--text-muted)';
+                        e.currentTarget.style.background = 'rgba(255,255,255,0.06)';
+                        e.currentTarget.style.borderColor = 'rgba(255,255,255,0.1)';
+                        e.currentTarget.style.transform = 'translateY(0) scale(1)';
+                        e.currentTarget.style.boxShadow = 'none';
+                      }}
+                    >
+                      <i className={icon}></i>
+                    </a>
+                  ) : (
+                    <span
+                      key={key}
+                      title={`${label} — not available`}
+                      style={{
+                        width: 38, height: 38, borderRadius: '50%',
+                        display: 'flex', alignItems: 'center', justifyContent: 'center',
+                        background: 'rgba(255,255,255,0.03)',
+                        border: '1px solid rgba(255,255,255,0.06)',
+                        color: 'rgba(255,255,255,0.2)', fontSize: '17px',
+                        cursor: 'not-allowed',
+                      }}
+                    >
+                      <i className={icon}></i>
+                    </span>
+                  )
+                ))}
               </div>
             </div>
           ))}

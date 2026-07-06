@@ -30,11 +30,11 @@ const StrictAutoLogout = () => {
   useEffect(() => {
     if (!isAuthenticated) return;
 
-    // Set timer for 10 minutes
+    // Set timer for 2 hours (matches JWT_EXPIRY)
     const timer = setTimeout(() => {
       logout();
-      toast.error('Session expired after 10 minutes for security reasons. Please log in again.', { duration: 6000 });
-    }, 10 * 60 * 1000);
+      toast.error('Session expired after 2 hours for security reasons. Please log in again.', { duration: 6000 });
+    }, 2 * 60 * 60 * 1000);
 
     return () => clearTimeout(timer);
   }, [isAuthenticated, logout]);
@@ -120,18 +120,28 @@ export default function App() {
         {/* About Us (Public standalone page) */}
         <Route path="/about" element={<AboutUs />} />
 
-        {/* Public Information Pages */}
-        <Route path="/savings" element={<PublicInfoPage />} />
-        <Route path="/current" element={<PublicInfoPage />} />
-        <Route path="/upi" element={<PublicInfoPage />} />
-        <Route path="/loans" element={<PublicInfoPage />} />
-        <Route path="/cards" element={<PublicInfoPage />} />
-        <Route path="/privacy" element={<PublicInfoPage />} />
-        <Route path="/terms" element={<PublicInfoPage />} />
-        <Route path="/cookies" element={<PublicInfoPage />} />
+        {/* Public Information Pages — use /info/ prefix to avoid conflicts with authenticated app routes */}
+        <Route path="/info/savings" element={<PublicInfoPage />} />
+        <Route path="/info/current" element={<PublicInfoPage />} />
+        <Route path="/info/upi"     element={<PublicInfoPage />} />
+        <Route path="/info/loans"   element={<PublicInfoPage />} />
+        <Route path="/info/cards"   element={<PublicInfoPage />} />
+        <Route path="/info/privacy"  element={<PublicInfoPage />} />
+        <Route path="/info/terms"    element={<PublicInfoPage />} />
+        <Route path="/info/cookies"  element={<PublicInfoPage />} />
+        <Route path="/info/security" element={<PublicInfoPage />} />
+        <Route path="/info/blog"     element={<PublicInfoPage />} />
+        <Route path="/info/press"    element={<PublicInfoPage />} />
+        {/* Legacy redirects — keep old paths working for any bookmarks */}
+        <Route path="/savings"  element={<PublicInfoPage />} />
+        <Route path="/current"  element={<PublicInfoPage />} />
+        <Route path="/privacy"  element={<PublicInfoPage />} />
+        <Route path="/terms"    element={<PublicInfoPage />} />
+        <Route path="/cookies"  element={<PublicInfoPage />} />
         <Route path="/security" element={<PublicInfoPage />} />
-        <Route path="/blog" element={<PublicInfoPage />} />
-        <Route path="/press" element={<PublicInfoPage />} />
+        <Route path="/blog"     element={<PublicInfoPage />} />
+        <Route path="/press"    element={<PublicInfoPage />} />
+
 
         {/* User-only routes (admins are redirected to /admin) */}
         <Route path="/dashboard"    element={<UserRoute><AppLayout><Dashboard /></AppLayout></UserRoute>} />
