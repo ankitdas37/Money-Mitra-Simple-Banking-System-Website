@@ -29,7 +29,7 @@
 | **📁 Project Type** | Minor Project – Full-Stack Web App |
 | **🎓 Course** | Diploma – Computer Science & Technology |
 | **🏫 College** | Technique Polytechnic Institute (TPI) |
-| **📅 Semester & Year** | 3rd Semester · 2025–2026 |
+| **📅 Semester & Year** | 4th Semester · 2025–2026 |
 
 ---
 
@@ -118,7 +118,7 @@
 
 ## 👥 Meet the Team
 
-> 🎓 **Technique Polytechnic Institute (TPI)** · 3rd Semester · Computer Science & Technology
+> 🎓 **Technique Polytechnic Institute (TPI)** · 4th Semester · Computer Science & Technology
 
 ---
 
@@ -134,7 +134,7 @@
 |-------|---------|
 | 🆔 Reg No | `D242525746` |
 | 🎓 College | Technique Polytechnic Institute (TPI) |
-| 📚 Semester | 3rd Semester |
+| 📚 Semester | 4th Semester |
 | 📂 Project | Minor Project |
 
 **🔗 Connect:**
@@ -156,7 +156,7 @@
 |-------|---------|
 | 🆔 Reg No | `D242525845` |
 | 🎓 College | Technique Polytechnic Institute (TPI) |
-| 📚 Semester | 3rd Semester |
+| 📚 Semester | 4th Semester |
 | 📂 Project | Minor Project |
 
 ---
@@ -173,7 +173,7 @@
 |-------|---------|
 | 🆔 Reg No | `D242525785` |
 | 🎓 College | Technique Polytechnic Institute (TPI) |
-| 📚 Semester | 3rd Semester |
+| 📚 Semester | 4th Semester |
 | 📂 Project | Minor Project |
 
 ---
@@ -190,7 +190,7 @@
 |-------|---------|
 | 🆔 Reg No | `D242525758` |
 | 🎓 College | Technique Polytechnic Institute (TPI) |
-| 📚 Semester | 3rd Semester |
+| 📚 Semester | 4th Semester |
 | 📂 Project | Minor Project |
 
 ---
@@ -207,7 +207,7 @@
 |-------|---------|
 | 🆔 Reg No | `D242525757` |
 | 🎓 College | Technique Polytechnic Institute (TPI) |
-| 📚 Semester | 3rd Semester |
+| 📚 Semester | 4th Semester |
 | 📂 Project | Minor Project |
 
 ---
@@ -224,7 +224,7 @@
 |-------|---------|
 | 🆔 Reg No | `D242525893` |
 | 🎓 College | Technique Polytechnic Institute (TPI) |
-| 📚 Semester | 3rd Semester |
+| 📚 Semester | 4th Semester |
 | 📂 Project | Minor Project |
 
 ---
