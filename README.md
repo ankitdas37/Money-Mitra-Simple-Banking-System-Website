@@ -10,7 +10,7 @@
   <h3><a href="https://money-mitra-simple-banking-system-w.vercel.app" target="_blank">🌐 Live Demo: Money Mitra</a></h3>
 </div>
 
-⚡ **Minor Project · 3rd Semester · CST**
+⚡ **Minor Project · 4th Semester · CST**
 
 ---
 
