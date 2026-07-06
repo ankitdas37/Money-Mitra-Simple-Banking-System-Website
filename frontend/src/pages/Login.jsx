@@ -79,22 +79,26 @@ function showLoginError(code, message) {
 export default function Login() {
   const navigate = useNavigate();
   const { setAuth } = useAuthStore();
-  const [form, setForm]               = useState({ email: '', password: '' });
-  const [loading, setLoading]         = useState(false);
+  const [form, setForm] = useState({ email: '', password: '' });
+  const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
-  const [rememberMe, setRememberMe]   = useState(false);
-  const [showForgot, setShowForgot]   = useState(false);
+  const [rememberMe, setRememberMe] = useState(false);
+  const [showForgot, setShowForgot] = useState(false);
   const [forgotEmail, setForgotEmail] = useState('');
-  const [forgotSent, setForgotSent]   = useState(false);
+  const [forgotSent, setForgotSent] = useState(false);
   const [forgotLoading, setForgotLoading] = useState(false);
-  const [errorField, setErrorField]   = useState(null); // 'email' | 'password'
-  
+  const [errorField, setErrorField] = useState(null); // 'email' | 'password'
+
   const passwordInputRef = useRef(null);
 
-  const handleDemoClick = (email, password) => {
-    setForm({ email, password });
+  const handleDemoClick = (email) => {
+    setForm({ email, password: '' });
     setErrorField(null);
-    toast.success('Demo credentials filled! Click Sign In to continue.');
+    toast.success('Email filled! Please enter the password.');
+    // Automatically focus the password field so the user can type
+    if (passwordInputRef.current) {
+      passwordInputRef.current.focus();
+    }
   };
 
   // Load remembered email on mount
@@ -214,9 +218,9 @@ export default function Login() {
         <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to right, transparent 60%, var(--bg-base) 100%)' }} />
 
         {[
-          { top: '10%', left: '8%',  text: '🔐 Bank-grade Security', delay: '0s' },
-          { top: '22%', left: '5%',  text: '🛡️ 2FA Protected',       delay: '0.6s' },
-          { top: '34%', left: '10%', text: '⚡ Instant Access',       delay: '1.2s' },
+          { top: '10%', left: '8%', text: '🔐 Bank-grade Security', delay: '0s' },
+          { top: '22%', left: '5%', text: '🛡️ 2FA Protected', delay: '0.6s' },
+          { top: '34%', left: '10%', text: '⚡ Instant Access', delay: '1.2s' },
         ].map((badge) => (
           <div key={badge.text} style={{
             position: 'absolute', top: badge.top, left: badge.left,
@@ -269,15 +273,15 @@ export default function Login() {
           </div>
 
           {/* Demo Banner */}
-          <div style={{ background:'#fff3cd', border:'1px solid #ffc107', padding:'12px', textAlign:'center', fontWeight:'bold', color:'#856404', marginBottom:'20px', borderRadius:'8px', fontSize:'13px' }}>
+          <div style={{ background: '#fff3cd', border: '1px solid #ffc107', padding: '12px', textAlign: 'center', fontWeight: 'bold', color: '#856404', marginBottom: '20px', borderRadius: '8px', fontSize: '13px' }}>
             ⚠️ Demo Project — Not a Real Bank. This is a coding portfolio project. Do not enter real card or personal details.
           </div>
 
           {/* Back to Home */}
           <a href="/home.html"
-            style={{ display:'inline-flex', alignItems:'center', gap:6, fontSize:13, color:'rgba(255,255,255,0.45)', textDecoration:'none', marginBottom:24, transition:'color 0.2s', fontWeight:500 }}
-            onMouseEnter={e=>e.currentTarget.style.color='rgba(255,255,255,0.85)'}
-            onMouseLeave={e=>e.currentTarget.style.color='rgba(255,255,255,0.45)'}>
+            style={{ display: 'inline-flex', alignItems: 'center', gap: 6, fontSize: 13, color: 'rgba(255,255,255,0.45)', textDecoration: 'none', marginBottom: 24, transition: 'color 0.2s', fontWeight: 500 }}
+            onMouseEnter={e => e.currentTarget.style.color = 'rgba(255,255,255,0.85)'}
+            onMouseLeave={e => e.currentTarget.style.color = 'rgba(255,255,255,0.45)'}>
             ← Back to Home
           </a>
 
@@ -393,16 +397,16 @@ export default function Login() {
             </div>
 
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
-              <button type="button" className="btn-secondary" onClick={() => handleDemoClick('rahul@moneymitra.in', 'User@1234')} disabled={loading} style={{ fontSize: 13, padding: '12px 8px', fontWeight: 700, minHeight: 46 }}>
+              <button type="button" className="btn-secondary" onClick={() => handleDemoClick('rahul@moneymitra.in')} disabled={loading} style={{ fontSize: 13, padding: '12px 8px', fontWeight: 700, minHeight: 46 }}>
                 👤 Rahul (User)
               </button>
-              <button type="button" className="btn-secondary" onClick={() => handleDemoClick('admin', 'AKKU@2006')} disabled={loading} style={{ fontSize: 13, padding: '12px 8px', fontWeight: 700, minHeight: 46 }}>
+              <button type="button" className="btn-secondary" onClick={() => handleDemoClick('admin@moneymitra.in')} disabled={loading} style={{ fontSize: 13, padding: '12px 8px', fontWeight: 700, minHeight: 46 }}>
                 👑 Admin
               </button>
             </div>
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 6, marginTop: 4 }}>
-              <div style={{ fontSize: 10, color: 'var(--text-muted)', textAlign: 'center' }}>Pass: User@1234</div>
-              <div style={{ fontSize: 10, color: 'var(--text-muted)', textAlign: 'center' }}>Pass: AKKU@2006</div>
+              <div style={{ fontSize: 10, color: 'var(--text-muted)', textAlign: 'center' }}></div>
+              <div style={{ fontSize: 10, color: 'var(--text-muted)', textAlign: 'center' }}></div>
             </div>
 
             <p style={{ marginTop: 18, textAlign: 'center', fontSize: 13, color: 'var(--text-secondary)' }}>
