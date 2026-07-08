@@ -22,6 +22,44 @@
 
 ---
 
+## 🌸🎀 How to Install on your PC (Pooki Style!) 🎀🌸
+
+Ready to set up **Money Mitra** on your computer? Yay! It's super easy, let me guide you step-by-step! ✨
+
+### Step 1: ✨ Database & Backend Setup ✨
+
+<div align="center">
+  <img src="assets/anime_setup_db.png" alt="Backend Setup" width="400" style="border-radius: 15px; margin-bottom: 10px;">
+</div>
+
+First, we need to get the brain of our app running! 🧠💖
+1. Open up your terminal in the project folder.
+2. Go to the backend folder by typing: `cd backend`
+3. Install all the magical packages: `npm install`
+4. Time to start the magic: `npm run dev`
+*(Make sure you have your `.env` configured! 😉)*
+
+### Step 2: ✨ Frontend Magic Setup ✨
+
+<div align="center">
+  <img src="assets/anime_setup_frontend.png" alt="Frontend Setup" width="400" style="border-radius: 15px; margin-bottom: 10px;">
+</div>
+
+Now let's build the pretty interface! 🎨✨
+1. Open a new terminal and go to the frontend: `cd frontend`
+2. Install the sparkly frontend tools: `npm install`
+3. Launch the pretty UI: `npm run dev`
+
+### Step 3: 🎉 YAY! You did it! 🎉
+
+<div align="center">
+  <img src="assets/anime_success.png" alt="Success!" width="400" style="border-radius: 15px; margin-bottom: 10px;">
+</div>
+
+You're all done, bestie! 💖 Just click the link in your terminal (usually `http://localhost:5173`) and enjoy your brand new Anime Banking experience! (✿◠‿◠)
+
+---
+
 ## 🧩 Project Details
 
 | Field | Value |
