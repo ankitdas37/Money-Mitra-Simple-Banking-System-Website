@@ -76,14 +76,13 @@ const PROVIDERS = {
     'Odisha':       ['PHEO Odisha'],
   },
   mobile: {
-    '': ['Jio Prepaid','Jio Postpaid','Airtel Prepaid','Airtel Postpaid',
-         'Vi (Vodafone Idea) Prepaid','Vi (Vodafone Idea) Postpaid',
-         'BSNL Prepaid','BSNL Postpaid','MTNL Mumbai','MTNL Delhi'],
+    '': ['Nexus Mobile Prepaid','Nexus Mobile Postpaid','GlobalNet Prepaid','GlobalNet Postpaid',
+         'CityCell Prepaid','CityCell Postpaid',
+         'National Telecom Prepaid','National Telecom Postpaid'],
   },
   broadband: {
-    '': ['Jio Fiber','Airtel Xstream Fiber','ACT Fibernet','BSNL Broadband',
-         'Excitel','Hathway','Den Networks','Tikona','YOU Broadband',
-         'MTNL Broadband','Sify Broadband','RailWire'],
+    '': ['Nexus Fiber','GlobalNet Xstream','FastNet Fiber','National Broadband',
+         'CityConnect','Metro Broadband','SpeedNet','QuickNet'],
   },
   gas: {
     'Maharashtra':  ['Mahanagar Gas (MGL)','Adani Gas Mumbai'],
@@ -106,29 +105,20 @@ const PROVIDERS = {
          'Videocon D2H / D2h','GTPL','NXT Digital','InCablenet'],
   },
   fastag: {
-    '': ['Paytm Payments Bank FASTag','HDFC Bank FASTag','ICICI Bank FASTag',
-         'SBI FASTag','Axis Bank FASTag','Kotak Bank FASTag','IDFC First FASTag',
-         'Bank of Baroda FASTag','Airtel Payments Bank FASTag','IndusInd FASTag',
-         'IDBI Bank FASTag','Punjab National Bank FASTag'],
+    '': ['National Bank FASTag','City Bank FASTag','First Bank FASTag',
+         'Standard Bank FASTag','Central Bank FASTag','Metro Bank FASTag'],
   },
   insurance: {
-    '': ['LIC of India','SBI Life Insurance','HDFC Life','ICICI Prudential Life',
-         'Bajaj Allianz Life','Max Life Insurance','Kotak Life Insurance',
-         'New India Assurance','United India Insurance','National Insurance',
-         'Oriental Insurance','Reliance General Insurance','Tata AIG',
-         'Care Health Insurance','Star Health Insurance','Niva Bupa'],
+    '': ['National Life Insurance','First Life Insurance','Secure Life','Care Life',
+         'General Assurance','SafeGuard Insurance','Prime Health Insurance'],
   },
   ott: {
-    '': ['Netflix','Amazon Prime Video','Disney+ Hotstar','Sony LIV','ZEE5',
-         'Apple TV+','YouTube Premium','Jio Cinema Premium','MX Player Gold',
-         'Aha','Voot Select','ALTBalaji','Lionsgate Play'],
+    '': ['StreamFlix','PrimeStream','VidStar','CinePlay','Tube Premium',
+         'MovieMax','ShowTime Plus','BingeWatch'],
   },
   other: {
-    '': ['HDFC Bank Credit Card','ICICI Bank Credit Card','SBI Card',
-         'Axis Bank Credit Card','Kotak Credit Card','American Express',
-         'IDFC First Credit Card','IndusInd Credit Card',
-         'Standard Chartered Credit Card','Citibank Credit Card',
-         'RBL Credit Card','Yes Bank Credit Card'],
+    '': ['National Bank Credit Card','City Bank Credit Card','First Bank Credit Card',
+         'Standard Credit Card','Central Bank Credit Card','Metro Bank Credit Card'],
   },
 };
 

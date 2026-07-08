@@ -96,7 +96,7 @@ export const LOAN_TYPES = {
 
 // Card network logos
 export const CARD_NETWORKS = {
-  visa: '💳 VISA',
-  mastercard: '💳 MASTERCARD',
-  rupay: '💳 RuPay'
+  visa: '💠 Nexus',
+  mastercard: '🔴 GlobalNet',
+  rupay: '💳 MitraPay'
 };

@@ -8,7 +8,7 @@ const NET_GRAD = {
   mastercard: 'linear-gradient(135deg,#3a0a1e 0%,#7b1535 50%,#b01f4a 100%)',
   rupay: 'linear-gradient(135deg,#0a2e12 0%,#145c22 50%,#1e8a34 100%)',
 };
-const NET_LOGO = { visa: 'VISA', mastercard: '●● Mastercard', rupay: 'RuPay' };
+const NET_LOGO = { visa: 'NEXUS', mastercard: '●● GlobalNet', rupay: 'MitraPay' };
 
 // ── Toggle switch ──────────────────────────────────────────────────────────────
 function Toggle({ on, onChange, disabled }) {
@@ -244,9 +244,9 @@ export default function Cards() {
               <select className="input-field" value={createForm.card_network}
                 onChange={e => setCreateForm(f => ({ ...f, card_network: e.target.value }))}
                 style={{ background: 'var(--bg-input)' }}>
-                <option value="rupay" style={{ background: '#1a1a3e' }}>🇮🇳 RuPay</option>
-                <option value="visa" style={{ background: '#1a1a3e' }}>💠 Visa</option>
-                <option value="mastercard" style={{ background: '#1a1a3e' }}>🔴 Mastercard</option>
+                <option value="rupay" style={{ background: '#1a1a3e' }}>🇮🇳 MitraPay</option>
+                <option value="visa" style={{ background: '#1a1a3e' }}>💠 Nexus</option>
+                <option value="mastercard" style={{ background: '#1a1a3e' }}>🔴 GlobalNet</option>
               </select>
             </div>
           </div>

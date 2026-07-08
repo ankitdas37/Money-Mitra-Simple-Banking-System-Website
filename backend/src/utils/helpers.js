@@ -23,7 +23,7 @@ const generateReferenceNumber = () => {
  * Generate virtual card number (16 digits)
  */
 const generateCardNumber = () => {
-  const prefix = '4000'; // Visa-style
+  const prefix = '4000'; // Standard-style
   const middle = Math.floor(Math.random() * 99999999).toString().padStart(8, '0');
   const last4 = Math.floor(Math.random() * 9999).toString().padStart(4, '0');
   return `${prefix}${middle}${last4}`;

@@ -5,9 +5,11 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/png" href="/logo.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-    <title>Money Mitra — Next-Gen Digital Banking</title>
+    <title>Money Mitra — Next-Gen Digital Banking (DEMO PROJECT)</title>
     <meta name="description"
-        content="Money Mitra — India's smartest digital bank. Secure UPI, instant transfers, savings accounts and more." />
+        content="[DEMO PROJECT] Money Mitra — A student portfolio project simulating a digital bank. Not a real bank." />
+    <!-- Prevent indexing to avoid deceptive site warnings -->
+    <meta name="robots" content="noindex, nofollow, noarchive" />
     <!-- Smart: if opened as file://, show a guide banner + enable links anyway -->
     <script>
         (function () {
@@ -56,6 +58,7 @@
             color: var(--text);
             overflow-x: hidden;
             line-height: 1.6;
+            padding-top: 40px; /* Space for demo banner */
         }
 
         /* ── Scrollbar ── */
@@ -151,7 +154,7 @@
     ════════════════════════════════════════ */
         .navbar {
             position: fixed;
-            top: 0;
+            top: 40px; /* Changed for demo banner */
             left: 0;
             right: 0;
             z-index: 1000;
@@ -1433,9 +1436,13 @@
 </head>
 
 <body>
+    <!-- DEMO BANNER -->
+    <div style="background-color: #ffb84c; color: #07071a; text-align: center; padding: 10px 20px; font-weight: 700; font-size: 14px; position: fixed; top: 0; left: 0; width: 100%; z-index: 99999;">
+        ⚠️ This is a student educational project, not a real bank. Do not enter real financial details.
+    </div>
 
     <!-- ⚠️ File:// warning banner — only shown when not served by server -->
-    <div id="file-warn" style="display:none;position:fixed;top:0;left:0;right:0;z-index:9999;
+    <div id="file-warn" style="display:none;position:fixed;top:40px;left:0;right:0;z-index:9999;
     background:linear-gradient(90deg,#FF6B9D,#6C63FF);padding:12px 24px;
     font-family:'Outfit',sans-serif;font-size:14px;font-weight:600;color:white;
     text-align:center;box-shadow:0 4px 20px rgba(0,0,0,0.4);">

@@ -92,9 +92,16 @@ const DefaultRedirect = () => {
   return <Navigate to={user?.role === 'admin' ? '/admin' : '/dashboard'} replace />;
 };
 
+const DemoBanner = () => (
+  <div style={{ background: '#ffb84c', color: '#07071a', textAlign: 'center', padding: '10px 20px', fontWeight: 700, fontSize: '14px', position: 'fixed', top: 0, left: 0, width: '100%', zIndex: 99999 }}>
+    ⚠️ This is a student educational project, not a real bank. Do not enter real financial details.
+  </div>
+);
+
 export default function App() {
   return (
     <BrowserRouter>
+      <DemoBanner />
       <Toaster
         position="top-right"
         toastOptions={{

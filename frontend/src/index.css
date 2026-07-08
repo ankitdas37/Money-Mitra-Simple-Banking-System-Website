@@ -70,6 +70,7 @@ body {
   min-height: 100vh;
   overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
+  padding-top: 40px; /* Space for demo banner */
 }
 
 /* Scrollbar */
@@ -186,9 +187,9 @@ body {
 .sidebar {
   position: fixed;
   left: 0;
-  top: 0;
+  top: 40px; /* Adjusted for demo banner */
   width: 260px;
-  height: 100vh;
+  height: calc(100vh - 40px); /* Adjusted for demo banner */
   background: var(--bg-sidebar);
   backdrop-filter: blur(30px);
   border-right: 1px solid var(--border);
@@ -514,7 +515,7 @@ body {
 .mobile-top-bar {
   display: none;
   position: fixed;
-  top: 0;
+  top: 40px; /* Adjusted for demo banner */
   left: 0;
   right: 0;
   height: 64px;
