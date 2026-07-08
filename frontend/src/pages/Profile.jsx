@@ -928,10 +928,10 @@ export default function Profile() {
           {/* Danger Zone */}
           <div style={{ marginTop: 24, background: 'rgba(255,87,87,0.05)', border: '1px solid rgba(255,87,87,0.2)', borderRadius: 12, padding: 20 }}>
             <div style={{ fontWeight: 700, color: '#FF5757', marginBottom: 8, display: 'flex', alignItems: 'center', gap: 8 }}>⛔ Danger Zone</div>
-            <p style={{ fontSize: 12, color: 'var(--text-muted)', marginBottom: 14, lineHeight: 1.6 }}>Closing your account is <strong>permanent and irreversible</strong>. All your data, transactions, and balances will be frozen. You will be logged out immediately.</p>
+            <p style={{ fontSize: 12, color: 'var(--text-muted)', marginBottom: 14, lineHeight: 1.6 }}>Closing your account is <strong>permanent and irreversible</strong>. Submitting a request will send it to the admin for approval.</p>
             <button onClick={() => { setCloseModal(true); setCloseForm({ password: '', confirm_text: '', showPw: false }); }}
               style={{ background: 'rgba(255,87,87,0.12)', border: '1px solid rgba(255,87,87,0.4)', borderRadius: 10, padding: '10px 20px', color: '#FF5757', fontWeight: 700, fontSize: 13, cursor: 'pointer', fontFamily: 'Outfit,sans-serif' }}>
-              ⛔ Close My Account Permanently
+              ⛔ Request Account Closure
             </button>
           </div>
         </div>
@@ -944,19 +944,12 @@ export default function Profile() {
           <div style={{ background: 'linear-gradient(145deg,#0e0e22,#1a0a0a)', border: '1px solid rgba(255,87,87,0.4)', borderRadius: 20, width: '100%', maxWidth: 460, padding: 30, boxShadow: '0 40px 120px rgba(255,87,87,0.15)' }}>
             <div style={{ textAlign: 'center', marginBottom: 22 }}>
               <div style={{ fontSize: 40, marginBottom: 10 }}>⛔</div>
-              <div style={{ fontSize: 20, fontWeight: 800, color: '#FF5757' }}>Close Account</div>
-              <div style={{ fontSize: 12, color: 'var(--text-muted)', marginTop: 6 }}>This action cannot be undone</div>
+              <div style={{ fontSize: 20, fontWeight: 800, color: '#FF5757' }}>Request Account Closure</div>
+              <div style={{ fontSize: 12, color: 'var(--text-muted)', marginTop: 6 }}>This action will be sent for admin approval</div>
             </div>
 
             <div style={{ background: 'rgba(255,87,87,0.08)', border: '1px solid rgba(255,87,87,0.2)', borderRadius: 12, padding: '12px 14px', marginBottom: 20, fontSize: 12, color: '#FF5757', lineHeight: 1.7 }}>
-              ⚠️ <strong>Warning:</strong> Closing your account will permanently deactivate it. Your balance will be frozen and you will <strong>not</strong> be able to log in again.
-            </div>
-
-            <div style={{ marginBottom: 14 }}>
-              <label style={{ display: 'block', fontSize: 11, fontWeight: 700, color: 'var(--text-muted)', marginBottom: 6, textTransform: 'uppercase', letterSpacing: 0.8 }}>Confirm by typing CLOSE</label>
-              <input value={closeForm.confirm_text} onChange={e => setCloseForm(f => ({ ...f, confirm_text: e.target.value }))}
-                placeholder='Type CLOSE to confirm'
-                style={{ width: '100%', background: 'rgba(255,255,255,0.04)', border: `2px solid ${closeForm.confirm_text === 'CLOSE' ? '#FF5757' : 'var(--border)'}`, borderRadius: 10, padding: '10px 14px', color: 'white', fontSize: 14, fontFamily: 'Outfit,sans-serif', fontWeight: 700, letterSpacing: 2, outline: 'none', boxSizing: 'border-box' }} />
+              ⚠️ <strong>Warning:</strong> Requesting account closure will notify the admin. Once approved, your balance will be frozen and you will <strong>not</strong> be able to log in again.
             </div>
 
             <div style={{ marginBottom: 20 }}>
@@ -980,19 +973,20 @@ export default function Profile() {
               </button>
               <button
                 onClick={async () => {
-                  if (closeForm.confirm_text !== 'CLOSE') { toast.error('Type CLOSE to confirm'); return; }
                   if (!closeForm.password) { toast.error('Enter your password'); return; }
                   setCloseLoading(true);
                   try {
-                    await userAPI.closeAccount({ password: closeForm.password, confirm_text: 'CLOSE' });
-                    toast.success('Account closed. Goodbye!');
-                    setTimeout(() => { logout(); navigate('/login'); }, 1500);
-                  } catch (err) { toast.error(err.response?.data?.message || 'Failed to close account'); }
+                    await userAPI.closeAccount({ password: closeForm.password });
+                    toast.success('Closure request submitted successfully.');
+                    setCloseModal(false);
+                    // Show a native browser popup as a highly visible notification
+                    window.alert('✅ SUCCESS!\n\nYour account closure request has been submitted successfully to the administrator.\n\nYou will be notified once the request is processed.');
+                  } catch (err) { toast.error(err.response?.data?.message || 'Failed to request closure'); }
                   finally { setCloseLoading(false); }
                 }}
-                disabled={closeLoading || closeForm.confirm_text !== 'CLOSE' || !closeForm.password}
-                style={{ flex: 1, background: 'linear-gradient(135deg,#FF5757,#c0392b)', border: 'none', borderRadius: 10, padding: '12px 0', color: 'white', fontWeight: 800, fontSize: 14, cursor: 'pointer', fontFamily: 'Outfit,sans-serif', opacity: closeLoading || closeForm.confirm_text !== 'CLOSE' ? 0.6 : 1 }}>
-                {closeLoading ? '⏳ Closing...' : '⛔ Close Permanently'}
+                disabled={closeLoading || !closeForm.password}
+                style={{ flex: 1, background: 'linear-gradient(135deg,#FF5757,#c0392b)', border: 'none', borderRadius: 10, padding: '12px 0', color: 'white', fontWeight: 800, fontSize: 14, cursor: 'pointer', fontFamily: 'Outfit,sans-serif', opacity: closeLoading || !closeForm.password ? 0.6 : 1 }}>
+                {closeLoading ? '⏳ Submitting...' : '⛔ Submit Request'}
               </button>
             </div>
           </div>

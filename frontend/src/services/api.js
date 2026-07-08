@@ -63,7 +63,7 @@ export const userAPI = {
   requestChange:  (data) => api.post('/users/me/request-change', data),
   verifyOtp:      (data) => api.post('/users/me/verify-otp', data),
   submitKYC:      (data) => api.post('/users/me/kyc', data),
-  closeAccount:   (data) => api.delete('/users/me/account', { data }),
+  closeAccount:   (data) => api.post('/users/me/request-closure', data),
   // Admin
   getPendingChanges: () => api.get('/users/admin/pending-changes'),
   approveChange:  (data) => api.put('/users/admin/approve-change', data),
@@ -198,6 +198,7 @@ export const adminAPI = {
   // User Management
   createUser:         (data)      => api.post('/admin/users/create', data),
   closeUserAccount:   (id, data)  => api.delete(`/admin/users/${id}/close-account`, { data }),
+  getClosureRequests: ()          => api.get('/admin/closure-requests'),
 };
 
 export default api;

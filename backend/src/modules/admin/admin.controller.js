@@ -11,7 +11,7 @@ const getAllUsers = async (req, res, next) => {
     if (search) { where += ' AND (full_name LIKE ? OR email LIKE ? OR phone LIKE ?)'; params.push(`%${search}%`, `%${search}%`, `%${search}%`); }
 
     const [rows] = await db.query(
-      `SELECT u.id, u.full_name, u.email, u.phone, u.avatar_id, u.kyc_status, u.is_active, u.last_login, u.created_at,
+      `SELECT u.id, u.full_name, u.email, u.phone, u.avatar_id, u.kyc_status, u.is_active, u.account_closed_at, u.last_login, u.created_at,
         u.date_of_birth, u.gender, u.nationality, u.occupation, u.annual_income,
         TIMESTAMPDIFF(YEAR, u.date_of_birth, CURDATE()) AS age,
         COUNT(a.id) as account_count, COALESCE(SUM(a.balance),0) as total_balance,
@@ -28,7 +28,7 @@ const getAllUsers = async (req, res, next) => {
 const getUser = async (req, res, next) => {
   try {
     const [rows] = await db.query(
-      `SELECT u.*,
+      `SELECT u.*, u.account_closed_at,
         TIMESTAMPDIFF(YEAR, u.date_of_birth, CURDATE()) AS age,
         a.account_number, a.account_type, a.balance
        FROM users u
@@ -1004,7 +1004,9 @@ const closeUserAccount = async (req, res, next) => {
     const [[user]] = await db.query("SELECT id, full_name, email FROM users WHERE id=? AND role != 'admin'", [req.params.id]);
     if (!user) return sendError(res, 404, 'User not found');
 
-    await db.query("UPDATE users SET is_active=FALSE, account_closed_at=NOW(), refresh_token=NULL WHERE id=?", [req.params.id]);
+    await db.query("UPDATE users SET is_active=FALSE, account_closed_at=NOW(), closure_requested=FALSE WHERE id=?", [req.params.id]);
+    await db.query("UPDATE accounts SET status='closed' WHERE user_id=?", [req.params.id]);
+    await db.query("UPDATE refresh_tokens SET is_revoked=TRUE WHERE user_id=?", [req.params.id]);
 
     // Notify user
     await db.query(
@@ -1013,6 +1015,20 @@ const closeUserAccount = async (req, res, next) => {
     );
 
     sendSuccess(res, { user: user.full_name }, 'Account closed successfully');
+  } catch (err) { next(err); }
+};
+
+// ── Admin Get Closure Requests ────────────────────────────────────────────────
+// GET /api/admin/closure-requests
+const getClosureRequests = async (req, res, next) => {
+  try {
+    const [requests] = await db.query(
+      `SELECT u.id, u.full_name, u.email, u.phone, u.created_at, a.account_number, a.balance 
+       FROM users u 
+       LEFT JOIN accounts a ON u.id = a.user_id 
+       WHERE u.closure_requested = TRUE AND u.is_active = TRUE`
+    );
+    sendSuccess(res, requests);
   } catch (err) { next(err); }
 };
 
@@ -1025,9 +1041,6 @@ const createUser = async (req, res, next) => {
     if (!full_name || !email || !phone || !password) return sendError(res, 400, 'Name, email, phone and password are required');
     if (password.length < 8) return sendError(res, 400, 'Password must be at least 8 characters');
 
-    const [exists] = await db.query('SELECT id FROM users WHERE email=? OR phone=?', [email, phone]);
-    if (exists.length > 0) return sendError(res, 409, 'Email or phone already registered');
-
     const bcrypt = require('bcryptjs');
     const { v4: uuidv4 } = require('uuid');
     const { generateAccountNumber } = require('../../utils/helpers');
@@ -1038,6 +1051,7 @@ const createUser = async (req, res, next) => {
     const accountNumber = generateAccountNumber();
     const balance = Math.max(0, parseFloat(initial_balance) || 0);
     const dob = date_of_birth ? date_of_birth.toString().slice(0, 10) : null;
+    const upiHandle = `${email.split('@')[0]}${Math.floor(Math.random()*10000)}@moneymitra`;
 
     const conn = await db.getConnection();
     await conn.beginTransaction();
@@ -1051,7 +1065,6 @@ const createUser = async (req, res, next) => {
         `INSERT INTO accounts (id, user_id, account_number, account_type, balance) VALUES (?,?,?,?,?)`,
         [accountId, uid, accountNumber, account_type, balance]
       );
-      const upiHandle = `${email.split('@')[0]}@moneymitra`;
       await conn.query(
         `INSERT INTO upi_ids (id, user_id, account_id, upi_handle, is_primary) VALUES (UUID(),?,?,?,TRUE)`,
         [uid, accountId, upiHandle]
@@ -1084,5 +1097,5 @@ module.exports = {
   addBeneficiary, deleteBeneficiary,
   adminGiveLoan, processEMI, exportUserLoans,
   sendUserMessage, resetUserPassword, getDbStats, runPresetQuery,
-  closeUserAccount, createUser,
+  closeUserAccount, createUser, getClosureRequests,
 };

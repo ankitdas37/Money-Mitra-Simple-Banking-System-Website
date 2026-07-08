@@ -607,6 +607,7 @@ export default function AdminPanel() {
   const [users, setUsers] = useState([]);
   const [transactions, setTransactions] = useState([]);
   const [pendingChanges, setPendingChanges] = useState([]);
+  const [closureRequests, setClosureRequests] = useState([]);
   const [search, setSearch] = useState('');
   const [fraudOnly, setFraudOnly] = useState(false);
 
@@ -703,6 +704,7 @@ export default function AdminPanel() {
     if (tab === 'transactions') fetchTransactions();
     if (tab === 'pending') fetchPending();
     if (tab === 'support') { fetchSupportTickets(); fetchSupportStats(); }
+    if (tab === 'closures') fetchClosureRequests();
     if (tab === 'faq') fetchFAQs();
     if (tab === 'loans') fetchAllLoans();
     if (tab === 'broadcast') adminAPI.getUsers({ limit: 200 }).then(r => setBroadcastUsers(r.data.data || [])).catch(() => {});
@@ -718,6 +720,9 @@ export default function AdminPanel() {
   };
   const fetchPending = async () => {
     try { const r = await userAPI.getPendingChanges(); setPendingChanges(r.data.data || []); } catch { /* empty */ }
+  };
+  const fetchClosureRequests = async () => {
+    try { const r = await adminAPI.getClosureRequests(); setClosureRequests(r.data.data || []); } catch { /* empty */ }
   };
   const fetchSupportTickets = async () => {
     try { const r = await supportAPI.adminGetAllTickets(supportFilter); setSupportTickets(r.data.data || []); } catch { /* empty */ }
@@ -1104,7 +1109,7 @@ export default function AdminPanel() {
                   <td><Badge color={u.kyc_status === 'verified' ? '#00E5A0' : '#FFB84C'}>{u.kyc_status}</Badge></td>
                   <td style={{ fontWeight: 700, fontSize: 13 }}>{formatINR(u.total_balance)}</td>
                   <td style={{ fontSize: 12 }}>{formatDate(u.created_at)}</td>
-                  <td><Badge color={u.is_active ? '#00E5A0' : '#FF5757'}>{u.is_active ? 'Active' : 'Suspended'}</Badge></td>
+                  <td><Badge color={u.account_closed_at ? '#a89cff' : (u.is_active ? '#00E5A0' : '#FF5757')}>{u.account_closed_at ? 'Closed' : (u.is_active ? 'Active' : 'Suspended')}</Badge></td>
                   <td>
                     <div style={{ display: 'flex', gap: 5, flexWrap: 'wrap' }}>
                       <button onClick={() => openUserDetail(u.id)}
@@ -1115,10 +1120,18 @@ export default function AdminPanel() {
                         style={{ background: 'rgba(0,229,160,0.12)', border: '1px solid rgba(0,229,160,0.3)', borderRadius: 7, padding: '5px 9px', color: '#00E5A0', fontSize: 11, fontWeight: 700, cursor: 'pointer', fontFamily: 'Outfit,sans-serif' }}>
                         💰 Money
                       </button>
-                      <button onClick={() => handleToggleUser(u.id)}
-                        style={{ background: u.is_active ? 'rgba(255,87,87,0.1)' : 'rgba(0,229,160,0.1)', border: `1px solid ${u.is_active ? 'rgba(255,87,87,0.3)' : 'rgba(0,229,160,0.3)'}`, borderRadius: 7, padding: '5px 9px', color: u.is_active ? '#FF5757' : '#00E5A0', fontSize: 11, fontWeight: 700, cursor: 'pointer', fontFamily: 'Outfit,sans-serif' }}>
-                        {u.is_active ? '🚫 Suspend' : '✅ Activate'}
-                      </button>
+                      {!u.account_closed_at && (
+                        <button onClick={() => handleToggleUser(u.id)}
+                          style={{ background: u.is_active ? 'rgba(255,87,87,0.1)' : 'rgba(0,229,160,0.1)', border: `1px solid ${u.is_active ? 'rgba(255,87,87,0.3)' : 'rgba(0,229,160,0.3)'}`, borderRadius: 7, padding: '5px 9px', color: u.is_active ? '#FF5757' : '#00E5A0', fontSize: 11, fontWeight: 700, cursor: 'pointer', fontFamily: 'Outfit,sans-serif' }}>
+                          {u.is_active ? '🚫 Suspend' : '✅ Activate'}
+                        </button>
+                      )}
+                      {u.is_active && !u.account_closed_at && (
+                        <button onClick={() => { setAdminCloseModal({ id: u.id, full_name: u.full_name, email: u.email }); setAdminCloseForm({ confirm_text: '', reason: '' }); }}
+                          style={{ background: 'rgba(255,87,87,0.12)', border: '1px solid rgba(255,87,87,0.35)', borderRadius: 7, padding: '5px 9px', color: '#FF5757', fontSize: 11, fontWeight: 700, cursor: 'pointer', fontFamily: 'Outfit,sans-serif' }}>
+                          ⛔ Close
+                        </button>
+                      )}
                     </div>
                   </td>
                 </tr>
@@ -1171,10 +1184,12 @@ export default function AdminPanel() {
                     style={{ background: 'rgba(255,184,76,0.12)', border: '1px solid rgba(255,184,76,0.3)', borderRadius: 9, padding: '9px 14px', color: '#FFB84C', fontSize: 12, fontWeight: 700, cursor: 'pointer', fontFamily: 'Outfit,sans-serif' }}>
                     🔑 Reset Password
                   </button>
-                  <button onClick={() => handleToggleUser(detailUser.user.id)}
-                    style={{ background: detailUser.user.is_active ? 'rgba(255,87,87,0.1)' : 'rgba(0,229,160,0.1)', border: `1px solid ${detailUser.user.is_active ? 'rgba(255,87,87,0.3)' : 'rgba(0,229,160,0.3)'}`, borderRadius: 9, padding: '9px 14px', color: detailUser.user.is_active ? '#FF5757' : '#00E5A0', fontSize: 12, fontWeight: 700, cursor: 'pointer', fontFamily: 'Outfit,sans-serif' }}>
-                    {detailUser.user.is_active ? '🚫 Suspend' : '✅ Activate'}
-                  </button>
+                  {!detailUser.user.account_closed_at && (
+                    <button onClick={() => handleToggleUser(detailUser.user.id)}
+                      style={{ background: detailUser.user.is_active ? 'rgba(255,87,87,0.1)' : 'rgba(0,229,160,0.1)', border: `1px solid ${detailUser.user.is_active ? 'rgba(255,87,87,0.3)' : 'rgba(0,229,160,0.3)'}`, borderRadius: 9, padding: '9px 14px', color: detailUser.user.is_active ? '#FF5757' : '#00E5A0', fontSize: 12, fontWeight: 700, cursor: 'pointer', fontFamily: 'Outfit,sans-serif' }}>
+                      {detailUser.user.is_active ? '🚫 Suspend' : '✅ Activate'}
+                    </button>
+                  )}
                   {detailUser.user.is_active && (
                     <button onClick={() => { setAdminCloseModal({ id: detailUser.user.id, full_name: detailUser.user.full_name, email: detailUser.user.email }); setAdminCloseForm({ confirm_text: '', reason: '' }); }}
                       style={{ background: 'rgba(255,87,87,0.12)', border: '1px solid rgba(255,87,87,0.35)', borderRadius: 9, padding: '9px 14px', color: '#FF5757', fontSize: 12, fontWeight: 700, cursor: 'pointer', fontFamily: 'Outfit,sans-serif' }}>
@@ -1907,6 +1922,43 @@ export default function AdminPanel() {
                 )}
               </div>
             ))}
+        </div>
+      )}
+
+      {/* ══════════════ CLOSURES TAB ══════════════ */}
+      {tab === 'closures' && (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+          {closureRequests.length === 0 && (
+            <div className="glass-card">
+              <div className="empty-state">
+                <div className="empty-state-icon">✅</div>
+                <p>No pending account closure requests.</p>
+              </div>
+            </div>
+          )}
+          {closureRequests.map(u => (
+            <div key={u.id} className="glass-card" style={{ padding: 20, borderLeft: '4px solid #FF5757' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 12 }}>
+                <div>
+                  <div style={{ fontWeight: 800, fontSize: 16 }}>{u.full_name}</div>
+                  <div style={{ fontSize: 13, color: 'var(--text-muted)' }}>{u.email} · {u.phone}</div>
+                </div>
+                <Badge color="#FF5757">Closure Requested</Badge>
+              </div>
+              <div style={{ display: 'flex', gap: 10, marginTop: 12 }}>
+                <button
+                  className="btn-primary"
+                  style={{ background: 'linear-gradient(135deg,#FF5757,#c0392b)', border: 'none' }}
+                  onClick={() => {
+                    setAdminCloseModal(u);
+                    setAdminCloseForm({ confirm_text: '', reason: 'Your account closure request has been approved and processed.' });
+                  }}
+                >
+                  ⛔ Review & Close Account
+                </button>
+              </div>
+            </div>
+          ))}
         </div>
       )}
 
@@ -2790,7 +2842,7 @@ export default function AdminPanel() {
             </div>
 
             <div style={{ background:'rgba(0,229,160,0.06)',border:'1px solid rgba(0,229,160,0.2)',borderRadius:10,padding:'10px 14px',marginBottom:20,fontSize:12,color:'var(--text-secondary)',lineHeight:1.6 }}>
-              ℹ️ A UPI ID (<strong>{createUserForm.email ? `${createUserForm.email.split('@')[0]}@moneymitra` : '...'}</strong>) will be auto-created. User will receive a welcome notification.
+              ℹ️ A UPI ID (<strong>{createUserForm.email ? `${createUserForm.email.split('@')[0]}XXXX@moneymitra` : '...'}</strong>) will be auto-created. User will receive a welcome notification.
             </div>
 
             <div style={{ display:'flex',gap:10 }}>
@@ -2853,7 +2905,7 @@ export default function AdminPanel() {
                 style={{ background:'transparent',border:'1px solid var(--border)',borderRadius:10,padding:'11px 20px',color:'var(--text-secondary)',fontWeight:600,fontSize:13,cursor:'pointer',fontFamily:'Outfit,sans-serif' }}>Cancel</button>
               <button
                 onClick={async () => {
-                  if (adminCloseForm.confirm_text !== 'CLOSE') { toast.error('Type CLOSE to confirm'); return; }
+                  if (adminCloseForm.confirm_text.trim().toUpperCase() !== 'CLOSE') { toast.error('Type CLOSE to confirm'); return; }
                   setAdminCloseLoading(true);
                   try {
                     const r = await adminAPI.closeUserAccount(adminCloseModal.id, { confirm_text:'CLOSE', reason: adminCloseForm.reason });
@@ -2861,11 +2913,12 @@ export default function AdminPanel() {
                     setAdminCloseModal(null);
                     setShowDetail(false);
                     fetchUsers();
+                    fetchClosureRequests();
                   } catch (err) { toast.error(err.response?.data?.message || 'Failed'); }
                   finally { setAdminCloseLoading(false); }
                 }}
-                disabled={adminCloseLoading || adminCloseForm.confirm_text !== 'CLOSE'}
-                style={{ flex:1,background:'linear-gradient(135deg,#FF5757,#c0392b)',border:'none',borderRadius:10,padding:'12px 0',color:'white',fontWeight:800,fontSize:14,cursor:'pointer',fontFamily:'Outfit,sans-serif',opacity:adminCloseLoading||adminCloseForm.confirm_text!=='CLOSE'?0.6:1 }}>
+                disabled={adminCloseLoading || adminCloseForm.confirm_text.trim().toUpperCase() !== 'CLOSE'}
+                style={{ flex:1,background:'linear-gradient(135deg,#FF5757,#c0392b)',border:'none',borderRadius:10,padding:'12px 0',color:'white',fontWeight:800,fontSize:14,cursor:'pointer',fontFamily:'Outfit,sans-serif',opacity:adminCloseLoading||adminCloseForm.confirm_text.trim().toUpperCase()!=='CLOSE'?0.6:1 }}>
                 {adminCloseLoading ? '⏳ Closing…' : '⛔ Close Account Permanently'}
               </button>
             </div>

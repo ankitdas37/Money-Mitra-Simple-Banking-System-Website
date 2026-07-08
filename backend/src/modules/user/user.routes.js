@@ -11,7 +11,7 @@ router.put('/me/password', ctrl.changePassword);
 router.post('/me/request-change', ctrl.requestChange);
 router.post('/me/verify-otp', ctrl.verifyOtp);
 router.post('/me/kyc', ctrl.submitKYC);
-router.delete('/me/account', ctrl.closeAccount);
+router.post('/me/request-closure', ctrl.requestAccountClosure);
 
 // Admin routes
 router.get('/admin/pending-changes', ctrl.getPendingChanges);

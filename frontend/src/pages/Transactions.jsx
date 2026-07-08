@@ -661,9 +661,11 @@ export default function Transactions() {
 
                     {/* Description column */}
                     <td data-label="Description">
-                      <div style={{ fontSize: 13, fontWeight: 600, maxWidth: 200, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{txn.description || '—'}</div>
-                      <div style={{ fontSize: 11, color: 'var(--text-muted)', fontFamily: 'monospace' }}>{txn.reference_number}</div>
-                      {txn.fraud_flagged && <div style={{ fontSize: 10, color: 'var(--warning)', marginTop: 2 }}>⚠️ Fraud Flagged</div>}
+                      <div style={{ textAlign: 'right' }}>
+                        <div style={{ fontSize: 13, fontWeight: 600, maxWidth: 200, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{txn.description || '—'}</div>
+                        <div style={{ fontSize: 11, color: 'var(--text-muted)', fontFamily: 'monospace' }}>{txn.reference_number}</div>
+                        {txn.fraud_flagged && <div style={{ fontSize: 10, color: 'var(--warning)', marginTop: 2 }}>⚠️ Fraud Flagged</div>}
+                      </div>
                     </td>
 
                     {/* From / To column */}
@@ -690,12 +692,14 @@ export default function Transactions() {
 
                     {/* Amount column */}
                     <td data-label="Amount" style={{ textAlign: 'right' }}>
-                      <div style={{ fontSize: 16, fontWeight: 800, color: dirColor, letterSpacing: '-0.5px' }}>
-                        {dirSign} {formatINR(txn.amount)}
+                      <div>
+                        <div style={{ fontSize: 16, fontWeight: 800, color: dirColor, letterSpacing: '-0.5px' }}>
+                          {dirSign} {formatINR(txn.amount)}
+                        </div>
+                        {txn.balance_after !== null && txn.balance_after !== undefined && (
+                          <div style={{ fontSize: 11, color: 'var(--text-muted)' }}>Bal: {formatINR(txn.balance_after)}</div>
+                        )}
                       </div>
-                      {txn.balance_after !== null && txn.balance_after !== undefined && (
-                        <div style={{ fontSize: 11, color: 'var(--text-muted)' }}>Bal: {formatINR(txn.balance_after)}</div>
-                      )}
                     </td>
 
                     {/* Status column */}
@@ -739,6 +743,7 @@ export default function Transactions() {
           <div style={{
             background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: 22,
             padding: 32, maxWidth: 480, width: '100%', boxShadow: '0 32px 80px rgba(0,0,0,0.6)',
+            maxHeight: '90vh', overflowY: 'auto'
           }}>
             {/* Icon */}
             <div style={{ textAlign: 'center', marginBottom: 20 }}>

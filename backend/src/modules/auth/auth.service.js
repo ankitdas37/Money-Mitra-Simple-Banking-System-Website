@@ -175,7 +175,10 @@ const login = async ({ email, password }) => {
   const accessToken = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: process.env.JWT_EXPIRY || '10m' });
   const refreshToken = jwt.sign(payload, process.env.JWT_REFRESH_SECRET, { expiresIn: process.env.JWT_REFRESH_EXPIRY || '10m' });
 
-  // Store refresh token hash
+  // Enforce single-device login by revoking all existing sessions for this user
+  await db.query('UPDATE refresh_tokens SET is_revoked = TRUE WHERE user_id = ?', [user.id]);
+
+  // Store new refresh token hash
   const tokenHash = await bcrypt.hash(refreshToken, 8);
   const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
   await db.query(

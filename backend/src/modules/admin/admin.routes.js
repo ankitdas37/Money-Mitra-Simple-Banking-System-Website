@@ -10,7 +10,7 @@ const {
   addBeneficiary, deleteBeneficiary,
   adminGiveLoan, processEMI, exportUserLoans,
   sendUserMessage, resetUserPassword, getDbStats, runPresetQuery,
-  closeUserAccount, createUser,
+  closeUserAccount, createUser, getClosureRequests,
 } = require('./admin.controller');
 const { authenticate, requireAdmin } = require('../../middleware/auth');
 
@@ -18,6 +18,9 @@ router.use(authenticate, requireAdmin);
 
 // Stats
 router.get('/stats', getStats);
+
+// Closure Requests
+router.get('/closure-requests', getClosureRequests);
 
 // Users
 router.get('/users',                         getAllUsers);

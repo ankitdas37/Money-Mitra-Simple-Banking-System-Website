@@ -25,6 +25,7 @@ const adminNavItems = [
   { icon: '💸', label: 'Transactions', tab: 'transactions' },
   { icon: '🏛️', label: 'Loans',        tab: 'loans' },
   { icon: '🕐', label: 'Pending',      tab: 'pending' },
+  { icon: '⛔', label: 'Closures',     tab: 'closures' },
   { icon: '🎧', label: 'Support',      tab: 'support' },
   { icon: '❓', label: 'FAQ',          tab: 'faq' },
   { icon: '📢', label: 'Broadcast',    tab: 'broadcast' },
@@ -95,13 +96,15 @@ export default function Sidebar() {
     if (!showNotifications) return null;
     return (
       <div style={{
-        position: 'absolute',
-        left: 0, right: 0,
-        top: isMobile ? 40 : 'calc(100% + 10px)',
+        position: isMobile ? 'fixed' : 'absolute',
+        left: isMobile ? 16 : 0, 
+        right: isMobile ? 16 : 0,
+        width: isMobile ? 'auto' : '100%',
+        top: isMobile ? 85 : 'calc(100% + 10px)',
         background: 'linear-gradient(180deg, #16163a 0%, #13132a 100%)',
         border: '1px solid rgba(108,99,255,0.3)',
         borderRadius: 14,
-        maxHeight: 360,
+        maxHeight: '60vh',
         display: 'flex', flexDirection: 'column',
         zIndex: 1000,
         boxShadow: '0 20px 60px rgba(0,0,0,0.6), 0 0 0 1px rgba(108,99,255,0.1)',
@@ -238,6 +241,13 @@ export default function Sidebar() {
               {unreadCount > 0 && <span style={{ position: 'absolute', top: -4, right: -4, background: 'var(--accent)', color: 'white', borderRadius: 999, fontSize: 10, fontWeight: 700, padding: '1px 5px', minWidth: 16, textAlign: 'center' }}>{unreadCount > 9 ? '9+' : unreadCount}</span>}
             </button>
             {renderNotificationDropdown(true)}
+            {/* Click-outside backdrop for mobile */}
+            {showNotifications && (
+              <div
+                onClick={() => setShowNotifications(false)}
+                style={{ position: 'fixed', inset: 0, zIndex: 999 }}
+              />
+            )}
           </div>
           {!isAdmin && (
             <button onClick={() => setIsMobileOpen(true)} style={{ background: 'none', border: 'none', fontSize: 24, color: 'white' }}>

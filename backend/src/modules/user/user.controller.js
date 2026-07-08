@@ -240,7 +240,7 @@ const rejectChange = async (req, res, next) => {
   } catch (err) { next(err); }
 };
 
-module.exports = { getProfile, updateProfile, uploadPhoto, changePassword, requestChange, verifyOtp, submitKYC, getPendingChanges, approveChange, rejectChange, closeAccount };
+module.exports = { getProfile, updateProfile, uploadPhoto, changePassword, requestChange, verifyOtp, submitKYC, getPendingChanges, approveChange, rejectChange, requestAccountClosure };
 
 // ── Helper: push notification to all admins ───────────────────────────────────
 async function insertAdminNotification(title, body, type = 'system') {
@@ -254,30 +254,26 @@ async function insertAdminNotification(title, body, type = 'system') {
 }
 module.exports.insertAdminNotification = insertAdminNotification;
 
-// ── DELETE /api/users/account — user closes own account ──────────────────────
-async function closeAccount(req, res, next) {
+// ── POST /api/users/me/request-closure — user requests account closure ──────────────────────
+async function requestAccountClosure(req, res, next) {
   try {
-    const { password, confirm_text } = req.body;
-    if (confirm_text !== 'CLOSE') return sendError(res, 400, 'Type CLOSE to confirm account closure');
+    const { password } = req.body;
 
     const [rows] = await db.query('SELECT password_hash, full_name, email FROM users WHERE id=?', [req.user.id]);
     if (!rows[0]) return sendError(res, 404, 'User not found');
     const isMatch = await bcrypt.compare(password, rows[0].password_hash);
     if (!isMatch) return sendError(res, 400, 'Incorrect password');
 
-    // Deactivate account
-    await db.query("UPDATE users SET is_active=FALSE, account_closed_at=NOW() WHERE id=?", [req.user.id]);
+    // Set closure requested flag
+    await db.query("UPDATE users SET closure_requested=TRUE WHERE id=?", [req.user.id]);
 
     // Notify admin
     await insertAdminNotification(
-      '⛔ Account Closed by User',
-      `${rows[0].full_name} (${rows[0].email}) has permanently closed their account.`,
+      '⛔ Account Closure Request',
+      `${rows[0].full_name} (${rows[0].email}) has requested to close their account.`,
       'warning'
     );
 
-    // Invalidate their token
-    await db.query("UPDATE users SET refresh_token=NULL WHERE id=?", [req.user.id]);
-
-    sendSuccess(res, {}, 'Account closed successfully. We are sorry to see you go.');
+    sendSuccess(res, {}, 'Account closure request submitted successfully. Waiting for admin approval.');
   } catch (err) { next(err); }
 }
