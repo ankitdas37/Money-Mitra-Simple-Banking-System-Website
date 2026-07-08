@@ -1062,8 +1062,8 @@ const createUser = async (req, res, next) => {
         [uid, full_name, email, phone, hash, role, gender || null, dob, occupation || null, annual_income || null, nationality]
       );
       await conn.query(
-        `INSERT INTO accounts (id, user_id, account_number, account_type, balance) VALUES (?,?,?,?,?)`,
-        [accountId, uid, accountNumber, account_type, balance]
+        `INSERT INTO accounts (id, user_id, user_name, user_email, account_number, account_type, balance) VALUES (?,?,?,?,?,?,?)`,
+        [accountId, uid, full_name, email, accountNumber, account_type, balance]
       );
       await conn.query(
         `INSERT INTO upi_ids (id, user_id, account_id, upi_handle, is_primary) VALUES (UUID(),?,?,?,TRUE)`,
