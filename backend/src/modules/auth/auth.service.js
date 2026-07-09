@@ -78,8 +78,8 @@ const register = async (userData) => {
 
     // Create account with chosen type
     await conn.query(
-      'INSERT INTO accounts (id, user_id, user_name, user_email, account_number, account_type, balance) VALUES (?,?,?,?,?,?,10000.00)',
-      [accountId, userId, full_name, email, accountNumber, account_type]
+      'INSERT INTO accounts (id, user_id, account_number, account_type, balance) VALUES (?,?,?,?,10000.00)',
+      [accountId, userId, accountNumber, account_type]
     );
 
     // Create UPI ID (unique handle pre-validated above)

@@ -21,6 +21,7 @@
 > ⚠️ **Disclaimer:** This is an educational project and NOT a real bank. Do not enter real financial details.
 
 ---
+
 ## 🧩 Project Details
 
 | Field | Value |
