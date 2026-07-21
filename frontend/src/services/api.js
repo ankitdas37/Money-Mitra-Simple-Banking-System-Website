@@ -57,6 +57,7 @@ export const authAPI = {
 // ── User ──────────────────────────────────────────────────────
 export const userAPI = {
   getProfile:     ()     => api.get('/users/me'),
+  getLoginHistory:()     => api.get('/users/me/login-history'),
   updateProfile:  (data) => api.put('/users/me', data),
   uploadPhoto:    (data) => api.put('/users/me/photo', data),
   changePassword: (data) => api.put('/users/me/password', data),

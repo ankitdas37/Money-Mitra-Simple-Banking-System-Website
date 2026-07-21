@@ -5,6 +5,7 @@ const { authenticate } = require('../../middleware/auth');
 
 router.use(authenticate);
 router.get('/me', ctrl.getProfile);
+router.get('/me/login-history', ctrl.getLoginHistory);
 router.put('/me', ctrl.updateProfile);
 router.put('/me/photo', ctrl.uploadPhoto);
 router.put('/me/password', ctrl.changePassword);

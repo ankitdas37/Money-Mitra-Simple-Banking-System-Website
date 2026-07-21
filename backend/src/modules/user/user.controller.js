@@ -21,6 +21,20 @@ const getProfile = async (req, res, next) => {
   } catch (err) { next(err); }
 };
 
+// ── GET /api/users/me/login-history ───────────────────────────────────────────
+const getLoginHistory = async (req, res, next) => {
+  try {
+    const [rows] = await db.query(
+      `SELECT id, action, ip_address, user_agent, created_at 
+       FROM audit_logs 
+       WHERE user_id = ? AND action = 'LOGIN' 
+       ORDER BY created_at DESC LIMIT 20`,
+      [req.user.id]
+    );
+    sendSuccess(res, rows);
+  } catch (err) { next(err); }
+};
+
 // ── PUT /api/users/me  (avatar only — immutable fields protected) ──────────────
 const updateProfile = async (req, res, next) => {
   try {
@@ -240,7 +254,7 @@ const rejectChange = async (req, res, next) => {
   } catch (err) { next(err); }
 };
 
-module.exports = { getProfile, updateProfile, uploadPhoto, changePassword, requestChange, verifyOtp, submitKYC, getPendingChanges, approveChange, rejectChange, requestAccountClosure };
+module.exports = { getProfile, getLoginHistory, updateProfile, uploadPhoto, changePassword, requestChange, verifyOtp, submitKYC, getPendingChanges, approveChange, rejectChange, requestAccountClosure };
 
 // ── Helper: push notification to all admins ───────────────────────────────────
 async function insertAdminNotification(title, body, type = 'system') {

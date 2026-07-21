@@ -140,7 +140,7 @@ const register = async (userData) => {
 /**
  * Login user and return tokens
  */
-const login = async ({ email, password }) => {
+const login = async ({ email, password, ip, userAgent }) => {
   const queryEmail = email === 'admin' ? 'admin@moneymitra.in' : email;
   const [rows] = await db.query(
     'SELECT id, full_name, email, phone, password_hash, avatar_id, role, kyc_status, is_active FROM users WHERE email = ?',
@@ -164,6 +164,12 @@ const login = async ({ email, password }) => {
 
   // Update last login
   await db.query('UPDATE users SET last_login = NOW() WHERE id = ?', [user.id]);
+
+  // Record login history
+  await db.query(
+    'INSERT INTO audit_logs (id, user_id, action, ip_address, user_agent) VALUES (?, ?, ?, ?, ?)',
+    [uuidv4(), user.id, 'LOGIN', ip || 'Unknown', userAgent || 'Unknown']
+  );
 
   const payload = {
     id: user.id,

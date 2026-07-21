@@ -47,7 +47,9 @@ const login = async (req, res, next) => {
     const { error, value } = loginSchema.validate(req.body);
     if (error) return sendError(res, 400, error.details[0].message);
 
-    const result = await authService.login(value);
+    const ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress || req.ip;
+    const userAgent = req.headers['user-agent'];
+    const result = await authService.login({ ...value, ip, userAgent });
     sendSuccess(res, result, 'Login successful');
   } catch (err) {
     if (err.status) return sendError(res, err.status, err.message);

@@ -45,6 +45,7 @@ export const formatINRShort = (amount) => {
 export const formatDate = (dateStr) => {
   if (!dateStr) return '—';
   return new Date(dateStr).toLocaleDateString('en-IN', {
+    timeZone: 'Asia/Kolkata',
     day: '2-digit', month: 'short', year: 'numeric'
   });
 };
@@ -53,6 +54,7 @@ export const formatDate = (dateStr) => {
 export const formatDateTime = (dateStr) => {
   if (!dateStr) return '—';
   return new Date(dateStr).toLocaleString('en-IN', {
+    timeZone: 'Asia/Kolkata',
     day: '2-digit', month: 'short', year: 'numeric',
     hour: '2-digit', minute: '2-digit'
   });

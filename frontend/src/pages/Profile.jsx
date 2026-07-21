@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { userAPI, accountAPI } from '../services/api';
 import { useAuthStore } from '../store';
-import { AVATARS, formatDate } from '../utils/helpers';
+import { AVATARS, formatDate, formatDateTime } from '../utils/helpers';
 import toast from 'react-hot-toast';
 
 // ── Read-only field ────────────────────────────────────────────────────────────
@@ -84,6 +84,7 @@ export default function Profile() {
   const [accounts, setAccounts] = useState([]);
   const [tab, setTab] = useState('personal');
   const [loading, setLoading] = useState(false);
+  const [loginHistory, setLoginHistory] = useState([]);
 
   // Avatar
   const [avatarId, setAvatarId] = useState(1);
@@ -109,11 +110,12 @@ export default function Profile() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    Promise.all([userAPI.getProfile(), accountAPI.getAll()])
-      .then(([pRes, aRes]) => {
+    Promise.all([userAPI.getProfile(), accountAPI.getAll(), userAPI.getLoginHistory().catch(() => ({ data: { data: [] } }))])
+      .then(([pRes, aRes, lRes]) => {
         setProfile(pRes.data.data);
         setAvatarId(pRes.data.data.avatar_id || 1);
         setAccounts(aRes.data.data || []);
+        setLoginHistory(lRes.data.data || []);
         const p = pRes.data.data;
         setKycForm({
           pan_number: p.pending_pan || p.pan_number || '',
@@ -923,6 +925,36 @@ export default function Profile() {
                 <span style={{ fontWeight: 600 }}>{value}</span>
               </div>
             ))}
+          </div>
+
+          {/* Login History */}
+          <div style={{ marginTop: 24, background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 12, padding: 16 }}>
+            <div style={{ fontWeight: 700, marginBottom: 12 }}>🕒 Recent Login History (IST)</div>
+            <div style={{ overflowX: 'auto' }}>
+              <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 12, textAlign: 'left' }}>
+                <thead>
+                  <tr style={{ color: 'var(--text-muted)', borderBottom: '1px solid rgba(255,255,255,0.1)' }}>
+                    <th style={{ padding: '8px 0', fontWeight: 600 }}>Date & Time</th>
+                    <th style={{ padding: '8px 0', fontWeight: 600 }}>IP Address</th>
+                    <th style={{ padding: '8px 0', fontWeight: 600 }}>Device / Browser</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {loginHistory.map(log => (
+                    <tr key={log.id} style={{ borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
+                      <td style={{ padding: '10px 0', whiteSpace: 'nowrap', fontWeight: 600 }}>{formatDateTime(log.created_at)}</td>
+                      <td style={{ padding: '10px 0', color: 'var(--primary-light)', fontFamily: 'monospace' }}>{log.ip_address}</td>
+                      <td style={{ padding: '10px 0', color: 'var(--text-muted)' }}>{log.user_agent}</td>
+                    </tr>
+                  ))}
+                  {loginHistory.length === 0 && (
+                    <tr>
+                      <td colSpan="3" style={{ padding: '16px 0', textAlign: 'center', color: 'var(--text-muted)' }}>No recent logins found.</td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
           </div>
 
           {/* Danger Zone */}
